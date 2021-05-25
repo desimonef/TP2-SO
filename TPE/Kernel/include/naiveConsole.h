@@ -2,7 +2,8 @@
 #define NAIVE_CONSOLE_H
 
 #include <stdint.h>
-
+void ncPrintCharAtt(char character, char attribute);
+void ncPrintAtt(const char * string, char frontColor, char backColor);
 void ncPrint(const char * string);
 void ncPrintChar(char character);
 void ncNewline();

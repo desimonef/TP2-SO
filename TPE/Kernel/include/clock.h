@@ -9,7 +9,7 @@ unsigned int month();
 unsigned int year();
 void timeToStr (char * dest);
 void dateToStr (char * dest);
-unsigned int decode(unsigned char time);
+static unsigned int decode(unsigned char time);
 
 
 #endif

@@ -8,18 +8,59 @@ static uint8_t * currentVideo = (uint8_t*)0xB8000;
 static const uint32_t width = 80;
 static const uint32_t height = 25 ;
 
-void ncPrint(const char * string)
+void scrollUp()
 {
+	for (int i = 0; i < height -1; i++){
+		for (int j = 0; j < width * 2; j++){
+			video[j + i * width * 2] = video[j + (i+1) * width * 2];
+		}
+	}
+	for (int k = 0; k < width * 2; k++)
+		video[(height - 1) * width * 2 + k] = '\0';
+	currentVideo = video + (height - 1) * width * 2;
+}
+
+void checkPosition()
+{
+	if (currentVideo - video >= width * height * 2)
+		scrollUp();
+}
+
+void ncPrintCharAtt(char character, char attribute)
+{
+	if (character == 0)
+		return;
+	checkPosition();
+    *currentVideo = character;
+    *(currentVideo+1) = attribute;
+    currentVideo += 2;
+}
+
+void ncPrintAtt(const char * string, char frontColor, char backColor)
+{
+    char attribute = 0;
+    attribute = (backColor << 4) | frontColor;
+    for (int i = 0; string[i] != 0; i++)
+        ncPrintCharAtt(string[i], attribute);
+}
+
+void ncPrintChar(char character)
+{
+	ncPrintCharAtt(character, 0x07);
+}
+
+void ncPrint(const char * string){
 	int i;
 
 	for (i = 0; string[i] != 0; i++)
 		ncPrintChar(string[i]);
 }
 
-void ncPrintChar(char character)
-{
-	*currentVideo = character;
-	currentVideo += 2;
+void ncErase(uint16_t amount){
+	for (int i = 0; i < amount; i++){
+		*currentVideo = '\0';
+		currentVideo--;
+	}
 }
 
 void ncNewline()

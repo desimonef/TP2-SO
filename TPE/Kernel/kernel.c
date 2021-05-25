@@ -3,6 +3,13 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
+#include <clock.h>
+#include <idtLoader.h>
+#include <time.h>
+#include <interrupts.h>
+#include <defs.h>
+#include <irqDispatcher.h>
+#include <keyboard.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -15,6 +22,8 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
+
+void sysCallWrite(uint64_t fd, char * buffer, uint64_t len);
 
 typedef int (*EntryPoint)();
 
@@ -36,6 +45,9 @@ void * getStackBase()
 void * initializeKernelBinary()
 {
 	char buffer[10];
+
+	ncPrintAtt("Arquitectura de las Computadoras", 2, 15);
+	ncNewline();
 
 	ncPrint("[x64BareBones]");
 	ncNewline();
@@ -82,8 +94,21 @@ void * initializeKernelBinary()
 
 int main()
 {	
+	char buffer[9];
+
 	ncPrint("[Kernel Main]");
 	ncNewline();
+
+	ncPrint("Time is: ");
+	timeToStr(buffer);
+	ncPrint(buffer);
+	ncNewline();
+
+	ncPrint("Date is: ");
+	dateToStr(buffer);
+	ncPrint(buffer);
+	ncNewline();
+
 	ncPrint("  Sample code module at 0x");
 	ncPrintHex((uint64_t)sampleCodeModuleAddress);
 	ncNewline();
@@ -98,6 +123,30 @@ int main()
 	ncPrint("  Sample data module contents: ");
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
+
+	load_idt();
+	uint8_t printed = 0;
+	/*
+	while (1){
+		if (!printed && ticks_elapsed() % (18*5) == 0){
+			printed = 1;
+			timeToStr(buffer);
+			ncPrint(buffer);
+			ncNewline();
+		}
+		if (printed && ticks_elapsed() % 18 != 0)
+			printed = 0;
+	}
+
+	
+	while(1){
+		char ret = keyboard_handler();
+		ncPrintChar(ret);
+	}
+	*/
+
+	//sysCallWrite(2, "hola", 5);
+
 
 	ncPrint("[Finished]");
 	return 0;

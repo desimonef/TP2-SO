@@ -1,4 +1,4 @@
-GLOBAL cpuVendor
+GLOBAL cpuVendor, accessClock, readKey, sysCallWrite
 
 section .text
 	
@@ -25,3 +25,38 @@ cpuVendor:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+accessClock:
+	push rbp
+	mov rbp, rsp
+
+	mov al, dil
+	out 70h, al
+	xor rax, rax
+	in al, 71h
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+;espera a leer del teclado y cuando devuelve algo te lo devuelve
+readKey:
+	push rbp
+	mov rbp, rsp
+
+.loop:
+	in al, 64h
+	and al, 00000001b
+	jz .loop
+	xor rax, rax
+	in al, 60h
+
+	leave
+	ret
+
+sysCallWrite:
+	mov rax, 1
+	int 80h
+	ret
+
+

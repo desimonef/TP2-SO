@@ -76,12 +76,9 @@ void onKeyPressed(char chr) {
 
 void isShiftPressed(int scancode)
 {
-  if (scancode == 42)
-    shift = 1;
-  if (scancode == 170)
-    shift = 0;
-  if(scancode == 58)
+  if (scancode == 42 || scancode == 170 || scancode == 58)
     shift = 1 - shift;
+  
 }
 
 uint8_t keyboard_handler(){

@@ -8,6 +8,7 @@
 
 static char keyboardBuffer[INPUT_BUFFER];
 static unsigned int bufferSize = 0;
+static int shift = 0;
 
 int readKey();
 
@@ -27,10 +28,27 @@ static const char asciiTable[] = {
     'z', 'x', 'c', 'v',
     'b', 'n', 'm', ',',
     '.', '-', 0, 0, 0,
-    0, 0, ' ', 0, 0,
+    ' ', 0, 0, 0, 0,
     0, 0, 0, 0
   };
 
+static const char asciiTable2[] = {
+    0, 0, '!', '"',
+    '#', '$', '%', '&',
+    '/', '(', ')', '=',
+    '¿', 0, 0, '\t',
+    'Q', 'W', 'E', 'R',
+    'T', 'Y', 'U', 'I',
+    'O', 'P', '[', ']',
+    '\n', 0, 'A', 'S',
+    'D', 'F', 'G', 'H',
+    'J', 'K', 'L', 'Ñ',
+    '{', '{', 0, '}',
+    'Z', 'X', 'C', 'V',
+    'B', 'N', 'M', ';',
+    ':', '_', 0, 0, 0,
+    ' ', 0, 0, 0, 0,
+    0, 0, 0, 0};
 
 int codeMatchesAscii(int scancode){
   return scancode >= 0 && scancode <= 57 && asciiTable[scancode] != 0;
@@ -42,8 +60,12 @@ int isLetter(char c){
 }
 
 uint8_t getMatchingAscii(int scancode){
-  if (codeMatchesAscii(scancode))
-    return asciiTable[scancode];
+  if (codeMatchesAscii(scancode)) {
+    if (shift == 0)
+      return asciiTable[scancode];
+    else
+      return asciiTable2[scancode];
+  }
   return 0;
 }
 
@@ -52,8 +74,19 @@ void onKeyPressed(char chr) {
     keyboardBuffer[bufferSize++] = chr;
 }
 
+void isShiftPressed(int scancode)
+{
+  if (scancode == 42)
+    shift = 1;
+  if (scancode == 170)
+    shift = 0;
+  if(scancode == 58)
+    shift = 1 - shift;
+}
+
 uint8_t keyboard_handler(){
     int scanCode = readKey();
+    isShiftPressed(scanCode);
     return getMatchingAscii(scanCode);
     //char c = getMatchingAscii(scanCode);
     //onKeyPressed(c);

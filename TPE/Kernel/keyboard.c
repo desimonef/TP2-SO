@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <lib.h>
 #include <keyboard.h>
+#include <naiveConsole.h>
 
 
 //entre codes de pressed y released hay un defasaje de 128
@@ -8,6 +9,12 @@
 #define SHIFT_PRESS 42
 #define SHIFT_RELEASE 170
 #define CAPS_PRESS 58
+#define ENTER 28
+#define TAB 15
+#define UP 0
+#define LEFT 1
+#define RIGHT 2
+#define DOWN 3
 
 static char keyboardBuffer[INPUT_BUFFER];
 static unsigned int bufferSize = 0;
@@ -20,11 +27,11 @@ static const char asciiTable[] = {
     0, 0, '1', '2',
     '3', '4', '5', '6',
     '7', '8', '9', '0',
-    '\'', '¡', 0, '\t',
+    '\'', '¡', 0, 0,
     'q', 'w', 'e', 'r',
     't', 'y', 'u', 'i',
     'o', 'p', '`', '+',
-    '\n', 0, 'a', 's',
+    0, 0, 'a', 's',
     'd', 'f', 'g', 'h',
     'j', 'k', 'l', 'ñ',
     '´', 'ç', 0, '<',
@@ -84,9 +91,40 @@ void isShiftPressed(int scancode)
   
 }
 
+void isSpecialChar(int scancode) {
+  if(scancode == ENTER)
+    ncNewline();
+  else if(scancode == TAB) {
+    int current = getCursor();
+    setCursor(current + 5);
+  }
+
+}
+
+void isArrowKey(int scancode) {
+  switch (scancode)
+  {
+  case 72:
+    keyMove(UP);
+    break;
+  case 75:
+    keyMove(LEFT);
+    break;
+  case 77:
+    keyMove(RIGHT);
+    break;
+  case 80:
+    keyMove(DOWN);
+    break;
+  
+  }
+}
+
 uint8_t keyboard_handler(){
     int scanCode = readKey();
     isShiftPressed(scanCode);
+    isSpecialChar(scanCode);
+    isArrowKey(scanCode);
     return getMatchingAscii(scanCode);
     //char c = getMatchingAscii(scanCode);
     //onKeyPressed(c);

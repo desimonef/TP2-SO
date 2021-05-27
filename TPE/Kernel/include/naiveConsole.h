@@ -15,5 +15,6 @@ void ncPrintBase(uint64_t value, uint32_t base);
 void ncClear();
 void setCursor(int pos);
 int getCursor();
+void keyMove(int mode);
 
 #endif

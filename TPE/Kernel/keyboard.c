@@ -5,6 +5,9 @@
 
 //entre codes de pressed y released hay un defasaje de 128
 #define INPUT_BUFFER 255 //Cant max de caracteres en buffer de input
+#define SHIFT_PRESS 42
+#define SHIFT_RELEASE 170
+#define CAPS_PRESS 58
 
 static char keyboardBuffer[INPUT_BUFFER];
 static unsigned int bufferSize = 0;
@@ -76,7 +79,7 @@ void onKeyPressed(char chr) {
 
 void isShiftPressed(int scancode)
 {
-  if (scancode == 42 || scancode == 170 || scancode == 58)
+  if (scancode == SHIFT_PRESS || scancode == SHIFT_RELEASE || scancode == CAPS_PRESS)
     shift = 1 - shift;
   
 }

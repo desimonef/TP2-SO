@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <string.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -10,7 +9,7 @@
 #include <defs.h>
 #include <irqDispatcher.h>
 #include <keyboard.h>
-
+#include <stdlib.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -25,6 +24,14 @@ static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 
 void sysCallWrite(uint64_t fd, char * buffer, uint64_t len);
+
+void os_dump_regs();
+
+void infoReg();
+
+void printMem(int dir);
+
+void printf(char * format, ...);
 
 typedef int (*EntryPoint)();
 
@@ -126,7 +133,6 @@ int main()
 	ncNewline();
 
 	load_idt();
-	uint8_t printed = 0;
 	/*
 	while (1){
 		if (!printed && ticks_elapsed() % (18*5) == 0){
@@ -138,17 +144,24 @@ int main()
 		if (printed && ticks_elapsed() % 18 != 0)
 			printed = 0;
 	}
-	*/
 
 	
 	while(1){
 		char ret = keyboard_handler();
 		ncPrintChar(ret);
 	}
-	
+	*/
 
-	//sysCallWrite(2, "hola", 5);
 
+	//infoReg();
+	ncNewline();
+
+	//printf("prueba hexa %x", 0x122F);
+
+	printMem(0x0010CFC8);
+
+
+	ncNewline();
 
 	ncPrint("[Finished]");
 	return 0;

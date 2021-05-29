@@ -10,6 +10,7 @@
 #include <defs.h>
 #include <irqDispatcher.h>
 #include <keyboard.h>
+#include <cursor.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -137,13 +138,14 @@ int main()
 		if (printed && ticks_elapsed() % 18 != 0)
 			printed = 0;
 	}
+	*/
 
 	
 	while(1){
 		char ret = keyboard_handler();
 		ncPrintChar(ret);
 	}
-	*/
+	
 
 	//sysCallWrite(2, "hola", 5);
 

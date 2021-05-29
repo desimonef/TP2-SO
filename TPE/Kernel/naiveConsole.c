@@ -6,7 +6,35 @@ static char buffer[64] = { '0' };
 static uint8_t * const video = (uint8_t*)0xB8000;
 static uint8_t * currentVideo = (uint8_t*)0xB8000;
 static const uint32_t width = 80;
-static const uint32_t height = 25 ;
+static const uint32_t height = 25;
+
+void setCursor(int pos) {
+	currentVideo = video + pos*2;
+}
+
+int getCursor() {
+	return (currentVideo - video)/2;
+}
+
+void keyMove(int mode) {
+	switch (mode)
+	{
+	case 0:
+		if(getCursor() >= width)
+			currentVideo -= width*2;
+		break;
+	case 1:
+		currentVideo -= 2;
+		break;
+	case 2:
+		currentVideo += 2;
+		break;
+	case 3: 
+		currentVideo += width*2;
+		checkPosition();
+		break;
+	}
+}
 
 void scrollUp()
 {
@@ -17,8 +45,9 @@ void scrollUp()
 	}
 	for (int k = 0; k < width * 2; k++)
 		video[(height - 1) * width * 2 + k] = '\0';
-	currentVideo = video + (height - 1) * width * 2;
+	setCursor((height-1)*width);
 }
+
 
 void checkPosition()
 {

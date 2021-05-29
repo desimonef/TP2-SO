@@ -10,7 +10,7 @@
 #include <defs.h>
 #include <irqDispatcher.h>
 #include <keyboard.h>
-#include <cursor.h>
+
 
 extern uint8_t text;
 extern uint8_t rodata;

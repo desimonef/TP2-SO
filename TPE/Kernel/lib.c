@@ -221,4 +221,8 @@ char* itoa(int num, char* str, int base)
     return str;
 }
 
+<<<<<<< HEAD
 */
+=======
+*/
+>>>>>>> 664ba25eeda664f8e265c2f59e0b0abdb58c13f8

@@ -12,4 +12,8 @@ void exceptionDispatcher(int exception) {
 	else
 		return;
 	sysWrite(2, message, strlen(message));
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 664ba25eeda664f8e265c2f59e0b0abdb58c13f8

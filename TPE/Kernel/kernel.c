@@ -39,9 +39,17 @@ void * getStackBase(){
 
 void * initializeKernelBinary(){
 	char buffer[10];
+<<<<<<< HEAD
 	
 	initScreen();
 	load_idt();
+=======
+
+	initScreen();
+
+	ncPrintAtt("Arquitectura de las Computadoras", 2, 15);
+	ncNewline();
+>>>>>>> 664ba25eeda664f8e265c2f59e0b0abdb58c13f8
 
 	ncPrint("[x64BareBones]");
 	ncNewline();

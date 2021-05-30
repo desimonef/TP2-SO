@@ -1,6 +1,10 @@
 #include <naiveConsole.h>
+<<<<<<< HEAD
 #include "screen.h"
 
+=======
+#include <screen.h>
+>>>>>>> 664ba25eeda664f8e265c2f59e0b0abdb58c13f8
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 
@@ -37,6 +41,11 @@ void keyMove(int mode) {
 		break;
 	}
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 664ba25eeda664f8e265c2f59e0b0abdb58c13f8
 /*
 void scrollUp()
 {
@@ -54,8 +63,13 @@ void checkPosition()
 {
 	if (currentVideo - video >= width * height * 2)
 		scrollUp();
+<<<<<<< HEAD
 }
 */
+=======
+}*/
+
+>>>>>>> 664ba25eeda664f8e265c2f59e0b0abdb58c13f8
 void ncPrintCharAtt(char character, char attribute)
 {
 	if (character == 0 || character == '\0')
@@ -95,13 +109,10 @@ void ncErase(uint16_t amount){
 	}
 }
 
-void ncNewline()
-{
-	do
-	{
+void ncNewline() {
+	do {
 		ncPrintChar(' ');
-	}
-	while((uint64_t)(currentVideo - video) % (width * 2) != 0);
+	} while((uint64_t)(currentVideo - video) % (width*2) != 0);
 }
 
 void ncPrintDec(uint64_t value)

@@ -2,13 +2,13 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
-#include <clock.h>
 #include <idtLoader.h>
 #include <time.h>
 #include <interrupts.h>
 #include <defs.h>
 #include <irqDispatcher.h>
 #include <keyboard.h>
+#include <screen.h>
 #include <stdlib.h>
 
 extern uint8_t text;
@@ -23,26 +23,13 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 
-void sysCallWrite(uint64_t fd, char * buffer, uint64_t len);
-
-void os_dump_regs();
-
-void infoReg();
-
-void printMem(int dir);
-
-void printf(char * format, ...);
-
 typedef int (*EntryPoint)();
 
-
-void clearBSS(void * bssAddress, uint64_t bssSize)
-{
+void clearBSS(void * bssAddress, uint64_t bssSize){
 	memset(bssAddress, 0, bssSize);
 }
 
-void * getStackBase()
-{
+void * getStackBase(){
 	return (void*)(
 		(uint64_t)&endOfKernel
 		+ PageSize * 8				//The size of the stack itself, 32KiB
@@ -50,12 +37,11 @@ void * getStackBase()
 	);
 }
 
-void * initializeKernelBinary()
-{
+void * initializeKernelBinary(){
 	char buffer[10];
-
-	ncPrintAtt("Arquitectura de las Computadoras", 2, 15);
-	ncNewline();
+	
+	initScreen();
+	load_idt();
 
 	ncPrint("[x64BareBones]");
 	ncNewline();
@@ -97,26 +83,15 @@ void * initializeKernelBinary()
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
+	ncClear();
+
 	return getStackBase();
 }
 
 int main()
 {	
-	char buffer[9];
-
 	ncPrint("[Kernel Main]");
 	ncNewline();
-
-	ncPrint("Time is: ");
-	timeToStr(buffer);
-	ncPrint(buffer);
-	ncNewline();
-
-	ncPrint("Date is: ");
-	dateToStr(buffer);
-	ncPrint(buffer);
-	ncNewline();
-
 	ncPrint("  Sample code module at 0x");
 	ncPrintHex((uint64_t)sampleCodeModuleAddress);
 	ncNewline();
@@ -132,37 +107,8 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 
-	load_idt();
-	/*
-	while (1){
-		if (!printed && ticks_elapsed() % (18*5) == 0){
-			printed = 1;
-			timeToStr(buffer);
-			ncPrint(buffer);
-			ncNewline();
-		}
-		if (printed && ticks_elapsed() % 18 != 0)
-			printed = 0;
-	}
-
-	
-	while(1){
-		char ret = keyboard_handler();
-		ncPrintChar(ret);
-	}
-	*/
-
-
-	//infoReg();
-	ncNewline();
-
-	//printf("prueba hexa %x", 0x122F);
-
-	printMem(0x0010CFC8);
-
-
-	ncNewline();
-
 	ncPrint("[Finished]");
+
+
 	return 0;
 }

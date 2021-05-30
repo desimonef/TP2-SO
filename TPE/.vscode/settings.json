@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "syscalldispatcher.h": "c",
+        "lib.h": "c",
+        "stdlib.h": "c"
+    }
+}

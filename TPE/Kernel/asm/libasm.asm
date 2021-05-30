@@ -1,6 +1,4 @@
-GLOBAL cpuVendor, accessClock, readKey, sysCallWrite, infoReg, printMem
-
-EXTERN printf
+GLOBAL cpuVendor, accessClock, readKey, sysCallWrite, getRegister, dumpMem, asmGetByte, getDateTime
 
 section .text
 
@@ -64,7 +62,7 @@ cpuVendor:
 	pop rbp
 	ret
 
-accessClock:
+getDateTime:
 	push rbp
 	mov rbp, rsp
 
@@ -84,7 +82,7 @@ readKey:
 
 .loop:
 	in al, 64h
-	and al, 00000001b
+	and al, 1
 	jz .loop
 	xor rax, rax
 	in al, 60h
@@ -98,128 +96,115 @@ sysCallWrite:
 	ret
 
 
-infoReg:
+getRegister:
+    push rbp
+    mov rbp, rsp
+
+	push rdi
+    
+.rax:	cmp rdi, 0
+		jne .rbx
+    	jp .exit
+
+.rbx:	cmp rdi, 1
+		jne .rcx
+    	mov rax, rbx
+    	jp .exit
+
+.rcx:	cmp rdi, 2
+		jne .rdx
+    	mov rax, rcx
+    	jp .exit
+
+.rdx:	cmp rdi, 3
+		jne .rsi
+    	mov rax, rdx
+    	jp .exit	
+
+.rsi:	cmp rdi, 4
+		jne .rdi
+    	mov rax, rsi
+    	jp .exit
+
+.rdi:	cmp rdi, 5
+		jne .rbp
+		pop rdi
+    	mov rax, rdi
+    	jp .exit
+
+.rbp:	cmp rdi, 6
+		jne .rsp
+    	mov rax, rbp
+    	jp .exit
+
+.rsp:	cmp rdi, 7
+		jne .r8
+    	mov rax, rsp
+    	jp .exit
+
+.r8:	cmp rdi, 8
+		jne .r9
+    	mov rax, r8
+    	jp .exit
+
+.r9:	cmp rdi, 9
+		jne .r10
+    	mov rax, r9
+    	jp .exit
+
+.r10:	cmp rdi, 10
+		jne .r11
+    	mov rax, r10
+    	jp .exit
+
+.r11:	cmp rdi, 11
+		jne .r12
+    	mov rax, r11
+    	jp .exit
+
+.r12:	cmp rdi, 12
+		jne .r13
+    	mov rax, r12
+    	jp .exit
+
+.r13:	cmp rdi, 13
+		jne .r14
+    	mov rax, r13
+    	jp .exit
+
+.r14:	cmp rdi, 14
+		jne .r15
+    	mov rax, r14
+    	jp .exit
+
+.r15:	cmp rdi, 15
+		jne .exit
+    	mov rax, r15
+    	jp .exit
+
+.exit 	
+    	mov rsp, rbp
+		pop rbp
+    	ret
+
+
+;----------------
+;asmGetByte:
+;Recibe en rdi la dirección de donde levantar el dato
+;-----------------
+
+asmGetByte:
+    pushState
     push rbp
     mov rbp, rsp
     
-	push rdi
-	push rsi
-
-    mov rdi, raxMsg
-    mov rsi, rax
-    call printf
-
-	mov rdi, rbxMsg
-    mov rsi, rbx
-    call printf
-
-	mov rdi, rcxMsg
-    mov rsi, rcx
-    call printf
-
-	mov rdi, rdxMsg
-    mov rsi, rdx
-    call printf
-
-	mov rdi, rsiMsg
-    pop rsi
-    call printf
-
-	pop rdi
-	mov rsi, rdi
-	mov rdi, rdiMsg
-    call printf
-
-	mov rdi, rbpMsg
-    mov rsi, rbp
-    call printf
-
-	mov rdi, rspMsg
-    mov rsi, rsp
-    call printf
-
-	mov rdi, r8Msg
-    mov rsi, r8
-    call printf
-
-	mov rdi, r9Msg
-    mov rsi, r9
-    call printf
-
-	mov rdi, r10Msg
-    mov rsi, r10
-    call printf
-
-	mov rdi, r11Msg
-    mov rsi, r11
-    call printf
-
-	mov rdi, r12Msg
-    mov rsi, r12
-    call printf
-
-	mov rdi, r13Msg
-    mov rsi, r13
-    call printf
-
-	mov rdi, r14Msg
-    mov rsi, r14
-    call printf
-
-	mov rdi, r15Msg
-    mov rsi, r15
-    call printf
-
+    mov al, byte[rdi]
+    
     leave
-    ret
-
-;-------------------------------------------|
-;   printMem: Recibe por parametro en RSI   |
-;   la dirección donde debe comenzar a      |
-;   dumpear.                                |
-;-------------------------------------------|
-printMem:
-    pushState
-    mov rcx, 0
-    xor rdx, rdx
-
-
-.loop:
-    mov al, byte[rsi]
-    inc rsi
-
-    mov [buffer + rcx], al
-    inc rcx
-
-    cmp rcx, 32 ;muevo 32 bytes
-    jne .loop
-
-	mov byte[buffer + rcx], 0
-	mov rdi, buffer
-	call printf
-
     popState
     ret
 
-
 section .data
-	raxMsg db "RAX: 0x%x", 0
-	rbxMsg db "RBX: 0x%x", 0
-	rcxMsg db "RCX: 0x%x", 0
-	rdxMsg db "RDX: 0x%x", 0
-	rsiMsg db "RSI: 0x%x", 0
-	rdiMsg db "RDI: 0x%x", 0
-	rbpMsg db "RBP: 0x%x", 0
-	rspMsg db "RSP: 0x%x", 0
-	r8Msg db "R8: 0x%x", 0
-	r9Msg db "R9: 0x%x", 0
-	r10Msg db "R10: 0x%x", 0
-	r11Msg db "R11: 0x%x", 0
-	r12Msg db "R12: 0x%x", 0
-	r13Msg db "R13: 0x%x", 0
-	r14Msg db "R14: 0x%x", 0
-	r15Msg db "R15: 0x%x", 0
-
 	hexa db "0123456789ABCDEF", 0
 
 section .bss

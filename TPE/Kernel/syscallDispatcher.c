@@ -54,25 +54,6 @@ void sysGetRegs(int fd, char * buff, uint64_t count){
 
 static uint64_t regs[17] = {0};
 
-uint64_t * getRegs(){
-    return regs;
-}
-/*
-void sysGetRegs(int fd, char * buff, uint64_t count){
-    char * registers[16] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RSI: ", "RDI: ", "RBP: ", "RSP: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
-    for (int i = 0; i < 16; i++){
-        write(1, registers[i], 5);
-        uint64_t reg = getRegister(i);
-        char buffer[20];
-        char * hexa = intToHexa(reg, buffer, 8);
-        write(1, hexa, 10);
-        ncNewline();
-    }
-}
-*/
-
-static uint64_t regs[17] = {0};
-
 
 uint64_t * getRegs(){
     return regs;
@@ -87,17 +68,7 @@ uint64_t sysGetRegs(uint64_t buffer, uint64_t rdx, uint64_t rcx){
     return 0;
 }
 
-void sysGetMem(char * buff, uint64_t address, uint64_t amount){
-    for(int i = 0; i < amount; i++){
-        int position = address + i;
-        buff[i] = asmGetByte(position);
-    }
-}
 
-uint64_t sysGetDateTime(uint64_t id, uint64_t rdx, uint64_t rcx){
-    uint64_t data = getDateTime(id);
-    return (data >> 4) * 10 + (data & 0x0F);
-}
 
 void sysGetMem(char * buff, uint64_t address, uint64_t amount){
     for(int i = 0; i < amount; i++){

@@ -9,6 +9,7 @@
 #include <defs.h>
 #include <irqDispatcher.h>
 #include <keyboard.h>
+#include <screen.h>
 #include <stdlib.h>
 
 extern uint8_t text;
@@ -53,6 +54,8 @@ void * getStackBase()
 void * initializeKernelBinary()
 {
 	char buffer[10];
+
+	initScreen();
 
 	ncPrintAtt("Arquitectura de las Computadoras", 2, 15);
 	ncNewline();

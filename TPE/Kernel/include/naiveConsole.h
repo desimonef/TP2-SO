@@ -15,6 +15,5 @@ void ncPrintBase(uint64_t value, uint32_t base);
 void ncClear();
 void setCurrent(uint8_t * pos);
 uint8_t * getCurrent();
-void keyMove(int mode);
 
 #endif

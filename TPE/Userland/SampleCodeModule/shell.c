@@ -1,4 +1,4 @@
-#include "stdlib.h"
+#include <stdlib.h>
 #include <userfunctions.h>
 #define MAXLEN 100
 
@@ -15,7 +15,7 @@ void shell() {
         *command = 0;
         *arg = 0;
         scanf("%s %s", command, arg);
-        execute(command);
+        execute(command, arg);
     }
 }
 

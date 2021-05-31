@@ -17,52 +17,15 @@ uint8_t * getCurrent() {
 	return currentVideo;
 }
 
-void keyMove(int mode) {
-	switch (mode)
-	{
-	case 0:
-		if(getCursor() >= width)
-			currentVideo -= width*2;
-		break;
-	case 1:
-		currentVideo -= 2;
-		break;
-	case 2:
-		currentVideo += 2;
-		break;
-	case 3: 
-		currentVideo += width*2;
-		checkPosition();
-		break;
-	}
-}
-
-/*
-void scrollUp()
-{
-	for (int i = 0; i < height -1; i++){
-		for (int j = 0; j < width * 2; j++){
-			video[j + i * width * 2] = video[j + (i+1) * width * 2];
-		}
-	}
-	for (int k = 0; k < width * 2; k++)
-		video[(height - 1) * width * 2 + k] = '\0';
-	setCursor((height-1)*width);
-}
-
-void checkPosition()
-{
-	if (currentVideo - video >= width * height * 2)
-		scrollUp();
-}
-*/
 
 void ncPrintCharAtt(char character, char attribute)
 {
 	if (character == 0 || character == '\0')
 		return;
-	if (character == '\n')
+	if (character == '\n') {
 		ncNewline();
+		return;
+	}
 	checkPosition();
     *currentVideo = character;
     *(currentVideo+1) = attribute;

@@ -1,5 +1,6 @@
 #include <time.h>
 #include <keyboard.h>
+#include <screen.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <naiveConsole.h>
@@ -31,13 +32,14 @@ int sysWrite(int fd, char * buff, uint64_t count){
     else if (fd == 2)
         att = 0x04;
     else{
-        ncPrintAtt("Error in file descriptor", 0x07, 0);
+        int pos = getCursor();
+        printString("Error in file descriptor", pos, 0x07, 0);
         ncNewline();
         return -1;
     }
     int i;
     for (i = 0; i < count || buff[i] == '\0'; i++)
-        ncPrintCharAtt(buff[i], att);
+        printChar(buff[i], att, 0);
     return i;
 
 }
@@ -69,7 +71,9 @@ uint64_t sysGetRegs(uint64_t buffer, uint64_t rdx, uint64_t rcx){
     for (int i = 0; i < 15; i++) {
         array[i] = regs[i];
     }
+    
     return 0;
+
 }
 
 
@@ -79,7 +83,9 @@ void sysGetMem(char * buff, uint64_t address, uint64_t amount){
         int position = address + i;
         buff[i] = asmGetByte(position);
     }
+    
 }
+
 
 uint64_t sysGetDateTime(uint64_t id, uint64_t rdx, uint64_t rcx){
     uint64_t data = getDateTime(id);

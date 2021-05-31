@@ -95,23 +95,21 @@ void isShiftPressed(int scancode)
   
 }
 
-
 void isArrowKey(int scancode) {
   switch (scancode)
   {
-  case 72:
-    keyMove(UP);
+  case UP:
+    changeScreen(0);
     break;
-  case 75:
-    keyMove(LEFT);
+  case LEFT:
+    moveCursor(-1);
     break;
-  case 77:
-    keyMove(RIGHT);
+  case RIGHT:
+    moveCursor(1);
     break;
-  case 80:
-    keyMove(DOWN);
+  case DOWN:
+    changeScreen(1);
     break;
-  
   }
 }
 

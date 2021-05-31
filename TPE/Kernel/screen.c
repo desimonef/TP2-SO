@@ -5,10 +5,26 @@
 static uint8_t *const video = (uint8_t *)0xB8000;
 static uint32_t width;
 static uint32_t height;
+static char divider = '-';
+static int screen = 0;
 
-void initScreen() {
+void initScreen()
+{
     setCursor(0); //cursor = video
     setSize(80, 25);
+}
+
+void initDoubleScreen() {
+    initScreen();
+    int half = width * height / 2;
+    int halfLine = half - (half % width);
+    setCursor(halfLine);
+    do
+    {
+        printChar(divider, 0x07, 0);
+        halfLine++;
+    } while (halfLine % width != 0);
+    
 }
 
 //cursor es un valor de 0 hasta (80x25)-1
@@ -27,11 +43,36 @@ int getCursor() {
     return ((int)(pos - video))/2; //retorno posición relativa
 }
 
+void moveCursor(int move) {
+    int pos = getCursor();
+    setCursor(pos + move);
+}
+
+void changeScreen(int whichScreen) {
+    if(screen != whichScreen) {
+        screen = whichScreen;
+        int half = width * height / 2;
+        if(screen == 0) {
+            moveCursor(half * -1);
+        } else if (screen == 1) {
+            moveCursor(half);
+        }
+    }
+}
+
 void printString(char * string, int pos, char colour, char background) {
     setCursor(pos);
+    for (int i = 0; string[i] != 0; i++) {
+        printChar(string[i], colour, background);
+    }
+    
+}
+
+void printChar(char c, char colour, char background) {
     char attribute = (background << 4) | colour;
-    for (int i = 0; string[i] != 0; i++)
-        ncPrintCharAtt(string[i], attribute);
+    int pos = getCursor();
+    ncPrintCharAtt(c, attribute);
+    setCursor(pos+1);
 }
 
 void newline()

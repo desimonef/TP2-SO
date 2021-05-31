@@ -8,6 +8,7 @@ int getScanCode();
 int isLetter(char c);
 uint8_t getMatchingAscii(int scancode);
 void onKeyPressed(char chr);
+int readFromKeyboard(char *dest, int amount); 
 void keyboard_handler();
 
 #endif

@@ -25,6 +25,7 @@ static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
 
+
 void clearBSS(void * bssAddress, uint64_t bssSize){
 	memset(bssAddress, 0, bssSize);
 }
@@ -39,16 +40,8 @@ void * getStackBase(){
 
 void * initializeKernelBinary(){
 	char buffer[10];
-	
-	initScreen();
-	load_idt();
-
 
 	initScreen();
-
-	ncPrintAtt("Arquitectura de las Computadoras", 2, 15);
-	ncNewline();
-
 
 	ncPrint("[x64BareBones]");
 	ncNewline();
@@ -87,18 +80,20 @@ void * initializeKernelBinary(){
 	ncPrintHex((uint64_t)&bss);
 	ncNewline();
 
+	load_idt();
+
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
-	ncClear();
-
 	return getStackBase();
 }
 
-int main()
-{	
+int main(){	
+	char buffer[9];
+
 	ncPrint("[Kernel Main]");
 	ncNewline();
+
 	ncPrint("  Sample code module at 0x");
 	ncPrintHex((uint64_t)sampleCodeModuleAddress);
 	ncNewline();
@@ -114,8 +109,7 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 
+	
 	ncPrint("[Finished]");
-
-
 	return 0;
 }

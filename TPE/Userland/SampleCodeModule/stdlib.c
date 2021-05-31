@@ -26,27 +26,30 @@ int scanf(char *command, ...)
 {
     va_list args;
     va_start(args, command);
-    int c = getchar();
-    if(c != -1) { //EOF
-        if(c == '\b') {
-            backspace();
-        }
-
-        if(c == '\n') {
-            newline();
-        }
-
-        else {
-            putInBuff(c);
-            putchar(c);
+    int c;
+    while((c != getchar()) != '\n') {
+        if (c != -1)
+        { //EOF
+            if (c == '\b')
+            {
+                //backspace();
+            }
+            else
+            {
+                putInBuff(c);
+                putchar(c);
+            }
         }
     }
     putchar('\n');
-    buffer[bufferSize++] = '\0';
+    buffer[buffSize++] = '\0';
 
     int flag = 0;
     int dim1=0;
     int dim2=0;
+
+    char *temp;
+    int *tmp;
 
     while(!flag) {
         if(buffer[dim1] == '\0' || command[dim2] == '\0') {
@@ -56,17 +59,17 @@ int scanf(char *command, ...)
             if(command[dim2] == '%') {
                 switch(command[++dim2]) {
                     case 's':
-                        char *temp = va_arg(args, char *);
+                        temp = *(char *)va_arg(args, char *);
                         strcpyWithSeparator(&buffer[dim1], temp, ' ');
                         dim1 += strlen(temp);
                         break;
                     case 'd':
-                        int *temp = va_arg(args, int *);
-                        int len = myAtoi(&buffer[dim1], temp);
+                        tmp = *(int *)va_arg(args, int *);
+                        int len = myAtoi(&buffer[dim1], tmp);
                         dim1 += len;
                         break;
                     case 'c':
-                        va_arg(args, char *) = buffer[dim1];
+                        *(char *)va_arg(args, char *) = buffer[dim1];
                         dim1++;
                         break;
                     default:
@@ -156,6 +159,11 @@ void strcpyWithSeparator(const char * str1, char * str2, char separator) {
 
 }
 
+void putInBuff(char c) {
+    if(buffSize <= MAX_BUFFER)
+        buffer[buffSize++] = c;
+}
+
 int myAtoi(const char * num, int * dest) {
     *dest = 0;
     int temp = 0;
@@ -176,70 +184,6 @@ int myAtoi(const char * num, int * dest) {
     return len;
 }
 
-/*
-void readLine(){
-    int auxChar;
-    while(auxChar = getChar() != '\0'){
-        if(auxChar != -1){ // codigo de error de getChar
-            if(buffSize < MAX_BUFFER-1){
-                buffer[buffSize] = auxChar;
-            }
-            putChar(auxChar);
-        }
-    }
-    putChar('\n');
-    buffer[buffSize++] = '\0';
-    return buffSize;
-}
-
-int scan(const char * format, ...){
-    va_list args;
-    va_start(args, format);
-
-    readLine();
-    int fmtIdx = 0;
-    int buffIdx = 0;
-    int notAValidEntry = 0;
-    int intValueSize = 0;
-
-    while(format[fmtIdx] != '\0' && buffer[buffIdx] != '\0' && notAValidEntry == 0){
-        if(format[fmtIdx] == '%'){
-            fmtIdx++;
-            switch(format[fmtIdx]){
-                case 'c':
-                    *(char *) va_arg(args, char *) = buffer[buffIdx]; //preguntar 
-                    buffIdx++;
-                    break;
-                case 'd':
-                    *(int *) va_arg(args, int *) = strToInt(&buffer[buffIdx], &intValueSize);
-                    buffIdx += intValueSize;
-                    break;
-                case 's': // necesito copiar el string desde buffIdx hasta el primer espacio encontrado
-                    char * auxStr;
-                    strCpyLimited(&buffer[buffIdx], auxStr);
-                    *(char *) va_arg(args, char *) = auxStr;
-                    buffIdx += strlen(auxStr);
-                    break;
-                default:
-                    notAValidEntry = -1;
-                    break;
-            }
-        }
-        else{
-            if(format[fmtIdx] != buffer[bffIdx]){
-                notAValidEntry = -1;
-            }
-            else{
-                bffIdx++;
-            }
-        }
-       
-    }
-        fmtIdx++;
-        return buffIdx;
-
-}
-*/
 void reverse(char str[], int length)
 {
     int start = 0;
@@ -253,7 +197,6 @@ void reverse(char str[], int length)
         end--;
     }
 }
-
 
   
 // Implementation of itoa()

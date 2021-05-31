@@ -17,11 +17,14 @@ void sysCallDispatcher (uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
         return sysCall(rdi, rsi, rdx);
 }
 
-void sysRead (char * buff, uint64_t address, uint16_t amount){
-    //
+int sysRead (int fd, char * buff, uint16_t amount){
+    if(fd != 0) {
+        return -1;
+    }
+    return readFromKeyboard(buff, amount);
 }
 
-void sysWrite(int fd, char * buff, uint64_t count){
+int sysWrite(int fd, char * buff, uint64_t count){
     char att;
     if (fd == 1)
         att = 0x07;
@@ -30,7 +33,7 @@ void sysWrite(int fd, char * buff, uint64_t count){
     else{
         ncPrintAtt("Error in file descriptor", 0x07, 0);
         ncNewline();
-        return;
+        return -1;
     }
     int i;
     for (i = 0; i < count || buff[i] == '\0'; i++)
@@ -38,8 +41,8 @@ void sysWrite(int fd, char * buff, uint64_t count){
     return i;
 
 }
-/*
-void sysGetRegs(int fd, char * buff, uint64_t count){
+
+/*void sysGetRegs(int fd, char * buff, uint64_t count){
     char * registers[16] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RSI: ", "RDI: ", "RBP: ", "RSP: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
     for (int i = 0; i < 16; i++){
         write(1, registers[i], 5);
@@ -51,6 +54,7 @@ void sysGetRegs(int fd, char * buff, uint64_t count){
     }
 }
 */
+
 
 static uint64_t regs[17] = {0};
 

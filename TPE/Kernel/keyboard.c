@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <lib.h>
 #include <keyboard.h>
-#include <naiveConsole.h>
+#include <screen.h>
 
 
 //entre codes de pressed y released hay un defasaje de 128
@@ -18,6 +18,7 @@
 
 static char keyboardBuffer[INPUT_BUFFER];
 static unsigned int bufferSize = 0;
+static unsigned int readIndex = 0;
 static int shift = 0;
 
 int readKey();
@@ -64,25 +65,28 @@ int codeMatchesAscii(int scancode){
   return scancode >= 0 && scancode <= 57 && asciiTable[scancode] != 0;
 }
 
-
-int isLetter(char c){
-  return (c >= 'a' && c <= 'z');
-}
-
 uint8_t getMatchingAscii(int scancode){
+  isShiftPressed(scancode);
+  isArrowKey(scancode);
   if (codeMatchesAscii(scancode)) {
     if (shift == 0)
       return asciiTable[scancode];
     else
       return asciiTable2[scancode];
   }
+  else if (scancode == TAB)
+  {
+    int current = getCursor();
+    setCursor(current + 5);
+  }
   return 0;
 }
 
+/*
 void onKeyPressed(char chr) {
   if (bufferSize < INPUT_BUFFER)
     keyboardBuffer[bufferSize++] = chr;
-}
+} */
 
 void isShiftPressed(int scancode)
 {
@@ -91,15 +95,6 @@ void isShiftPressed(int scancode)
   
 }
 
-void isSpecialChar(int scancode) {
-  if(scancode == ENTER)
-    ncNewline();
-  else if(scancode == TAB) {
-    int current = getCursor();
-    setCursor(current + 5);
-  }
-
-}
 
 void isArrowKey(int scancode) {
   switch (scancode)
@@ -120,12 +115,30 @@ void isArrowKey(int scancode) {
   }
 }
 
-uint8_t keyboard_handler(){
+void checkIndex() {
+  if (readIndex >= INPUT_BUFFER)
+  {
+    readIndex = readIndex % INPUT_BUFFER;
+  }
+}
+
+int readFromKeyboard(char * dest, int amount) {
+    int dim = 0;
+    while(amount > 0) {
+        dest[dim++] = keyboardBuffer[readIndex++];
+        checkIndex();
+        amount--;
+    }
+    return dim;
+}
+
+void store(char c) {
+    keyboardBuffer[bufferSize] = c;
+    bufferSize = (bufferSize+1)%INPUT_BUFFER; 
+}
+
+void keyboard_handler(){
     int scanCode = readKey();
-    isShiftPressed(scanCode);
-    isSpecialChar(scanCode);
-    isArrowKey(scanCode);
-    return getMatchingAscii(scanCode);
-    //char c = getMatchingAscii(scanCode);
-    //onKeyPressed(c);
+    char c = getMatchingAscii(scanCode);
+    store(c);
 }

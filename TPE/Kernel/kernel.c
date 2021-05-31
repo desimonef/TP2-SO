@@ -41,8 +41,7 @@ void * initializeKernelBinary(){
 	char buffer[10];
 	
 	initScreen();
-	load_idt();
-
+	
 
 	initScreen();
 
@@ -91,6 +90,8 @@ void * initializeKernelBinary(){
 	ncNewline();
 	ncNewline();
 	ncClear();
+
+	load_idt();
 
 	return getStackBase();
 }

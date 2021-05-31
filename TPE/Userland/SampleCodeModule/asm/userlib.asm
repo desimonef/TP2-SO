@@ -1,6 +1,7 @@
 GLOBAL scan, print, dumpRegs, dumpMem, accessClock
 
-//las syscalls, funciones asm que llaman a int80
+
+SECTION .text
 
 %macro pushState 0
 	push rax

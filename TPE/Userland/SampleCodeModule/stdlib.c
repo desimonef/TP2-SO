@@ -3,10 +3,93 @@
 #include "userlib.h"
 
 #define MAX_BUFFER 100
+#define STDIN 0
+#define STDOUT 1
 char buffer[MAX_BUFFER];
 int buffSize = 0;
 
+int getchar() {
+    char temp[2];
+    int read = scan(STDIN, temp, 1);
+    if(read <= 0)
+        return -1;
+    return *temp;
+}
 
+int putchar(char c) {
+    char temp[2];
+    *temp = c;
+    return print(STDOUT, temp, 1);
+}
+
+int scanf(char *command, ...)
+{
+    va_list args;
+    va_start(args, command);
+    int c = getchar();
+    if(c != -1) { //EOF
+        if(c == '\b') {
+            backspace();
+        }
+
+        if(c == '\n') {
+            newline();
+        }
+
+        else {
+            putInBuff(c);
+            putchar(c);
+        }
+    }
+    putchar('\n');
+    buffer[bufferSize++] = '\0';
+
+    int flag = 0;
+    int dim1=0;
+    int dim2=0;
+
+    while(!flag) {
+        if(buffer[dim1] == '\0' || command[dim2] == '\0') {
+            flag = 1;
+        }
+        else {
+            if(command[dim2] == '%') {
+                switch(command[++dim2]) {
+                    case 's':
+                        char *temp = va_arg(args, char *);
+                        strcpyWithSeparator(&buffer[dim1], temp, ' ');
+                        dim1 += strlen(temp);
+                        break;
+                    case 'd':
+                        int *temp = va_arg(args, int *);
+                        int len = myAtoi(&buffer[dim1], temp);
+                        dim1 += len;
+                        break;
+                    case 'c':
+                        va_arg(args, char *) = buffer[dim1];
+                        dim1++;
+                        break;
+                    default:
+                        flag = 1;
+                        break;
+                }
+            }
+            else {
+                if(buffer[dim1] != ' ' || command[dim2] != ' ') {
+                    flag = 1;
+                } 
+                else {
+                    dim1++;
+                }
+            }
+            dim2++;
+        }
+    }
+
+    va_end(args);
+    return dim1;
+    
+}
 
 void printf(char * format, ...){
     char buffer[MAX_BUFFER];
@@ -59,6 +142,40 @@ int strcmp(const char * str1, const char * str2){
     }
     return *str1 - *str2;
 }
+
+void strcpy(const char * str1, char * str2) {
+    strcpyWithSeparator(str1, str2, '\0');
+}
+
+void strcpyWithSeparator(const char * str1, char * str2, char separator) {
+    while(*str1 != separator) {
+        *str2 = *str1;
+        str1++;
+        str2++;
+    }
+
+}
+
+int myAtoi(const char * num, int * dest) {
+    *dest = 0;
+    int temp = 0;
+    int flag = 0;
+    int len = 0;
+    while(*num != '\0' && *num != ' ' && !flag) {
+        if(*num < 1 || *num > 9)
+            flag = 1;
+        else {
+            temp = *dest;
+            *dest = temp * 10 + (*num - '\0');
+            num++;
+            len++;
+        }
+
+    }
+
+    return len;
+}
+
 /*
 void readLine(){
     int auxChar;
@@ -136,6 +253,8 @@ void reverse(char str[], int length)
         end--;
     }
 }
+
+
   
 // Implementation of itoa()
 char* itoa(int num, char* str, int base)

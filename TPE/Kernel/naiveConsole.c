@@ -26,7 +26,7 @@ void ncPrintCharAtt(char character, char attribute)
 		ncNewline();
 		return;
 	}
-	checkPosition();
+	//checkPosition();
     *currentVideo = character;
     *(currentVideo+1) = attribute;
     currentVideo += 2;

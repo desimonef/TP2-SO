@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <userfunctions.h>
+//#include <userfunctions.h>
 #define MAXLEN 100
 
 void initShell(){
@@ -22,4 +22,8 @@ void shell() {
 void execute(const char * command, const char * arg) {
     if(strcmp(command, "toto") == 0)
         toto();
+}
+
+void toto(){
+    printf("TOTO");
 }

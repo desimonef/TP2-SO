@@ -10,15 +10,15 @@ int buffSize = 0;
 
 int getchar() {
     char temp[2];
-    int read = scan(STDIN, temp, 1);
+    int read = scan(STDIN, temp, 2);
     if(read <= 0)
         return -1;
     return *temp;
 }
 
 int putchar(char c) {
-    char temp[2];
-    *temp = c;
+    char temp[2] = {0};
+    temp[0] = c;
     return print(STDOUT, temp, 1);
 }
 
@@ -92,6 +92,43 @@ int scanf(char *command, ...)
     va_end(args);
     return dim1;
     
+}
+
+void myPrintf(char * format, ...){
+    char buffer[MAX_BUFFER];
+    char * reference = format; // uso var aux para no perder la referencia de donde comienza format
+
+    va_list args;
+    va_start(args, format);
+
+    while(*reference != '\0'){
+        if(*reference == '%'){
+            reference++;
+            char * auxStr;
+            switch(*reference){
+                case 'd':
+                    auxStr = itoa(va_arg(args, int), buffer, 10);
+                    break;
+                case 'x':
+                    auxStr = itoa(va_arg(args, int), buffer, 16);
+                    break;
+                case 's':
+                case 'c':
+                    auxStr = va_arg(args,char*);
+                break; 
+            }
+            int auxStrLen = strlen(auxStr);
+            for(int i = 0; i < auxStrLen; i++){
+                putchar(*auxStr);
+                auxStr++;
+            }
+        }
+        else{
+            putchar(*reference);
+        }
+        reference++;
+    }
+    va_end(args);
 }
 
 void printf(char * format, ...){

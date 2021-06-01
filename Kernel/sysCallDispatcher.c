@@ -24,8 +24,9 @@ void sysRead (int fd, char * buff, uint16_t amount){
     readFromKeyboard(buff, amount);
 }
 
+
 void sysWrite(int fd, char * buff, uint64_t count){
-    char color;
+    /*char color;
     if (fd == 1)
         color = 0x07;
     else if (fd == 2)
@@ -38,6 +39,11 @@ void sysWrite(int fd, char * buff, uint64_t count){
     int i;
     for (i = 0; i < count || buff[i] == '\0'; i++)
         ncPrintCharColor(buff[i], color);
+        */
+    for(int i = 0; i < count; i++){
+        ncPrintChar(*buff);
+        buff++;
+    }
 }
 /*
 void sysGetRegs(int fd, char * buff, uint64_t count){

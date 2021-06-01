@@ -86,7 +86,7 @@ void * initializeKernelBinary()
 	ncNewline();
 	ncNewline();
 
-	//ncClear();
+	ncClear();
 	load_idt();
 	return getStackBase();
 }
@@ -112,6 +112,6 @@ int main()
 
 	ncPrint("[Finished]");
 
-	//ncClear();
+	ncClear();
 	return 0;
 }

@@ -8,4 +8,6 @@ void execute(const char * command, const char * arg);
 
 void printMem(char * hexaAddress);
 
+void opCodeExceptionTest();
+
 #endif

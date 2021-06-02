@@ -17,5 +17,6 @@ char* itoa(int num, char* str, int base);
 int hexToInt(char* num);
 char * intToHex(long long num, char *str, int bytes);
 int abs(int num);
+int isValidHexaAddress(char * buff);
 
 #endif

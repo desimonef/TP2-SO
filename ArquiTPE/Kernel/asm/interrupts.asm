@@ -7,6 +7,7 @@ GLOBAL _irq05Handler
 GLOBAL _sysCallHandler
 
 GLOBAL _exception0Handler
+GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
 EXTERN sysCallDispatcher
@@ -69,10 +70,8 @@ SECTION .text
 
 %macro exceptionHandler 1
 	pushState
-
-	mov rax, rsp
-	add rax, 3*8
-	mov rsi, rax
+	
+	mov rsi, rsp
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 

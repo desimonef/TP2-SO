@@ -283,6 +283,23 @@ char* itoa(int num, char* str, int base)
     return str;
 }
 
+int isValidHexaAddress(char * buff){
+    for(int i = 0; i < 8; i++){
+        if(i == 0 && buff[i] != '0'){
+            return 0;
+        }
+        else if(i == 1 && buff[i] != 'x'){
+            return 0;
+        }
+        else{
+            if(!((buff[i] >= '0' && buff[i] <= '9') || (buff[i] >= 'A' && buff[i] <= 'F'))){
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
 int hexToInt(char* num){
     
     int len = strlen(num);

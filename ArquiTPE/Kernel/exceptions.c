@@ -5,7 +5,7 @@
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
 
-void exceptionDispatcher(int exception, int rsp) {
+void exceptionDispatcher(int exception, uint64_t rsp) {
 	char * message;
 	if (exception == ZERO_EXCEPTION_ID)
 		 message = "Exception: ZERO DIVISION\n";
@@ -17,6 +17,7 @@ void exceptionDispatcher(int exception, int rsp) {
 	ncNewline();
 	ncPrint("RSP: ");
 	char auxHexa[20] ={0};
-	sysWrite(2, intToHexa(rsp, auxHexa, 8), 8);
+	intToHexa((uint64_t)(rsp + 3*8), auxHexa, 8);
+	sysWrite(2, auxHexa, 10);
 	hold(5);
 }

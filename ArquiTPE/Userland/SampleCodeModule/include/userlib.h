@@ -11,4 +11,6 @@ int accessClock(int descriptor);
 void testAccessClock(int id, char * buff);
 void screenClear();
 
+void UDcaller();
+
 #endif

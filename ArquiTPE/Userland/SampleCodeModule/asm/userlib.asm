@@ -1,4 +1,4 @@
-GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, testAccessClock
+GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, testAccessClock, UDcaller
 
 %macro pushState 0
 	push rax
@@ -154,4 +154,8 @@ screenClear:
 
 	popState
 	leave
+	ret
+
+UDcaller:
+	UD0 ; https://www.felixcloutier.com/x86/ud
 	ret

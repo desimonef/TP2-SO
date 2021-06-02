@@ -42,8 +42,9 @@ int scanf(char * format, ...){
                 case 's':
                     string = va_arg(args, char *);
                     stringIndex = 0;
-                    while (buffer[bufferIndex] != ' ' || buffer[bufferIndex] != '\0')
+                    while (buffer[bufferIndex] != ' ' && buffer[bufferIndex] != '\0')
                         string[stringIndex++] = buffer[bufferIndex++];
+                    string[stringIndex] = '\0';
                     if (buffer[bufferIndex] != ' ')
                         bufferIndex++;
                     break;
@@ -70,7 +71,6 @@ int scanf(char * format, ...){
         }
         formatIndex++;
     }
-
     va_end(args);
     return bufferIndex;
     
@@ -83,17 +83,14 @@ void readLine() {
         if(c == '\b'){
             if (buffSize != 0) {
                 buffSize--;
-                putchar('\b');
             }
         }
         else if(c != -1){
             if (buffSize < MAX_BUFFER-1) {
                 buffer[buffSize++] = c;
             }
-            putchar(c);
         }
     }
-    putchar('\n');
     buffer[buffSize++] = '\0';
 }
 
@@ -256,10 +253,64 @@ char* itoa(int num, char* str, int base)
     return str;
 }
 
-void clearBuff(){
-    buffSize = 0;
-    do {
-        scan(0,buffer,512);
+int hexToInt(char* num){
+    
+    int len = strlen(num);
+    int base = 1;
+    int returnValue = 0;
+
+    for (int i = len - 1; i >= 0; i--)
+    {
+        if (num[i] >= '0' && num[i] <= '9')
+        {
+            returnValue += (num[i] - '0') * base;
+        }
+        else if (num[i] >= 'A' && num[i] <= 'F')
+        {
+            returnValue += (num[i] - 'A') * base;
+        }
+	else if(num[i] != 'x'){
+	    printf("Direccion hexadecimal invalida\n");
+	    return -1;
+	}	
+	base = base * 16;
     }
-    while (getchar()!= -1);
+    return returnValue;
 }
+
+char *intToHex(uint64_t num, char *str, int bytes) 
+{ 
+    int i = 0;
+    uint64_t n = num;
+
+    /* Handle 0 explicitely, otherwise empty string is printed for 0 */
+    if (n == 0) 
+    {
+        str[i++] = '0';
+        str[i++] = 'x';
+
+        while (i < bytes*2 + 2) {
+            str[i++] = '0';
+        }
+
+        str[i] = '\0'; 
+        return str; 
+    } 
+
+    while (i < bytes*2 && n != 0) 
+    { 
+        int rem = n % 16; 
+        str[i++] = (rem >= 10)? (rem - 10) + 65 : rem + 48; 
+        n = n/16; 
+    } 
+
+    while (i < bytes*2) {
+        str[i++] = '0';
+    }
+
+    str[i++] = 'x';
+    str[i++] = '0';
+    str[i] = '\0';
+    reverse(str, i);
+    return str; 
+} 

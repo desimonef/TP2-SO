@@ -10,7 +10,7 @@
 #define YEAR 0x09
 #define TIMEZONE -3
 
-
+/*
 unsigned int seconds(){
     return accessClock(SECONDS);
 }
@@ -59,4 +59,47 @@ void dateToStr (char * dest){
     uint8_t y = year();
     dest[6] = (y/10) % 10 + '0';
     dest[7] = y % 10 + '0';
+}
+*/
+void getDateAndTime(){
+    char auxDaysBuff[3] = {0};
+    char auxMonthsBuff[3] = {0};
+    char auxYearsBuff[3] = {0};
+    testingDays(auxDaysBuff);
+    testingMonths(auxMonthsBuff);
+    testingYears(auxYearsBuff);
+    printf("La fecha de hoy es: %s/%s/%s\n", auxDaysBuff, auxMonthsBuff, auxYearsBuff);
+    char auxSecondsBuff[3] = {0};
+    char auxMinutesBuff[3] = {0};
+    char auxHoursBuff[3] = {0};
+    testingSeconds(auxSecondsBuff);
+    testingMinutes(auxMinutesBuff);
+    testingHours(auxHoursBuff);
+    printf("La hora actual es: %s:%s:%s\n", auxHoursBuff, auxMinutesBuff, auxSecondsBuff);
+}
+
+void testingDays(char * buff){
+    accessClock(DAYS, buff);
+}
+
+void testingMonths(char * buff){
+    accessClock(MONTH, buff);
+}
+
+void testingYears(char * buff){
+    accessClock(YEAR, buff);
+}
+
+void testingSeconds(char * buff){
+    accessClock(SECONDS, buff);
+}
+void testingMinutes(char * buff){
+    accessClock(MINUTES, buff);
+}
+void testingHours(char * buff){
+    accessClock(HOURS, buff);
+    int hours = (buff[0] - '0')*10 + (buff[1] - '0');
+    int finalHours = hours + TIMEZONE;
+    buff[0] = ((finalHours/10)%10) + '0';
+    buff[1] = (finalHours%10) + '0';
 }

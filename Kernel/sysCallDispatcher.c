@@ -9,7 +9,7 @@
 typedef uint64_t (*PSysCall) (uint64_t, uint64_t, uint64_t);
 
 
-static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime};
+static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime, &sysClearScreen};
 
 void sysCallDispatcher (uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
     PSysCall sysCall = sysCalls[rax];
@@ -24,9 +24,8 @@ void sysRead (int fd, char * buff, uint16_t amount){
     readFromKeyboard(buff, amount);
 }
 
-
 void sysWrite(int fd, char * buff, uint64_t count){
-    /*char color;
+    char color;
     if (fd == 1)
         color = 0x07;
     else if (fd == 2)
@@ -39,11 +38,6 @@ void sysWrite(int fd, char * buff, uint64_t count){
     int i;
     for (i = 0; i < count || buff[i] == '\0'; i++)
         ncPrintCharColor(buff[i], color);
-        */
-    for(int i = 0; i < count; i++){
-        ncPrintChar(*buff);
-        buff++;
-    }
 }
 /*
 void sysGetRegs(int fd, char * buff, uint64_t count){
@@ -87,4 +81,8 @@ void sysGetMem(char * buff, uint64_t address, uint64_t amount){
 uint64_t sysGetDateTime(uint64_t id, uint64_t rdx, uint64_t rcx){
     uint64_t data = getDateTime(id);
     return (data >> 4) * 10 + (data & 0x0F);
+}
+
+void sysClearScreen(uint64_t rsi, uint64_t rdx, uint64_t rcx){
+    ncClear();
 }

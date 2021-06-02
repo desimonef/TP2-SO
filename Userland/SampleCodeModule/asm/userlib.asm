@@ -1,4 +1,4 @@
-GLOBAL scan, print, dumpRegs, dumpMem, accessClock
+GLOBAL scan, print, dumpRegs, dumpMem, accessClock, clearScreen
 
 %macro pushState 0
 	push rax
@@ -48,11 +48,6 @@ scan:
     mov rsi,rdi   ; fd
     mov rdi,0    ; interrupt id
     int 80h
-
-    pop rcx
-    pop rdx
-    pop rsi
-    pop rdi
     
     popState
 
@@ -122,4 +117,17 @@ accessClock:
 	popState
 
     leave
+	ret
+
+clearScreen:
+	push rbp
+	mov rbp, rsp
+
+	pushState
+
+	mov rdi, 5 ;interrupt id
+	int 80h
+
+	popState
+	leave
 	ret

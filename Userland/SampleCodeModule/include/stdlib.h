@@ -3,7 +3,9 @@
 
 int getchar();
 int putchar(char c);
-int scanf(char * command, ...);
+int scanf(char * format, ...);
+void readLine();
+int strToInt(char *str, int* size);
 void printf(char * format, ...);
 int strlen(char * string);
 int strcmp(const char * str1, const char * str2);
@@ -13,5 +15,6 @@ void putInBuff(char c);
 int myAtoi(const char * num, int * dest);
 void reverse(char str[], int length);
 char* itoa(int num, char* str, int base);
+void clearBuff();
 
 #endif

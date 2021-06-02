@@ -135,11 +135,7 @@ _irq05Handler:
 ;SysCalls
 _sysCallHandler:
 	pushState
-	
-;	mov rcx, rdx ;len
-;	mov rdx, rsi ;buffer
-;	mov rsi, rdi ;fd
-;	mov rdi, rax ;id
+
 	call sysCallDispatcher
 
 	popState

@@ -1,4 +1,4 @@
-GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear
+GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, testAccessClock
 
 %macro pushState 0
 	push rax
@@ -95,24 +95,50 @@ dumpMem:
 	mov rcx, rdx ; coloco en rcx la cant de bytes
 	mov rdx, rsi ; rdx -> direc
 	mov rsi, rdi ; seteo el buff
-	mov rdi, 4
+	mov rdi, 3
 	int 80h 
 	
 	leave
 	popState
 	ret
 
-accessClock:
+
+testAccessClock:
 	push rbp
 	mov rbp, rsp
 
-    pushState
+	push rdx
+    push rsi
+	push rdi
 	
+	mov rdx, rsi ; buff
 	mov rsi, rdi ; seconds/minutes/hours/date/month/year id
 	mov rdi, 6   ; interrupt id
 	int 80h
 	
-	popState
+	pop rdi
+	pop rsi
+	pop rdx
+
+    leave
+	ret
+
+
+accessClock:
+	push rbp
+	mov rbp, rsp
+
+	push rdx
+    push rsi
+	push rdi
+	
+	mov rsi, rdi ; seconds/minutes/hours/date/month/year id
+	mov rdi, 4   ; interrupt id
+	int 80h
+	
+	pop rdi
+	pop rsi
+	pop rdx
 
     leave
 	ret

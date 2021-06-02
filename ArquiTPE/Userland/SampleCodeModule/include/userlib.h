@@ -8,6 +8,7 @@ int print(int fd, char * buffer, uint32_t length);
 int dumpRegs(char * buffer); 
 int dumpMem(char * buffer, uint64_t address, uint64_t bytes);
 int accessClock(int descriptor);
+void testAccessClock(int id, char * buff);
 void screenClear();
 
 #endif

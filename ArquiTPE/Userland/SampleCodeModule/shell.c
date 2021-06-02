@@ -1,12 +1,14 @@
 #include "stdlib.h"
 #include "userlib.h"
 #include "shell.h"
+#include "clock.h"
 
 #define MAXLEN 100
 
 void initShell(){
     screenClear();
-    shellWelcomeMsg();
+    //shellWelcomeMsg();
+    shell();
     while(1){}
     //shell();
 }
@@ -20,8 +22,9 @@ void shell(){
         printf("\nBienvenidos a nuestro precario sistema operativo\n\nEs el anio %d\n\n", 2021);
         printf("%c : %s\n\n\n", 'a', "TOTO"); //sigue sin reconocer los chars, despues investigar
         printf("\n");
-        printMem("0x00FFFFFF");
+        printMem("0x000000FF");
         printf("\n");
+        getDateAndTime();
         while(1);
         printf("$>");
 

@@ -10,5 +10,6 @@ uint64_t sysGetRegs(uint64_t buffer, uint64_t rdx, uint64_t rcx);
 void sysGetMem(char * buff, uint64_t address, uint64_t amount);
 uint64_t sysGetDateTime(uint64_t id, uint64_t rdx, uint64_t rcx);
 void sysClearScreen(char * buff, uint64_t address, uint64_t amount);
+void sysGetDateTimeBuff(uint64_t id, uint64_t buff, uint64_t rcx);
 
 #endif

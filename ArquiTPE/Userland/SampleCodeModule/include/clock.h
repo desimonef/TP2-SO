@@ -11,5 +11,13 @@ void timeToStr (char * dest);
 void dateToStr (char * dest);
 static unsigned int decode(unsigned char time);
 
+void getDateAndTime();
+void testingDays(char * buff);
+void testingMonths(char * buff);
+void testingYears(char * buff);
+void testingSeconds(char * buff);
+void testingMinutes(char * buff);
+void testingHours(char * buff);
+
 
 #endif

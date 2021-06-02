@@ -9,12 +9,12 @@
 typedef uint64_t (*PSysCall) (uint64_t, uint64_t, uint64_t);
 
 
-static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime, &sysClearScreen, &sysGetRTC};
+static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime, &sysClearScreen, &sysGetDateTimeBuff};
 
-void sysCallDispatcher (uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx){
-    PSysCall sysCall = sysCalls[rax];
+void sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx){
+    PSysCall sysCall = sysCalls[rdi];
     if (sysCall != 0)
-        sysCall(rdi, rsi, rdx);
+        sysCall(rsi, rdx, rcx);
 }
 
 void sysRead (int fd, char * buff, uint16_t amount){
@@ -87,14 +87,28 @@ void sysGetMem(char * buff, uint64_t address, uint64_t amount){
 
 uint64_t sysGetDateTime(uint64_t id, uint64_t rdx, uint64_t rcx){
     uint64_t data = getDateTime(id);
-    return (data >> 4) * 10 + (data & 0x0F);
+    int firstDigit = (data >> 4)*10;
+    int secondDigit = data&0x0F;
+    uint64_t returnValue = firstDigit + secondDigit;
+    ncPrint("Valor (en sys):");
+    ncPrintDec(returnValue);
+    ncPrint("   ");
+    return returnValue;
+
+}
+
+void sysGetDateTimeBuff(uint64_t id, uint64_t buff, uint64_t rcx){
+    unsigned char * aux = (unsigned char *) buff;
+    uint64_t data = getDateTime(id);
+    int firstDigit = (data >> 4)&0x0F;
+    int secondDigit = data&0x0F;
+    aux[0] = '0' + firstDigit;
+    aux[1] = '0' + secondDigit;
+    return;
 }
 
 void sysClearScreen(char * buff, uint64_t address, uint64_t amount){
     ncClear();
 }
 
-unsigned int sysGetRTC(char * buff, uint64_t address, uint64_t amount){
-
-}
 

@@ -12,4 +12,13 @@ int readKey();
 uint64_t getRegister(int index);
 int asmGetByte(int pos);
 
+int abs(int num);
+char * intToHexa(long long num, char *str, int bytes);
+void swap(char *x, char *y);
+char * reverse(char *buffer, int i, int j);
+
+void hold(int s);
+long int getNormSecsInDay();
+
+
 #endif

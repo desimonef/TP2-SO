@@ -348,3 +348,4 @@ char *intToHex(long long num, char *str, int bytes)
 int abs(int num){
     return num < 0? -num : num;
 }
+

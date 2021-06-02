@@ -11,6 +11,7 @@ GLOBAL _exception0Handler
 EXTERN irqDispatcher
 EXTERN sysCallDispatcher
 EXTERN exceptionDispatcher
+EXTERN getStackBase
 
 SECTION .text
 
@@ -69,10 +70,20 @@ SECTION .text
 %macro exceptionHandler 1
 	pushState
 
+	mov rax, rsp
+	add rax, 3*8
+	mov rsi, rax
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
 	popState
+
+	sti ;Reactivo las interrupciones
+	call getStackBase
+	mov [rsp + 3*8], rax ;restablezco el stack
+	mov rax, 0x400000 ; Direccion del SampleCodeModule
+	mov [rsp], rax
+
 	iretq
 %endmacro
 

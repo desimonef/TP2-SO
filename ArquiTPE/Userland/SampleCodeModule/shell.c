@@ -5,6 +5,8 @@
 
 #define MAXLEN 100
 
+int off = 0;
+
 void initShell(){
     screenClear();
     //shellWelcomeMsg();
@@ -14,10 +16,8 @@ void initShell(){
 }
 
 void shell(){
-    //screenClear();
     char command[MAXLEN] = {0};
     char arg[MAXLEN] = {0};
-    int off = 0;
     while(off == 0) {
         printf("\nBienvenidos a nuestro precario sistema operativo\n\nEs el anio %d\n\n", 2021);
         printf("%c : %s\n\n\n", 'a', "TOTO"); //sigue sin reconocer los chars, despues investigar
@@ -25,7 +25,11 @@ void shell(){
         printMem("0x000000FF");
         printf("\n");
         getDateAndTime();
-        while(1);
+        printf("\n\n\n");
+        divCeroExceptionTest();
+        printf("\n\n\n");
+        printf("Volvio la ejecucion de la shell");
+        //while(1);
         printf("$>");
 
 
@@ -35,6 +39,10 @@ void shell(){
         //scanf("%s %s", command, arg);
         //printf("Comando: %s\n\nArgumento: %s", command, arg);
         //execute(command, arg); 
+    }
+    while(1){
+        printf("Volviste a la ejecución de shell\n");
+        while(1);
     }
 }
 
@@ -57,6 +65,10 @@ void printMem(char * hexaAddress){
 	printf("\n");
 }
 
+void divCeroExceptionTest(){
+    int a = 1/0;
+}
+
 void shellWelcomeMsg(){
     printf("          -+#%%%%%%*-\n");              
     printf("        =@*-.......-*@=\n");            
@@ -74,6 +86,6 @@ void shellWelcomeMsg(){
     printf("  .-+*%@------#%%%@%#--=@*\n");         
     printf("      -@+----=@+ +@=---*@:\n");         
     printf("       @*----=@+ :@*===@#\n");          
-    printf("      +@%##%%*:  :+##*+\n");           
-    
+    printf("      +@%##%%*:  :+##*+\n");
 }
+

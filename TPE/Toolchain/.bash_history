@@ -1,3 +1,0 @@
-ls
-make all
-exit

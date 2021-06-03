@@ -9,32 +9,35 @@
 int off = 0;
 
 void initShell(){
-    screenClear();
-    //shellWelcomeMsg();
+    screenClear(0);
+    shellWelcomeMsg();
+    
+    int c = -1;
+    while (c == -1)
+    {
+        c = getchar();
+    }
+    screenClear(1);
     shell();
-    while(1){}
+    //while(1){}
     //shell();
 }
-
 void shell(){
     char command[MAXLEN] = {0};
     char arg[MAXLEN] = {0};
-    while(off == 0) {
-        printf("\nBienvenidos a nuestro precario sistema operativo\n\n");
-        //printf("%c : %s\n\n\n", 'a', "TOTO"); //sigue sin reconocer los chars, despues investigar
+    /*while(off == 0) {
+        printf("\nBienvenidos a nuestro precario sistema operativo\n\nEs el anio %d\n\n", 2021);
+        printf("%c : %s\n\n\n", 'a', "TOTO"); //sigue sin reconocer los chars, despues investigar
         printf("\n");
         //printMem("0x000000FF");
         printf("\n");
-        displayHelpMenu();
-        //getDateAndTime();
-        //printf("\n\n\n");
+        getDateAndTime();
+        printf("\n\n\n");
         //divCeroExceptionTest();
-        //opCodeExceptionTest();
-        printf("\n");
-        //printf("Volvio la ejecucion de la shell");
+        printf("\n\n\n");
+        printf("Volvio la ejecucion de la shell");
         //while(1);
         printf("$>");
-        while(1){};
 
 
         //myScanf("%s %s", command, arg);
@@ -44,9 +47,12 @@ void shell(){
         //printf("Comando: %s\n\nArgumento: %s", command, arg);
         //execute(command, arg); 
     }
+    */
     while(1){
-        printf("Volviste a la ejecución de shell\n");
-        while(1);
+        printf("$ ");
+        *command = 0;
+        *arg = 0;
+        scanf("%s %s", command, arg);
     }
 }
 
@@ -78,6 +84,7 @@ void opCodeExceptionTest(){
 }
 
 void shellWelcomeMsg(){
+    /*
     printf("          -+#%%%%%%*-\n");              
     printf("        =@*-.......-*@=\n");            
     printf("       -@=....-+*#%%%@@#.\n");          
@@ -94,7 +101,8 @@ void shellWelcomeMsg(){
     printf("  .-+*%@------#%%%@%#--=@*\n");         
     printf("      -@+----=@+ +@=---*@:\n");         
     printf("       @*----=@+ :@*===@#\n");          
-    printf("      +@%##%%*:  :+##*+\n");
+    printf("      +@%##%%*:  :+##*+\n");*/
+    printf("presione cualquier tecla para comenzar\n");
 }
 
 

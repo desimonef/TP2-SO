@@ -1,5 +1,6 @@
 #include <time.h>
 #include <keyboard.h>
+#include <screen.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <naiveConsole.h>
@@ -11,39 +12,54 @@ typedef uint64_t (*PSysCall) (uint64_t, uint64_t, uint64_t);
 
 static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime, &sysClearScreen, &sysGetDateTimeBuff};
 
-void sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx){
+uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx){
     PSysCall sysCall = sysCalls[rdi];
     if (sysCall != 0)
-        sysCall(rsi, rdx, rcx);
+        return sysCall(rsi, rdx, rcx);
 }
 
-void sysRead (int fd, char * buff, uint16_t amount){
+uint64_t sysRead(int fd, char *buff, uint16_t amount)
+{
     if(fd != 0) {
-        return;
+        return -1;
     }
-    readFromKeyboard(buff, amount);
+    return keyboardRead(buff, amount);
+    
 }
 
-
-void sysWrite(int fd, char * buff, uint64_t count){
-    /*char color;
-    if (fd == 1)
+uint64_t sysWrite(int fd, char *buff, uint64_t count)
+{
+    char color;
+    if (fd == 1) {
         color = 0x07;
+    }
     else if (fd == 2)
         color = 0x04;
     else{
         ncPrint("Error in file descriptor");
         ncNewline();
-        return;
+        return 0;
     }
+    /*
     int i;
     for (i = 0; i < count || buff[i] == '\0'; i++)
         ncPrintCharColor(buff[i], color);
-        */
+        
     for(int i = 0; i < count; i++){
         ncPrintChar(*buff);
         buff++;
+    }*/
+    int inserted = 0;
+    while(count > 0) {
+        if(*buff == '\0' || *buff==-1)
+            break;
+        else
+            ncPrintChar(*buff);
+        buff++;
+        inserted++;
+        count--;
     }
+    return inserted;
 }
 /*
 void sysGetRegs(int fd, char * buff, uint64_t count){
@@ -107,8 +123,12 @@ void sysGetDateTimeBuff(uint64_t id, uint64_t buff, uint64_t rcx){
     return;
 }
 
-void sysClearScreen(char * buff, uint64_t address, uint64_t amount){
+void sysClearScreen(uint64_t mode, uint64_t address, uint64_t amount){
     ncClear();
+    if(mode == 0)
+        initScreen();
+    if(mode == 1)
+        initDoubleScreen();
 }
 
 

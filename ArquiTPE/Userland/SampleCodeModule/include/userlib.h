@@ -9,7 +9,9 @@ int dumpRegs(char * buffer);
 int dumpMem(char * buffer, uint64_t address, uint64_t bytes);
 int accessClock(int descriptor);
 void testAccessClock(int id, char * buff);
-void screenClear();
+void screenClear(int mode);
+
+#endif
 
 void UDcaller();
 

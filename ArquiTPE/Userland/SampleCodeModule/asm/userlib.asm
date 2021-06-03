@@ -37,11 +37,15 @@ GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, testAccessClock
 %endmacro
 
 
+
 scan:
     push rbp
     mov rbp,rsp;
 
-    pushState
+    push rdi
+	push rsi
+	push rdx
+	push rcx
 
     mov rcx ,rdx ;len
     mov rdx, rsi  ;buffer
@@ -49,7 +53,10 @@ scan:
     mov rdi,0    ; interrupt id
     int 80h
     
-    popState
+    pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
 
     leave
     ret
@@ -58,7 +65,10 @@ print:
     push rbp
     mov rbp,rsp;
 
-    pushState
+    push rdi
+	push rsi
+	push rdx
+	push rcx
 
     mov rcx ,rdx ;len
     mov rdx, rsi  ;buffer
@@ -66,11 +76,13 @@ print:
     mov rdi,1     ; interrupt id
     int 80h
 
-    popState
+    pop rcx
+	pop rdx
+	pop rsi
+	pop rdi
 
     leave
     ret
-
 
 dumpRegs:
 	push rbp

@@ -159,12 +159,15 @@ screenClear:
 	push rbp
 	mov rbp, rsp
 
-	pushState
+	push rsi
+	push rdi
 
+	mov rsi, rdi
 	mov rdi, 5
 	int 80h
 
-	popState
+	pop rdi
+	pop rsi
 	leave
 	ret
 

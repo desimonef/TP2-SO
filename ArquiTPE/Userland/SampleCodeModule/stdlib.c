@@ -117,7 +117,7 @@ void readLine()
     putchar('\n');
     buffer[buffSize++] = '\0';
 }
-
+/*
 void myPrintf(char * format, ...){
     char buffer[MAX_BUFFER];
     char * reference = format; // uso var aux para no perder la referencia de donde comienza format
@@ -156,6 +156,7 @@ void myPrintf(char * format, ...){
     }
     va_end(args);
 }
+*/
 
 void printf(char * format, ...){
     char buffer[MAX_BUFFER];
@@ -259,6 +260,20 @@ void reverse(char str[], int length)
         start++;
         end--;
     }
+}
+
+int strToInt(char *str, int *size)
+{
+    *size = 0;
+    int res = 0;
+
+    for (int i = 0; str[i] != '\0' || str[i] != ' '; i++, *size++)
+    {
+        if (str[i] < '0' || str[i] > '9')
+            return -1;
+        res = res * 10 + str[i] - '0';
+    }
+    return res;
 }
 
   

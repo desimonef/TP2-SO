@@ -3,98 +3,119 @@
 #include "userlib.h"
 
 #define MAX_BUFFER 100
-#define BUFFER_SIZE 100
 #define STDIN 0
 #define STDOUT 1
 char buffer[MAX_BUFFER];
 int buffSize = 0;
 
-int getChar() {
-    char temp[2];
-    int read = scan(STDIN, temp, 2);
-    if(read <= 0)
+int getchar()
+{
+    char temp[2] = {0};
+    int read = scan(0, temp, 2);
+    if (read <= 0)
         return -1;
     return *temp;
 }
 
-int putChar(char c) {
+int putchar(char c)
+{
     char temp[2] = {0};
-    temp[0] = c;
-    return print(STDOUT, temp, 1);
+    *temp = c;
+    return print(STDOUT, temp, 2);
 }
 
+void clearBuff() {
+    buffSize = 0;
+    int c;
+    do {
+        scan(0, buffer, 512);
+    } while((c = getchar()) != -1);
+    
+}
 
-int scanf(char *command, ...)
+int scanf(char *format, ...)
 {
     va_list args;
-    va_start(args, command);
-    int c;
+    va_start(args, format);
+    clearBuff();
+    readLine(); //guarda en buffer los argumentos
+    int bufferIndex = 0;
+    int error = 0;
+    int formatIndex = 0;
+    char *string;
+    int stringIndex;
 
-    while((c != getChar()) != '\n') {
-        if (c != -1)
-        { //EOF
-            if (c == '\b')
+    int *integer;
+    int integerLen;
+
+    while (format[formatIndex] != '\0' && buffer[bufferIndex] != '\0' && !error)
+    {
+        if (format[formatIndex] == '%')
+        {
+            formatIndex++;
+            switch (format[formatIndex])
             {
-                //backspace();
+            case 's':
+                string = va_arg(args, char *);
+                stringIndex = 0;
+                while (buffer[bufferIndex] != ' ' && buffer[bufferIndex] != '\0')
+                    string[stringIndex++] = buffer[bufferIndex++];
+                string[stringIndex] = '\0';
+                if (buffer[bufferIndex] != ' ')
+                    bufferIndex++;
+                break;
+            case 'd':
+                integer = va_arg(args, int *);
+                integerLen = 0;
+                integer = strToInt(&buffer[bufferIndex], &integerLen);
+                bufferIndex += integerLen;
+                break;
+            case 'c':
+                *(char *)va_arg(args, char *) = buffer[bufferIndex++];
+                break;
+            default:
+                error = 1;
+                break;
             }
+        }
+        else
+        {
+            if (buffer[bufferIndex] != format[formatIndex])
+                error = 1;
             else
-            {
-                putInBuff(c);
-                putChar(c);
-            }
+                bufferIndex++;
         }
+        formatIndex++;
     }
-    putChar('\n');
-    buffer[buffSize++] = '\0';
-
-    int flag = 0;
-    int dim1=0;
-    int dim2=0;
-
-    char *temp;
-    int *tmp;
-
-    while(!flag) {
-        if(buffer[dim1] == '\0' || command[dim2] == '\0') {
-            flag = 1;
-        }
-        else {
-            if(command[dim2] == '%') {
-                switch(command[++dim2]) {
-                    case 's':
-                        temp = *(char *)va_arg(args, char *);
-                        strcpyWithSeparator(&buffer[dim1], temp, ' ');
-                        dim1 += strlen(temp);
-                        break;
-                    case 'd':
-                        tmp = *(int *)va_arg(args, int *);
-                        int len = myAtoi(&buffer[dim1], tmp);
-                        dim1 += len;
-                        break;
-                    case 'c':
-                        *(char *)va_arg(args, char *) = buffer[dim1];
-                        dim1++;
-                        break;
-                    default:
-                        flag = 1;
-                        break;
-                }
-            }
-            else {
-                if(buffer[dim1] != ' ' || command[dim2] != ' ') {
-                    flag = 1;
-                } 
-                else {
-                    dim1++;
-                }
-            }
-            dim2++;
-        }
-    }
-
     va_end(args);
-    return dim1;
-    
+    return bufferIndex;
+}
+
+void readLine()
+{
+    buffSize = 0;
+    int c;
+    while ((c = getchar()) != '\n')
+    {
+        
+        if (c == '\b')
+        {
+            if (buffSize != 0)
+            {
+                buffSize--;
+            }
+        }
+        else if (c != -1)
+        {
+            if (buffSize < MAX_BUFFER - 1)
+            {
+                buffer[buffSize++] = c;
+            }
+            putchar(c);
+        }
+    }
+    putchar('\n');
+    buffer[buffSize++] = '\0';
 }
 
 void myPrintf(char * format, ...){

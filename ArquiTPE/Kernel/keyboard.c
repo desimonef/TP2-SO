@@ -71,11 +71,11 @@ uint8_t getMatchingAscii(int scancode){
   int isArrow = isArrowKey(scancode);
   if (scancode == ENTER || scancode == ENTER_RELEASE)
   {
-    setMove(1);
+    //setMove(1);
   }
   else if (isArrow == 0)
   {
-    setMove(0);
+   // setMove(0);
   }
   if (codeMatchesAscii(scancode)) {
     if (shift == 0)

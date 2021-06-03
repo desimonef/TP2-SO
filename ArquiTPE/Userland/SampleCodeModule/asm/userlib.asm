@@ -43,9 +43,9 @@ scan:
     mov rbp,rsp;
 
     push rdi
-	push rsi
-	push rdx
-	push rcx
+    push rsi
+    push rdx
+    push rcx
 
     mov rcx ,rdx ;len
     mov rdx, rsi  ;buffer
@@ -54,9 +54,9 @@ scan:
     int 80h
     
     pop rcx
-	pop rdx
-	pop rsi
-	pop rdi
+    pop rdx
+    pop rsi
+    pop rdi
 
     leave
     ret
@@ -66,9 +66,9 @@ print:
     mov rbp,rsp;
 
     push rdi
-	push rsi
-	push rdx
-	push rcx
+    push rsi
+    push rdx
+    push rcx
 
     mov rcx ,rdx ;len
     mov rdx, rsi  ;buffer
@@ -77,9 +77,9 @@ print:
     int 80h
 
     pop rcx
-	pop rdx
-	pop rsi
-	pop rdi
+    pop rdx
+    pop rsi
+    pop rdi
 
     leave
     ret

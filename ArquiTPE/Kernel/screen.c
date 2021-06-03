@@ -21,8 +21,8 @@ void initDoubleScreen() {
     setCursor(halfLine);
     do{
         ncPrintChar(divider);
-        setCursor(getCursor() + 1);
         halfLine++;
+        setCursor(halfLine);
     } while (halfLine % width != 0);
     
 }

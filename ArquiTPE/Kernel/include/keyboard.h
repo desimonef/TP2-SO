@@ -7,10 +7,10 @@ int codeMatchesAscii(int scancode);
 int getScanCode();
 int isLetter(char c);
 uint8_t getMatchingAscii(int scancode);
-void onKeyPressed(char chr);
-int readFromKeyboard(char *dest, int amount); 
+void onKeyPressed(char chr); 
+int keyboardRead(char *ret, int count);
 void keyboard_handler();
 void isShiftPressed(int scancode);
-void isArrowKey(int scancode) ;
+int isArrowKey(int scancode) ;
 
 #endif

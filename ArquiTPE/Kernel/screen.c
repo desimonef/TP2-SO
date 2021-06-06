@@ -6,7 +6,11 @@ static uint8_t * const video = (uint8_t *)0xB8000;
 static uint32_t width;
 static uint32_t height;
 static char divider = '-';
-static int screen = 0;
+static int screen = 1;
+static int canMove = 1;
+static int start = 0;
+static int upCursor = 0;
+static int downCursor = 0;
 
 void initScreen()
 {
@@ -16,6 +20,8 @@ void initScreen()
 
 void initDoubleScreen() {
     initScreen();
+    ncPrint("$ ");
+    upCursor = 2;
     int half = width * height / 2;
     int halfLine = half - (half % width);
     setCursor(halfLine);
@@ -24,7 +30,6 @@ void initDoubleScreen() {
         halfLine++;
         setCursor(halfLine);
     } while (halfLine % width != 0);
-    
 }
 
 //cursor es un valor de 0 hasta (80x25)-1
@@ -32,6 +37,18 @@ void initDoubleScreen() {
 void setSize(int newWidth, int newHeight) {
     width = newWidth;
     height = newHeight;
+}
+
+void setStart() {
+    if(start <= 2)
+        start++;
+    if(start == 2)
+        downCursor = getCursor();
+}
+
+void setMove(int option) {
+    if(start > 2)
+        canMove = option;
 }
 
 void setCursor(int pos) {
@@ -49,15 +66,23 @@ void moveCursor(int move) {
 }
 
 void changeScreen(int whichScreen) {
-    if(screen != whichScreen) {
-        screen = whichScreen;
-        int half = width * height / 2;
-        if(screen == 0) {
-            moveCursor(half * -1);
-        } else if (screen == 1) {
-            moveCursor(half);
-        }
-    }
+
+   if(canMove) {
+       if (screen != whichScreen)
+       {
+           screen = whichScreen;
+           if (screen == 0)
+           {
+               downCursor = getCursor();
+               setCursor(upCursor);
+           }
+           else if (screen == 1)
+           {
+               upCursor = getCursor();
+               setCursor(downCursor);
+           }
+       }
+   }
 }
 
 //setCursor((height - 1) * width); (para el scroll up)

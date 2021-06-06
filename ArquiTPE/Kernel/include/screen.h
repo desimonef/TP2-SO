@@ -9,5 +9,6 @@ void moveCursor(int move);
 void changeScreen(int whichScreen);
 void initDoubleScreen();
 void setMove(int option);
+void setStart();
 
 #endif

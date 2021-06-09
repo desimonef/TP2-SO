@@ -13,7 +13,7 @@ void initShell(){
     shellWelcomeMsg();
 
     int c = -1;
-    while (c == -1 || (c != '1' && c != '2'))
+    while (c != '1' && c != '2')
     {
         c = getchar();
     }
@@ -25,46 +25,30 @@ void initShell(){
 
 void shellWelcomeMsg(){
     /*
-    printf("          -+#//////*-\n");              
+    printf("          -+#%%%%%%*-\n");              
     printf("        =@*-.......-*@=\n");            
-    printf("       -@=....-+*#///@@#.\n");          
-    printf("       @%...:/@          /#:\n");        
-    printf("   @@@@@+...*@           +@=\n");       
-    printf("  @#++#@-...+@           +@+\n");       
-    printf(" /#:::#@-..../@#        #@#\n");        
-    printf(" @#---@/-.....##//////#**@-\n");        
+    printf("       -@=....-+*#%%%@@#.\n");          
+    printf("       @%...:%@+-:....:+%#:\n");        
+    printf("   .:-+@+...*@*=:::.   .:+@=\n");       
+    printf(" -@#++#@-...+@**+==------+@+\n");       
+    printf(" %#:::#@-....%@#********#@#\n");        
+    printf(" @#---@%-.....=*%%%%%%#**@-\n");        
     printf(".@*---@#-:..............:@=\n");        
     printf(".@*---@#--..............-@=\n");        
     printf(" @*---@#---.............+@-\n");        
-    printf(" @/---@/-----:::.....:--*@.\n");        
-    printf("  @#+=@/-----------------@\n");         
-    printf("   @@@@@------#///@-----@*\n");         
-    printf("       @+----=@+ +@=---*@:\n");         
+    printf(" @%---@%-----:::.....:--*@.\n");        
+    printf(" =@#+=%%----------------#@\n");         
+    printf("  .-+*%@------#%%%@%#--=@*\n");         
+    printf("      -@+----=@+ +@=---*@:\n");         
     printf("       @*----=@+ :@*===@#\n");          
-    printf("       @######@: :@####@\n");
-    */
-    printf("              .+======+-.               #########\n");              
-    printf("             -#.       .+*.            #         #\n");            
-    printf("            .#:=*===-=+= -#.          #     ##### #\n");          
-    printf("            *= +/+====*#. =+       ###@    #     # #\n");        
-    printf("           :#.  .----:.   .#      #   @     ##### #\n");       
-    printf("           +-             .#.     #   @           #  \n");       
-    printf("           *.              +:     #   @           #\n");        
-    printf("          -=               +=     #   @          #\n");        
-    printf("          *:               ==      ###@          #\n");        
-    printf("         .#   :===-==:     -+         #    ###   #\n");        
-    printf("         +=  ./:     *:    :+         #####   ####\n");  
-    printf("    :+===*.   *-     *:    :=\n");
-    printf("    -+:.  ..:=*: .-==*.    --\n");
-    printf("     .-===---.  .#:       :*.\n");
-    printf("                 :-=======:\n");
-    printf("\n\nHola! Bienvenidos al sistema operativo Among-OS. Por favor, presione 1 o 2 para elegir que shell");
+    printf("      +@%##%%*:  :+##*+\n");*/
+    printf("Hola! Bienvenidos al sistema operativo Among-OS. Por favor, presione 1 o 2 para elegir que shell\n");
     printf("quiere correr.\n\n1:Shell superior\n2:Shell inferior\n");
 }
 
 
 void shellDivertida(){
-    printf("Bienvenidos a among-OS! Si necesita ayuda, ingresar el comando <help>\n");
+    printf("\nBienvenidos a among-OS! Si necesita ayuda, ingresar el comando <help>\n");
  
     while(1){
         printf("$>");
@@ -104,7 +88,6 @@ void shellDivertida(){
             screenClear(0);
             printf("\nGracias por utilizar among-OS! Vuelva pronto!\n");
             sleep(5);
-            printf("Hola");
             return;
         }
     }
@@ -113,7 +96,7 @@ void shellDivertida(){
 void displayHelpMenu(){
     printf("\nLos comandos disponibles para ejecucion son:\n\n");
     printf("~help~: muestra el menu de ayuda\n");
-    printf("~kill~: termina la ejecucion del SO\n");
+    printf("~kill~: termina la ejecución del SO\n");
     printf("~zerodiv~: se genera una excepcion de division por cero\n");
     printf("~invopcode~: se genera una excepcion de codigo de operacion equivocado\n");
     printf("~inforeg~: muestra los valores de los registros en el momento de ejecucion\n");

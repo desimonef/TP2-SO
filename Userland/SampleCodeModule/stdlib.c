@@ -59,15 +59,6 @@ int scanf(char *command, ...){
                 if (buffer[bufferIndex] != ' ')
                     bufferIndex++;
                 break;
-            case 'd':
-                integer = va_arg(args, int *);
-                integerLen = 0;
-                *integer = atoi(&buffer[bufferIndex]);
-                bufferIndex += integerLen;
-                break;
-            case 'c':
-                *(char *)va_arg(args, char *) = buffer[bufferIndex++];
-                break;
             default:
                 error = 1;
                 break;
@@ -120,7 +111,6 @@ void printf(char * command, ...){
                     string = itoa(va_arg(args, int), buffer, 16);
                 break;
                 case 's':
-                case 'c':
                     string = va_arg(args,char*);
                 break;  
             }
@@ -172,15 +162,6 @@ void putInBuff(char c) {
         buffer[buffSize++] = c;
 }
 
-int atoi(char * str){
-    int res = 0;
-
-    for (int i = 0; str[i] != '\0'; ++i)
-        res = res * 10 + str[i] - '0';
- 
-    return res;
-}
-
 void reverse(char str[], int length)
 {
     int start = 0;
@@ -192,19 +173,6 @@ void reverse(char str[], int length)
         start++;
         end--;
     }
-}
-
-int strToInt(char *str, int *size){
-    *size = 0;
-    int res = 0;
-
-    for (int i = 0; str[i] != '\0' || str[i] != ' '; i++, *size++)
-    {
-        if (str[i] < '0' || str[i] > '9')
-            return -1;
-        res = res * 10 + str[i] - '0';
-    }
-    return res;
 }
 
   
@@ -328,10 +296,11 @@ char * intToHex(uint64_t num, char * str, int bytes)
 void sleep(int secs){
     char buffer[3] = {0};
     seconds(buffer);
-    int initialSecs = atoi(buffer);
+    int initialSecs = (buffer[0] - '0') * 10 + (buffer[1] - '0');
     while(1){
         seconds(buffer);
-        if (atoi(buffer) - initialSecs >= secs)
+        int auxSeconds = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+        if (auxSeconds - initialSecs >= secs)
             return;
     }
 }

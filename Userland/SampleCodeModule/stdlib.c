@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include "stdlib.h"
 #include "userlib.h"
+#include "clock.h"
 
 #define MAX_BUFFER 100
 #define STDIN 0
@@ -8,8 +9,7 @@
 char buffer[MAX_BUFFER];
 int buffSize = 0;
 
-int getchar()
-{
+int getchar(){
     char temp[2] = {0};
     int read = scan(0, temp, 2);
     if (read <= 0)
@@ -17,8 +17,7 @@ int getchar()
     return *temp;
 }
 
-int putchar(char c)
-{
+int putchar(char c){
     char temp[2] = {0};
     *temp = c;
     return print(STDOUT, temp, 2);
@@ -33,28 +32,24 @@ void clearBuff() {
     
 }
 
-int scanf(char *format, ...)
-{
+int scanf(char *command, ...){
     va_list args;
-    va_start(args, format);
+    va_start(args, command);
     clearBuff();
     readLine(); //guarda en buffer los argumentos
     int bufferIndex = 0;
     int error = 0;
-    int formatIndex = 0;
+    int commandIndex = 0;
     char *string;
     int stringIndex;
 
     int *integer;
     int integerLen;
 
-    while (format[formatIndex] != '\0' && buffer[bufferIndex] != '\0' && !error)
-    {
-        if (format[formatIndex] == '%')
-        {
-            formatIndex++;
-            switch (format[formatIndex])
-            {
+    while (command[commandIndex] != '\0' && buffer[bufferIndex] != '\0' && !error){
+        if (command[commandIndex] == '%'){
+            commandIndex++;
+            switch (command[commandIndex]){
             case 's':
                 string = va_arg(args, char *);
                 stringIndex = 0;
@@ -67,7 +62,7 @@ int scanf(char *format, ...)
             case 'd':
                 integer = va_arg(args, int *);
                 integerLen = 0;
-                integer = strToInt(&buffer[bufferIndex], &integerLen);
+                *integer = atoi(&buffer[bufferIndex]);
                 bufferIndex += integerLen;
                 break;
             case 'c':
@@ -80,93 +75,44 @@ int scanf(char *format, ...)
         }
         else
         {
-            if (buffer[bufferIndex] != format[formatIndex])
+            if (buffer[bufferIndex] != command[commandIndex])
                 error = 1;
             else
                 bufferIndex++;
         }
-        formatIndex++;
+        commandIndex++;
     }
     va_end(args);
     return bufferIndex;
 }
 
-void readLine()
-{
+void readLine(){
     buffSize = 0;
     int c;
-    while ((c = getchar()) != '\n')
-    {
-        
-        if (c == '\b')
-        {
+    while ((c = getchar()) != '\n'){
+        if (c == '\b'){
             if (buffSize != 0)
-            {
                 buffSize--;
-            }
         }
-        else if (c != -1)
-        {
+        else if (c != -1){
             if (buffSize < MAX_BUFFER - 1)
-            {
                 buffer[buffSize++] = c;
-            }
             putchar(c);
         }
     }
     putchar('\n');
     buffer[buffSize++] = '\0';
 }
-/*
-void myPrintf(char * format, ...){
-    char buffer[MAX_BUFFER];
-    char * reference = format; // uso var aux para no perder la referencia de donde comienza format
 
-    va_list args;
-    va_start(args, format);
-
-    while(*reference != '\0'){
-        if(*reference == '%'){
-            reference++;
-            char * auxStr;
-            switch(*reference){
-                case 'd':
-                    auxStr = itoa(va_arg(args, int), buffer, 10);
-                    break;
-                case 'x':
-                    auxStr = itoa(va_arg(args, int), buffer, 16);
-                    break;
-                case 's':
-                    auxStr = va_arg(args,char*);
-                break;
-                case 'c':
-                    auxStr = va_arg(args,char *);
-                break; 
-            }
-                int auxStrLen = strlen(auxStr);
-                for(int i = 0; i < auxStrLen; i++){
-                    putChar(*auxStr);
-                    auxStr++;
-                }
-        }
-        else{
-            putChar(*reference);
-        }
-        reference++;
-    }
-    va_end(args);
-}
-*/
-
-void printf(char * format, ...){
+void printf(char * command, ...){
     char buffer[MAX_BUFFER];
     va_list args;
-    va_start(args, format);
-    while(*format != 0){
-        if(*format == '%'){
-            format++;
+    va_start(args, command);
+    while(*command != 0){
+        if(*command == '%'){
+            command++;
             char * string;
-            switch(*format){
+            switch(*command){
                 case 'd':
                     string = itoa(va_arg(args, int), buffer, 10);
                 break;
@@ -181,12 +127,11 @@ void printf(char * format, ...){
             print(1, string, strlen(string));
         }
         else{
-            print(1, format, 1);
+            print(1, command, 1);
         }
-    format++;                   
+    command++;                   
     }
     va_end(args);
-    //print(1, "\n", 1);
 }
 
 int strlen(char * string){
@@ -220,7 +165,6 @@ void strcpyWithSeparator(const char * str1, char * str2, char separator) {
         str1++;
         str2++;
     }
-
 }
 
 void putInBuff(char c) {
@@ -228,32 +172,20 @@ void putInBuff(char c) {
         buffer[buffSize++] = c;
 }
 
-int myAtoi(const char * num, int * dest) {
-    *dest = 0;
-    int temp = 0;
-    int flag = 0;
-    int len = 0;
-    while(*num != '\0' && *num != ' ' && !flag) {
-        if(*num < 1 || *num > 9)
-            flag = 1;
-        else {
-            temp = *dest;
-            *dest = temp * 10 + (*num - '\0');
-            num++;
-            len++;
-        }
+int atoi(char * str){
+    int res = 0;
 
-    }
-
-    return len;
+    for (int i = 0; str[i] != '\0'; ++i)
+        res = res * 10 + str[i] - '0';
+ 
+    return res;
 }
 
 void reverse(char str[], int length)
 {
     int start = 0;
     int end = length -1;
-    while (start < end)
-    {
+    while (start < end){
         char aux = *(str+start);
         *(str+start) = *(str+end);
         *(str+end) = aux;
@@ -262,8 +194,7 @@ void reverse(char str[], int length)
     }
 }
 
-int strToInt(char *str, int *size)
-{
+int strToInt(char *str, int *size){
     *size = 0;
     int res = 0;
 
@@ -361,13 +292,11 @@ int hexToInt(char* num){
     return returnValue;
 }
 
-char *intToHex(long long num, char *str, int bytes) 
+char * intToHex(uint64_t num, char * str, int bytes) 
 { 
     int i = 0;
-    long long n = abs(num);
 
-    if (n == 0) 
-    {
+    if (num == 0) {
         str[i++] = '0';
         str[i++] = 'x';
 
@@ -379,11 +308,10 @@ char *intToHex(long long num, char *str, int bytes)
         return str; 
     } 
 
-    while (i < bytes*2 && n != 0) 
-    { 
-        int rem = n % 16; 
+    while (i < bytes*2 && num != 0) { 
+        int rem = num % 16; 
         str[i++] = (rem >= 10)? (rem - 10) + 65 : rem + 48; 
-        n = n/16; 
+        num = num/16; 
     } 
 
     while (i < bytes*2) {
@@ -395,9 +323,16 @@ char *intToHex(long long num, char *str, int bytes)
     str[i] = '\0';
     reverse(str, i);
     return str; 
-} 
+}
 
-int abs(int num){
-    return num < 0? -num : num;
+void sleep(int secs){
+    char buffer[3] = {0};
+    seconds(buffer);
+    int initialSecs = atoi(buffer);
+    while(1){
+        seconds(buffer);
+        if (atoi(buffer) - initialSecs >= secs)
+            return;
+    }
 }
 

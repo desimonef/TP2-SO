@@ -145,13 +145,14 @@ int isArrow(int scancode)
   return toRet;
 }
 
-int isBackspace(int scancode){
-  if (scancode == BACKSPACE){
+if (scancode == BACKSPACE){
+    bufferSize = (bufferSize - 1) % INPUT_BUFFER;
+    keyboardBuffer[bufferSize] = 0;
+    unread--;
     backspace();
     return 1;
   }
   return 0;
-}
 
 void screenMove(int scancode)
 {

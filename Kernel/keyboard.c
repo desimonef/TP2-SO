@@ -72,7 +72,6 @@ char getAscii(int scancode)
 {
   shiftPressing(scancode);
   int arrow = isArrow(scancode);
-  int backspace = isBackspace(scancode);
   if (arrow == 1)
     return -1;
   if(scancode == BACKSPACE)

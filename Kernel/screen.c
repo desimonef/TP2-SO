@@ -22,7 +22,6 @@ void initScreen()
 
 void initDoubleScreen(int mode) {
     initScreen();
-    upCursor = 2;
     int half = width * height / 2;
     int halfLine = half - (half % width);
     setCursor(halfLine);

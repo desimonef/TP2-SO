@@ -61,6 +61,10 @@ void setStart() {
         */
 }
 
+int canDelete() {
+    return getCursor() % width > 2;
+}
+
 void setMove(int option) {
     if(start > 2)
         canMove = option;

@@ -74,7 +74,7 @@ char getAscii(int scancode)
   int arrow = isArrow(scancode);
   if (arrow == 1)
     return -1;
-  if(scancode == BACKSPACE)
+  if(scancode == BACKSPACE && canDelete())
       backspace();
   if (arrow == 0)
     screenMove(scancode);

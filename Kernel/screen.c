@@ -18,6 +18,11 @@ void initScreen()
     setCursor(0); //cursor = video
     setSize(80, 25);
     resetKeyboardFlags();
+    start = 0;
+    canMove = 1;
+    upCursor = 0;
+    downCursor = 0;
+    screen = 1;
 }
 
 void initDoubleScreen(int mode) {

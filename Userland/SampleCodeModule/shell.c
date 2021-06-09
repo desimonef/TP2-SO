@@ -63,7 +63,7 @@ void shellWelcomeMsg(){
 
 
 void shellDivertida(){
-    printf("\nBienvenidos a among-OS! Si necesita ayuda, ingresar el comando <help>\n");
+    printf("Bienvenidos a among-OS! Si necesita ayuda, ingresar el comando <help>\n");
  
     while(1){
         printf("$>");
@@ -112,7 +112,7 @@ void shellDivertida(){
 void displayHelpMenu(){
     printf("\nLos comandos disponibles para ejecucion son:\n\n");
     printf("~help~: muestra el menu de ayuda\n");
-    printf("~kill~: termina la ejecución del SO\n");
+    printf("~kill~: termina la ejecucion del SO\n");
     printf("~zerodiv~: se genera una excepcion de division por cero\n");
     printf("~invopcode~: se genera una excepcion de codigo de operacion equivocado\n");
     printf("~inforeg~: muestra los valores de los registros en el momento de ejecucion\n");

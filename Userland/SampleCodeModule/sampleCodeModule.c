@@ -8,5 +8,6 @@ static int var2 = 0;
 
 int main() {
 	initShell();
+
 	return 0xDEADBEEF;
 }

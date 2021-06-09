@@ -6,7 +6,8 @@ GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 GLOBAL _sysCallHandler
 
-GLOBAL _exception0Handler, _exception6Handler
+GLOBAL _exception0Handler
+GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
 EXTERN sysCallDispatcher
@@ -68,19 +69,19 @@ SECTION .text
 
 
 %macro exceptionHandler 1
-	pushState
-
 	mov rsi, rsp
+
+	pushState
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
 	popState
 
-	;sti ;Reactivo las interrupciones
-	;call getStackBase
-	;mov [rsp + 3*8], rax ;restablezco el stack
-	;mov rax, 0x400000 ; Direccion del SampleCodeModule
-	;mov [rsp], rax
+	sti ;Reactivo las interrupciones
+	call getStackBase
+	mov [rsp + 3*8], rax ;restablezco el stack
+	mov rax, 0x400000 ; Direccion del SampleCodeModule
+	mov [rsp], rax
 
 	iretq
 %endmacro
@@ -143,11 +144,15 @@ _irq05Handler:
 
 ;SysCalls
 _sysCallHandler:
-	pushState
-
+	;pushState
+	
+;	mov rcx, rdx ;len
+;	mov rdx, rsi ;buffer
+;	mov rsi, rdi ;fd
+;	mov rdi, rax ;id
 	call sysCallDispatcher
 
-	popState
+	;popState
 	iretq
 
 

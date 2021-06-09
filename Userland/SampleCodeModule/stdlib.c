@@ -8,63 +8,79 @@
 char buffer[MAX_BUFFER];
 int buffSize = 0;
 
-int getchar() {
-    char temp[2];
-    int read = scan(STDIN, temp, 1);
-    if(read <= 0)
+int getchar()
+{
+    char temp[2] = {0};
+    int read = scan(0, temp, 2);
+    if (read <= 0)
         return -1;
     return *temp;
 }
 
-int putchar(char c) {
-    char temp[2];
+int putchar(char c)
+{
+    char temp[2] = {0};
     *temp = c;
-    return print(STDOUT, temp, 1);
+    return print(STDOUT, temp, 2);
 }
 
-int scanf(char * format, ...){
+void clearBuff() {
+    buffSize = 0;
+    int c;
+    do {
+        scan(0, buffer, 512);
+    } while((c = getchar()) != -1);
+    
+}
+
+int scanf(char *format, ...)
+{
     va_list args;
     va_start(args, format);
+    clearBuff();
     readLine(); //guarda en buffer los argumentos
     int bufferIndex = 0;
     int error = 0;
-    int formatIndex=0;
-    char * string;
+    int formatIndex = 0;
+    char *string;
     int stringIndex;
 
-    int * integer;
+    int *integer;
     int integerLen;
 
-    while(format[formatIndex] != '\0' && buffer[bufferIndex] != '\0' && !error) {
-        if(format[formatIndex] == '%') {
+    while (format[formatIndex] != '\0' && buffer[bufferIndex] != '\0' && !error)
+    {
+        if (format[formatIndex] == '%')
+        {
             formatIndex++;
-            switch(format[formatIndex]) {
-                case 's':
-                    string = va_arg(args, char *);
-                    stringIndex = 0;
-                    while (buffer[bufferIndex] != ' ' && buffer[bufferIndex] != '\0')
-                        string[stringIndex++] = buffer[bufferIndex++];
-                    string[stringIndex] = '\0';
-                    if (buffer[bufferIndex] != ' ')
-                        bufferIndex++;
-                    break;
-                case 'd':
-                    integer = va_arg(args, int *);
-                    integerLen = 0;
-                    integer = strToInt(&buffer[bufferIndex], &integerLen);
-                    bufferIndex += integerLen;
-                    break;
-                case 'c':
-                    *(char *)va_arg(args, char *) = buffer[bufferIndex++];
-                    break;
-                default:
-                    error = 1;
-                    break;
-            
+            switch (format[formatIndex])
+            {
+            case 's':
+                string = va_arg(args, char *);
+                stringIndex = 0;
+                while (buffer[bufferIndex] != ' ' && buffer[bufferIndex] != '\0')
+                    string[stringIndex++] = buffer[bufferIndex++];
+                string[stringIndex] = '\0';
+                if (buffer[bufferIndex] != ' ')
+                    bufferIndex++;
+                break;
+            case 'd':
+                integer = va_arg(args, int *);
+                integerLen = 0;
+                integer = strToInt(&buffer[bufferIndex], &integerLen);
+                bufferIndex += integerLen;
+                break;
+            case 'c':
+                *(char *)va_arg(args, char *) = buffer[bufferIndex++];
+                break;
+            default:
+                error = 1;
+                break;
             }
         }
-        else {
-            if(buffer[bufferIndex] != format[formatIndex])
+        else
+        {
+            if (buffer[bufferIndex] != format[formatIndex])
                 error = 1;
             else
                 bufferIndex++;
@@ -73,39 +89,74 @@ int scanf(char * format, ...){
     }
     va_end(args);
     return bufferIndex;
-    
 }
 
-void readLine() {
+void readLine()
+{
     buffSize = 0;
-    int c ;
-    while ((c = getchar()) != '\n') {
-        if(c == '\b'){
-            if (buffSize != 0) {
+    int c;
+    while ((c = getchar()) != '\n')
+    {
+        
+        if (c == '\b')
+        {
+            if (buffSize != 0)
+            {
                 buffSize--;
             }
         }
-        else if(c != -1){
-            if (buffSize < MAX_BUFFER-1) {
+        else if (c != -1)
+        {
+            if (buffSize < MAX_BUFFER - 1)
+            {
                 buffer[buffSize++] = c;
             }
+            putchar(c);
         }
     }
+    putchar('\n');
     buffer[buffSize++] = '\0';
 }
+/*
+void myPrintf(char * format, ...){
+    char buffer[MAX_BUFFER];
+    char * reference = format; // uso var aux para no perder la referencia de donde comienza format
 
- int strToInt(char *str, int* size){
-    *size=0;
-    int res = 0;
+    va_list args;
+    va_start(args, format);
 
-     for (int i = 0; str[i] != '\0' || str[i] != ' '; i++, *size++){
-         if (str[i] < '0' || str[i] > '9')
-             return -1;
-         res = res * 10 + str[i] - '0';
-     }
-     return res;
+    while(*reference != '\0'){
+        if(*reference == '%'){
+            reference++;
+            char * auxStr;
+            switch(*reference){
+                case 'd':
+                    auxStr = itoa(va_arg(args, int), buffer, 10);
+                    break;
+                case 'x':
+                    auxStr = itoa(va_arg(args, int), buffer, 16);
+                    break;
+                case 's':
+                    auxStr = va_arg(args,char*);
+                break;
+                case 'c':
+                    auxStr = va_arg(args,char *);
+                break; 
+            }
+                int auxStrLen = strlen(auxStr);
+                for(int i = 0; i < auxStrLen; i++){
+                    putChar(*auxStr);
+                    auxStr++;
+                }
+        }
+        else{
+            putChar(*reference);
+        }
+        reference++;
+    }
+    va_end(args);
 }
-
+*/
 
 void printf(char * format, ...){
     char buffer[MAX_BUFFER];
@@ -135,6 +186,7 @@ void printf(char * format, ...){
     format++;                   
     }
     va_end(args);
+    //print(1, "\n", 1);
 }
 
 int strlen(char * string){
@@ -172,7 +224,7 @@ void strcpyWithSeparator(const char * str1, char * str2, char separator) {
 }
 
 void putInBuff(char c) {
-    if(buffSize < MAX_BUFFER-1)
+    if(buffSize <= MAX_BUFFER)
         buffer[buffSize++] = c;
 }
 
@@ -208,6 +260,20 @@ void reverse(char str[], int length)
         start++;
         end--;
     }
+}
+
+int strToInt(char *str, int *size)
+{
+    *size = 0;
+    int res = 0;
+
+    for (int i = 0; str[i] != '\0' || str[i] != ' '; i++, *size++)
+    {
+        if (str[i] < '0' || str[i] > '9')
+            return -1;
+        res = res * 10 + str[i] - '0';
+    }
+    return res;
 }
 
   
@@ -295,12 +361,11 @@ int hexToInt(char* num){
     return returnValue;
 }
 
-char *intToHex(uint64_t num, char *str, int bytes) 
+char *intToHex(long long num, char *str, int bytes) 
 { 
     int i = 0;
-    uint64_t n = num;
+    long long n = abs(num);
 
-    /* Handle 0 explicitely, otherwise empty string is printed for 0 */
     if (n == 0) 
     {
         str[i++] = '0';
@@ -332,4 +397,7 @@ char *intToHex(uint64_t num, char *str, int bytes)
     return str; 
 } 
 
+int abs(int num){
+    return num < 0? -num : num;
+}
 

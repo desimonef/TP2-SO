@@ -12,6 +12,12 @@ void int_21() {
 }
 
 void irqDispatcher(uint64_t irq) {
+	/*
+	PInterruption interruption = interruptions[irq];
+	if (interruption != 0)
+		interruption();
+	return;
+	*/
 	switch(irq){
 		case 0: 
 			int_20();

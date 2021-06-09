@@ -5,10 +5,14 @@
 
 int scan(int fd, char * buffer, uint32_t length);
 int print(int fd, char * buffer, uint32_t length);
-int dumpRegs(uint64_t * buffer); 
+int dumpRegs(char * buffer); 
 int dumpMem(char * buffer, uint64_t address, uint64_t bytes);
-void accessClock(int id, char * buff);
-void clearScreen();
+int accessClock(int descriptor);
+void testAccessClock(int id, char * buff);
+void screenClear(int mode);
+void startScreen(int module);
+
+
 void UDcaller();
 
 #endif

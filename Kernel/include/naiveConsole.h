@@ -14,5 +14,7 @@ void ncPrintBase(uint64_t value, uint32_t base);
 void ncClear();
 uint8_t * getCurrent();
 void setCurrent(uint8_t * pos);
+void scrollUp(int screen);
+void backspace();
 
 #endif

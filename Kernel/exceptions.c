@@ -1,5 +1,6 @@
 #include "lib.h"
 #include "sysCallDispatcher.h"
+#include "naiveConsole.h"
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
@@ -19,4 +20,5 @@ void exceptionDispatcher(int exception, uint64_t rsp) {
 	intToHexa((uint64_t)(rsp + 3*8), auxHexa, 8);
 	sysWrite(2, auxHexa, 10);
 	hold(5);
+	//ncClear();
 }

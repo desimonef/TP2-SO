@@ -137,7 +137,7 @@ getRegister:
     	mov rax, r15
     	jp .exit
 
-.exit 	
+.exit: 	
     	mov rsp, rbp
 		pop rbp
     	ret

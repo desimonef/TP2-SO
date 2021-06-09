@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "lib.h"
 
+int counter  = 0;
+
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
@@ -57,6 +59,14 @@ int strlen(char * string){
     return i;
 }
 
+/*
+
+
+FUNCIONES AUXILIARES B
+ACORDARSE DE REMOVER
+
+*/
+
 void swap(char *x, char *y)
 {
     char t = *x;
@@ -64,12 +74,28 @@ void swap(char *x, char *y)
     *y = t;
 }
 
-char * intToHexa(uint64_t num, char * str, int bytes) 
+// function to reverse buffer[i..j]
+char * reverse(char *buffer, int i, int j)
+{
+    while (i < j)
+        swap(&buffer[i++], &buffer[j--]);
+
+    return buffer;
+}
+
+
+int abs(int num){
+    return num < 0? -num : num;
+}
+
+char * intToHexa(long long num, char *str, int bytes) 
 { 
     int i = 0;
+    long long n = abs(num);
 
     /* Handle 0 explicitely, otherwise empty string is printed for 0 */
-    if (num == 0) {
+    if (n == 0) 
+    {
         str[i++] = '0';
         str[i++] = 'x';
 
@@ -82,10 +108,11 @@ char * intToHexa(uint64_t num, char * str, int bytes)
     } 
   
     // Process individual digits 
-    while (i < bytes*2 && num != 0) { 
-        int aux = num % 16; 
-        str[i++] = (aux >= 10)? (aux - 10) + 'A' : aux + '0'; 
-        num = num/16; 
+    while (i < bytes*2 && n != 0) 
+    { 
+        int rem = n % 16; 
+        str[i++] = (rem >= 10)? (rem - 10) + 65 : rem + 48; 
+        n = n/16; 
     } 
 
     while (i < bytes*2) {
@@ -97,25 +124,10 @@ char * intToHexa(uint64_t num, char * str, int bytes)
     str[i] = '\0'; // Append string terminator 
   
     // Reverse the string 
-    reverse(str, i); 
-    return str;
+    return reverse(str, 0, i-1); 
 } 
 
-void reverse(char str[], int length)
- {
-     int start = 0;
-     int end = length -1;
-     while (start < end)
-     {
-         char aux = str[start];
-         str[start] = str[end];
-         str[end] = aux;
-         start++;
-         end--;
-     }
- }
-
- void hold(int secs){
+void hold(int secs){
     long int initTime,currTime;
     long int timeDif=0;
     int difference = 0;

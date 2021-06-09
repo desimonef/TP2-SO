@@ -43,8 +43,6 @@ void * initializeKernelBinary()
 {
 	char buffer[10];
 
-	initScreen();
-
 	ncPrint("[x64BareBones]");
 	ncNewline();
 
@@ -85,7 +83,8 @@ void * initializeKernelBinary()
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
-
+	ncClear();
+	
 	load_idt();
 	return getStackBase();
 }
@@ -111,5 +110,6 @@ int main()
 
 	ncPrint("[Finished]");
 
+	ncClear();
 	return 0;
 }

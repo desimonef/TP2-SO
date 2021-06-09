@@ -1,4 +1,4 @@
-GLOBAL scan, print, dumpRegs, dumpMem, accessClock, clearScreen, UDcaller
+GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, testAccessClock, UDcaller
 
 %macro pushState 0
 	push rax
@@ -37,11 +37,15 @@ GLOBAL scan, print, dumpRegs, dumpMem, accessClock, clearScreen, UDcaller
 %endmacro
 
 
+
 scan:
     push rbp
     mov rbp,rsp;
 
-    pushState
+    push rdi
+    push rsi
+    push rdx
+    push rcx
 
     mov rcx ,rdx ;len
     mov rdx, rsi  ;buffer
@@ -49,7 +53,10 @@ scan:
     mov rdi,0    ; interrupt id
     int 80h
     
-    popState
+    pop rcx
+    pop rdx
+    pop rsi
+    pop rdi
 
     leave
     ret
@@ -58,7 +65,10 @@ print:
     push rbp
     mov rbp,rsp;
 
-    pushState
+    push rdi
+    push rsi
+    push rdx
+    push rcx
 
     mov rcx ,rdx ;len
     mov rdx, rsi  ;buffer
@@ -66,11 +76,13 @@ print:
     mov rdi,1     ; interrupt id
     int 80h
 
-    popState
+    pop rcx
+    pop rdx
+    pop rsi
+    pop rdi
 
     leave
     ret
-
 
 dumpRegs:
 	push rbp
@@ -88,48 +100,77 @@ dumpRegs:
 	ret
 
 dumpMem:
+
 	push rbp
 	mov rbp, rsp
 
-    pushState
+	pushState
 	
-	mov rcx, rdx ; len
-	mov rdx, rsi ; address
-	mov rsi, rdi ; buffer
-	mov rdi, 3   ; interrupt id
-	int 80h
+	mov rcx, rdx ; coloco en rcx la cant de bytes
+	mov rdx, rsi ; rdx -> direc
+	mov rsi, rdi ; seteo el buff
+	mov rdi, 3
+	int 80h 
 	
 	popState
 
+	leave
+	ret
+
+
+testAccessClock:
+	push rbp
+	mov rbp, rsp
+
+	push rdx
+    push rsi
+	push rdi
+	
+	mov rdx, rsi ; buff
+	mov rsi, rdi ; seconds/minutes/hours/date/month/year id
+	mov rdi, 6   ; interrupt id
+	int 80h
+	
+	pop rdi
+	pop rsi
+	pop rdx
+
     leave
 	ret
+
 
 accessClock:
 	push rbp
 	mov rbp, rsp
 
-    pushState
+	push rdx
+    push rsi
+	push rdi
 	
-	mov rdx, rsi
 	mov rsi, rdi ; seconds/minutes/hours/date/month/year id
 	mov rdi, 4   ; interrupt id
 	int 80h
 	
-	popState
+	pop rdi
+	pop rsi
+	pop rdx
 
     leave
 	ret
 
-clearScreen:
+screenClear:
 	push rbp
 	mov rbp, rsp
 
-	pushState
+	push rsi
+	push rdi
 
-	mov rdi, 5 ;interrupt id
+	mov rsi, rdi
+	mov rdi, 5
 	int 80h
 
-	popState
+	pop rdi
+	pop rsi
 	leave
 	ret
 

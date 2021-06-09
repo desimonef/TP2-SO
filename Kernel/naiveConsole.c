@@ -1,4 +1,5 @@
 #include <naiveConsole.h>
+#include <screen.h>
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 
@@ -7,6 +8,7 @@ static uint8_t * const video = (uint8_t*)0xB8000;
 static uint8_t * currentVideo = (uint8_t*)0xB8000;
 static const uint32_t width = 80;
 static const uint32_t height = 25 ;
+static const uint32_t mid_height = 12;
 
 void setCurrent(uint8_t * pos) {
 	currentVideo = pos;
@@ -16,21 +18,49 @@ uint8_t * getCurrent() {
 	return currentVideo;
 }
 
-void scrollUp()
+void scrollUp(int screen)
 {
-	for (int i = 0; i < height -1; i++){
-		for (int j = 0; j < width * 2; j++){
-			video[j + i * width * 2] = video[j + (i+1) * width * 2];
+	if(screen == 0){
+		for (int i = 0; i < mid_height -1; i++){
+			for (int j = 0; j < width * 2; j++){
+				video[j + i * width * 2] = video[j + (i+1) * width * 2];
+			}
 		}
+		for (int k = 0; k < width * 2; k++){
+			video[(mid_height - 1) * width * 2 + k] = '\0';
+		}
+		currentVideo = video + (mid_height - 1) * width * 2;
 	}
-	for (int k = 0; k < width * 2; k++)
-		video[(height - 1) * width * 2 + k] = '\0';
-	currentVideo = video + (height - 1) * width * 2;
+	else{
+		for (int i = mid_height+1; i < height -1; i++){
+			for (int j = 0; j < width * 2; j++){
+				video[j + i * width * 2] = video[j + (i+1) * width * 2];
+			}
+		}
+		for (int k = 0; k < width * 2; k++){
+			video[(height - 1) * width * 2 + k] = '\0';
+		}
+		currentVideo = video + (height - 1) * width * 2;
+	}
+}
+
+void backspace(){
+	if (*currentVideo != 0xB8000){
+    	currentVideo -= 2;
+		*currentVideo = ' ';
+	}
 }
 
 void checkPosition(){
-	if (currentVideo - video >= width * height * 2)
-		scrollUp();
+	if(getCurrentScreen() == 0){
+		if(currentVideo - video >= width * mid_height * 2){
+			scrollUp(0);
+		}
+	}
+	else{
+		if (currentVideo - video >= width * height * 2)
+			scrollUp(1);
+	}
 }
 
 void ncPrintCharColor(char character, char color)

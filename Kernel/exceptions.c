@@ -16,10 +16,7 @@ void exceptionDispatcher(int exception, uint64_t rsp) {
 		return;
 	sysWrite(2, message, strlen(message));
 	ncNewline();
-	ncPrint("RSP: ");
-	char auxHexa[20] ={0};
-	intToHexa((uint64_t)(rsp + 3*8), auxHexa, 8);
-	sysWrite(2, auxHexa, 10);
+	ncNewline();
 	printRegisters();
 	sleep(5);
 }

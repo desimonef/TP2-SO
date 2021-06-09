@@ -1,4 +1,4 @@
-GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, testAccessClock, UDcaller
+GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, UDcaller
 
 %macro pushState 0
 	push rax
@@ -118,7 +118,7 @@ dumpMem:
 	ret
 
 
-testAccessClock:
+accessClock:
 	push rbp
 	mov rbp, rsp
 
@@ -138,25 +138,6 @@ testAccessClock:
     leave
 	ret
 
-
-accessClock:
-	push rbp
-	mov rbp, rsp
-
-	push rdx
-    push rsi
-	push rdi
-	
-	mov rsi, rdi ; seconds/minutes/hours/date/month/year id
-	mov rdi, 4   ; interrupt id
-	int 80h
-	
-	pop rdi
-	pop rsi
-	pop rdx
-
-    leave
-	ret
 
 screenClear:
 	push rbp

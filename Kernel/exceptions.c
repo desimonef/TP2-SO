@@ -19,6 +19,22 @@ void exceptionDispatcher(int exception, uint64_t rsp) {
 	char auxHexa[20] ={0};
 	intToHexa((uint64_t)(rsp + 3*8), auxHexa, 8);
 	sysWrite(2, auxHexa, 10);
+	printRegisters();
 	hold(5);
-	//ncClear();
+}
+
+void printRegisters(){
+    char * registers[16] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RSI: ", "RDI: ", "RBP: ", "RSP: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
+    for (int i=0 ;i < 16;i++){
+        if(i % 2 == 0){
+            ncNewline();
+        }
+		char hexa[20];
+		uint64_t aux = getRegister(i);
+        intToHexa(aux,hexa,8);
+        ncPrint(registers[i]);
+        ncPrint(hexa);
+		ncPrint(" ");
+    }
+    ncNewline();
 }

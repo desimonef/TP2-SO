@@ -13,7 +13,7 @@ void initShell(){
     shellWelcomeMsg();
 
     int c = -1;
-    while (c == -1)
+    while (c == -1 || (c != '1' && c != '2'))
     {
         c = getchar();
     }

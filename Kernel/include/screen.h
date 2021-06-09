@@ -11,6 +11,7 @@ void initDoubleScreen(int screen);
 void setMove(int option);
 void setStart();
 int getCurrentScreen();
+int canDelete();
 
 
 #endif

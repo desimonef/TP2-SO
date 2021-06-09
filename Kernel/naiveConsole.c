@@ -1,5 +1,5 @@
-#include <naiveConsole.h>
-#include <screen.h>
+#include "naiveConsole.h"
+#include "screen.h"
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 
@@ -128,8 +128,7 @@ void ncClear()
 	currentVideo = video;
 }
 
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base)
-{
+static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
 	char *p = buffer;
 	char *p1, *p2;
 	uint32_t digits = 0;

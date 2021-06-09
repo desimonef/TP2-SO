@@ -16,6 +16,7 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
     PSysCall sysCall = sysCalls[rdi];
     if (sysCall != 0)
         return sysCall(rsi, rdx, rcx);
+    return 0;
 }
 
 uint64_t sysRead(uint64_t fd, uint64_t buff, uint64_t amount){
@@ -45,18 +46,6 @@ uint64_t sysWrite(uint64_t fd, uint64_t buff, uint64_t count){
     for (i = 0; i < count && castbuff[i] != '\0'; i++)
         ncPrintCharColor(castbuff[i], color);
 
-    /*
-    int inserted = 0;
-    while(count > 0) {
-        if(*castbuff == '\0' || *castbuff==-1)
-            break;
-        else
-            ncPrintChar(*castbuff);
-        castbuff++;
-        inserted++;
-        count--;
-    }
-    */
     return i;
 }
 
@@ -87,6 +76,7 @@ uint64_t sysGetDateTime(uint64_t id, uint64_t buff, uint64_t rcx){
     int secondDigit = data&0x0F;
     castbuff[0] = '0' + firstDigit;
     castbuff[1] = '0' + secondDigit;
+    castbuff[2] = '\0';
     return data;
 }
 

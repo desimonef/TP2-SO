@@ -1,6 +1,7 @@
 #include "naiveConsole.h"
 #include "stdint.h"
 #include "naiveConsole.h"
+#include "keyboard.h"
 
 static uint8_t * const video = (uint8_t *)0xB8000;
 static uint32_t width;
@@ -16,6 +17,7 @@ void initScreen()
 {
     setCursor(0); //cursor = video
     setSize(80, 25);
+    resetKeyboardFlags();
 }
 
 void initDoubleScreen(int mode) {
@@ -31,6 +33,7 @@ void initDoubleScreen(int mode) {
     } while (halfLine % width != 0);
     if (mode == 0){
         setCursor(width);
+        downCursor = halfLine;
         screen = 0;
     }
     else if (mode == 1){
@@ -48,8 +51,10 @@ void setSize(int newWidth, int newHeight) {
 void setStart() {
     if(start <= 2)
         start++;
+        /*
     if(start == 2)
         downCursor = getCursor();
+        */
 }
 
 void setMove(int option) {
@@ -93,6 +98,3 @@ void changeScreen(int whichScreen) {
 int getCurrentScreen(){
     return screen;
 }
-
-
-//setCursor((height - 1) * width); (para el scroll up)

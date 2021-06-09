@@ -44,15 +44,15 @@ static const char asciiTable[] = {
     'z', 'x', 'c', 'v',
     'b', 'n', 'm', ',',
     '.', '-', 0, 0, 0,
-    0, 0, ' ', 0, 0,
+    0, ' ', ' ', 0, 0,
     0, 0, 0, 0
-};
+  };
 
 static const char asciiTableShift[] = {
-     0, 0, '!', '"',
+    0, 0, '!', '"',
     '·', '$', '%', '/',
     '/', '(', ')', '=',
-    '?', '¿', '\b', 0,
+    '?', '¿', 0, '\t',
     'Q', 'W', 'E', 'R',
     'T', 'Y', 'U', 'I',
     'O', 'P', '^', '*',
@@ -63,7 +63,7 @@ static const char asciiTableShift[] = {
     'Z', 'X', 'C', 'V',
     'B', 'N', 'M', ';',
     ':', '_', 0, 0, 0,
-    0, 0, ' ', 0, 0,
+    0, ' ', 0, 0,
     0, 0, 0, 0
 };
 
@@ -145,7 +145,8 @@ int isArrow(int scancode)
   return toRet;
 }
 
-if (scancode == BACKSPACE){
+int isBackspace(int scancode){
+  if (scancode == BACKSPACE){
     bufferSize = (bufferSize - 1) % INPUT_BUFFER;
     keyboardBuffer[bufferSize] = 0;
     unread--;
@@ -153,6 +154,7 @@ if (scancode == BACKSPACE){
     return 1;
   }
   return 0;
+}
 
 void screenMove(int scancode)
 {
@@ -206,6 +208,7 @@ void store(char c)
   unread++;
 }
 
+
 void keyboard_handler()
 {
   int scancode = readKey();
@@ -213,4 +216,8 @@ void keyboard_handler()
   char c = getAscii(scancode);
   if (c != -1)
     store(c);
+}
+
+void resetKeyboardFlags(){
+  first = 0;
 }

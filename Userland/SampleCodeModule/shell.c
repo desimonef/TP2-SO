@@ -42,7 +42,22 @@ void shellWelcomeMsg(){
     printf("      -@+----=@+ +@=---*@:\n");         
     printf("       @*----=@+ :@*===@#\n");          
     printf("      +@%##%%*:  :+##*+\n");*/
-    printf("Hola! Bienvenidos al sistema operativo Among-OS. Por favor, presione 1 o 2 para elegir que shell\n");
+    printf("              .+======+-.  \n");              
+    printf("             -#.       .+*.\n");            
+    printf("            .#:=*===-=+= -#.\n");          
+    printf("            *= +/+====*#. =+\n");        
+    printf("           :#.  .----:.   .#\n");       
+    printf("           +-             .#.\n");       
+    printf("           *.              +:\n");        
+    printf("          -=               +=\n");        
+    printf("          *:               ==\n");        
+    printf("         .#   :===-==:     -+\n");        
+    printf("         +=  ./:     *:    :+\n");  
+    printf("    :+===*.   *-     *:    :=\n");
+    printf("    -+:.  ..:=*: .-==*.    --\n");
+    printf("     .-===---.  .#:       :*.\n");
+    printf("                 :-=======:\n");
+    printf("\n\nHola! Bienvenidos al sistema operativo Among-OS. Por favor, presione 1 o 2 para elegir que shell\n");
     printf("quiere correr.\n\n1:Shell superior\n2:Shell inferior\n");
 }
 

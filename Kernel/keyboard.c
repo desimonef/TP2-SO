@@ -33,7 +33,7 @@ static const char asciiTable[] = {
     0, 0, '1', '2',
     '3', '4', '5', '6',
     '7', '8', '9', '0',
-    '\'', '¡', 0, '\t',
+    '\'', '¡', '\b', '\t',
     'q', 'w', 'e', 'r',
     't', 'y', 'u', 'i',
     'o', 'p', '`', '+',
@@ -73,8 +73,10 @@ char getAscii(int scancode)
   shiftPressing(scancode);
   int arrow = isArrow(scancode);
   int backspace = isBackspace(scancode);
-  if (arrow == 1 || backspace == 1)
+  if (arrow == 1)
     return -1;
+  if(scancode == BACKSPACE)
+      backspace();
   if (arrow == 0)
     screenMove(scancode);
 
@@ -143,17 +145,6 @@ int isArrow(int scancode)
   }
   
   return toRet;
-}
-
-int isBackspace(int scancode){
-  if (scancode == BACKSPACE){
-    bufferSize = (bufferSize - 1) % INPUT_BUFFER;
-    keyboardBuffer[bufferSize] = 0;
-    unread--;
-    backspace();
-    return 1;
-  }
-  return 0;
 }
 
 void screenMove(int scancode)

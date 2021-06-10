@@ -3,14 +3,15 @@
 
 #include <stdint.h>
 
-int codeMatchesAscii(int scancode);
-int getScanCode();
-int isLetter(char c);
 char getAscii(int scancode);
-void onKeyPressed(char chr); 
-int keyboardRead(char *ret, int count);
-void keyboard_handler();
+int codeMatchesAscii(int scancode);
+int isArrow(int scancode);
+void screenMove(int scancode);
 void shiftPressing(int scancode);
-int arrows(int scancode);
+void checkIndex();
+int keyboardRead(char *ret, int count);
+void store(char c);
+void keyboard_handler();
+void resetKeyboardFlags();
 
 #endif

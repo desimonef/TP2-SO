@@ -47,7 +47,7 @@ void shellWelcomeMsg(){
 
 
 void shellDivertida(){
-    printf("\nBienvenidos a among-OS! Si necesita ayuda, ingresar el comando <help>\n");
+    printf("Bienvenidos a among-OS! Si necesita ayuda, ingresar el comando <help>\n");
  
     while(1){
         printf("$>");

@@ -10,7 +10,7 @@
 typedef uint64_t (*PSysCall) (uint64_t, uint64_t, uint64_t);
 
 
-static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime, &sysClearScreen, &sysGetDateTime};
+static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime, &sysClearScreen};
 
 uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx){
     PSysCall sysCall = sysCalls[rdi];

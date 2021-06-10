@@ -1,0 +1,14 @@
+¡Bienvenidos a Among-OS!
+
+Indicaciones:
+	- Al iniciar el SO, notará que se le pide que ingrese 1 o 2 para
+	  comenzar el funcionamiento de la shell requerida. Por favor,
+	  haga uso de la indicación. No podrá inicializar la shell si
+	  presiona cualquier otra tecla.
+	
+	- Para cambiar entre shells mientras ejecuta, utilizar las
+	  flechas de arriba y abajo, respectivamente.
+	
+Gracias por utilizar nuestro sistema operativo.
+
+Cornidez, Milagros - De Simone, Franco - Dizenhaus, Manuel

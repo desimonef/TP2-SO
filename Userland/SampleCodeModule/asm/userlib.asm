@@ -1,43 +1,5 @@
 GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, UDcaller
 
-%macro pushState 0
-	push rax
-	push rbx
-	push rcx
-	push rdx
-	push rbp
-	push rdi
-	push rsi
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
-	push r14
-	push r15
-%endmacro
-
-%macro popState 0
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
-	pop rsi
-	pop rdi
-	pop rbp
-	pop rdx
-	pop rcx
-	pop rbx
-	pop rax
-%endmacro
-
-
-
 scan:
     push rbp
     mov rbp,rsp;
@@ -88,13 +50,15 @@ dumpRegs:
 	push rbp
 	mov rbp, rsp
 
-    pushState
+	push rdi
+    	push rsi
 	
 	mov rsi, rdi ; buffer
 	mov rdi, 2   ; interrupt id
 	int 80h
 	
-	popState
+	pop rsi
+    	pop rdi
 
     leave
 	ret
@@ -104,7 +68,10 @@ dumpMem:
 	push rbp
 	mov rbp, rsp
 
-	pushState
+	push rdi
+    push rsi
+    push rdx
+    push rcx
 	
 	mov rcx, rdx ; coloco en rcx la cant de bytes
 	mov rdx, rsi ; rdx -> direc
@@ -112,7 +79,10 @@ dumpMem:
 	mov rdi, 3
 	int 80h 
 	
-	popState
+	pop rcx
+    pop rdx
+    pop rsi
+    pop rdi
 
 	leave
 	ret

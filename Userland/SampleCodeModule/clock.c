@@ -36,6 +36,13 @@ void hours(char * buff){
 
 void days(char * buff){
     accessClock(DAYS, buff);
+    char auxBuff[3] = {0};
+    hours(auxBuff);
+    if(auxBuff[0] == '2' && auxBuff[1] >= '1'){
+        int finalDays = (buff[0] - '0')*10 + (buff[1] - '0') - 1;
+        buff[0] = ((finalDays/10)%10) + '0';
+        buff[1] = (finalDays%10) + '0';
+    }
 }
 
 void months(char * buff){

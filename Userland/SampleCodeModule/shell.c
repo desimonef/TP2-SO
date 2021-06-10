@@ -20,7 +20,6 @@ void initShell(){
 
     screenClear(c-'0');
     shellDivertida();
-    //shell();
 }
 
 void shellWelcomeMsg(){
@@ -47,7 +46,7 @@ void shellWelcomeMsg(){
 
 
 void shellDivertida(){
-    printf("Bienvenidos a among-OS! Si necesita ayuda, ingresar el comando <help>\n");
+    printf("Bienvenidos a Among-OS! Si necesita ayuda, ingresar el comando <help>\n");
  
     while(1){
         printf("$>");
@@ -77,15 +76,15 @@ void shellDivertida(){
                     else
                         printf("Argumento incorrecto. Ingrese la direccion con formato 0x seguido de la\ndireccion\n");
                 else
-                    printf("\nFalta argumento.\n");
+                    printf("Falta argumento.\n");
             }
             else{
-                printf("\nNo entendi su comando, por favor ingresar nuevamente\n");
+                printf("No entendi su comando, por favor ingresar nuevamente\n");
             }
         }
         else{
             screenClear(0);
-            printf("\nGracias por utilizar among-OS! Vuelva pronto!\n");
+            printf("Gracias por utilizar Among-OS! Vuelva pronto!\n");
             sleep(5);
             return;
         }
@@ -93,7 +92,7 @@ void shellDivertida(){
 }
 
 void displayHelpMenu(){
-    printf("\nLos comandos disponibles para ejecucion son:\n\n");
+    printf("Los comandos disponibles para ejecucion son:\n\n");
     printf("~help~: muestra el menu de ayuda\n");
     printf("~kill~: termina la ejecución del SO\n");
     printf("~zerodiv~: se genera una excepcion de division por cero\n");
@@ -117,7 +116,7 @@ void inforeg(){
     uint64_t buff[16];
     char hexa[20];
     dumpRegs(buff);
-    printf("\n\nLos valores de los registros son:\n\n");
+    printf("Los valores de los registros son:\n");
     for (int i=0 ;i < 16;i++){
         if(i % 2 == 0){
             printf("\n");
@@ -126,7 +125,7 @@ void inforeg(){
         printf("%s:",registers[i]);
         printf("%s   ",hexa);
     }
-    printf("\n\n");
+    printf("\n");
 }
 
 void printMem(char * hexaAddress){
@@ -140,7 +139,7 @@ void printMem(char * hexaAddress){
 		}
 		printf("    %s ", intToHex(buffer[i], byte, 1));
 	}
-	printf("\n\n");
+	printf("\n");
 }
 
 void getDateAndTime(){
@@ -150,13 +149,13 @@ void getDateAndTime(){
     days(auxDaysBuff);
     months(auxMonthsBuff);
     years(auxYearsBuff);
-    printf("\nLa fecha de hoy es: %s/%s/%s\n\n", auxDaysBuff, auxMonthsBuff, auxYearsBuff);
+    printf("\nLa fecha de hoy es: %s/%s/%s\n", auxDaysBuff, auxMonthsBuff, auxYearsBuff);
     char auxSecondsBuff[3] = {0};
     char auxMinutesBuff[3] = {0};
     char auxHoursBuff[3] = {0};
     seconds(auxSecondsBuff);
     minutes(auxMinutesBuff);
     hours(auxHoursBuff);
-    printf("La hora actual es: %s:%s:%s\n\n", auxHoursBuff, auxMinutesBuff, auxSecondsBuff);
+    printf("La hora actual es: %s:%s:%s\n", auxHoursBuff, auxMinutesBuff, auxSecondsBuff);
 }
 

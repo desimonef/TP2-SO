@@ -1,7 +1,8 @@
 #include "naiveConsole.h"
-#include "stdint.h"
+#include <stdint.h>
 #include "naiveConsole.h"
 #include "keyboard.h"
+#include "screen.h"
 
 static uint8_t * const video = (uint8_t *)0xB8000;
 static uint32_t width;

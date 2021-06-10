@@ -128,7 +128,7 @@ accessClock:
 	
 	mov rdx, rsi ; buff
 	mov rsi, rdi ; seconds/minutes/hours/date/month/year id
-	mov rdi, 6   ; interrupt id
+	mov rdi, 4   ; interrupt id
 	int 80h
 	
 	pop rdi

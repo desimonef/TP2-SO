@@ -8,6 +8,9 @@ Indicaciones:
 	
 	- Para cambiar entre shells mientras ejecuta, utilizar las
 	  flechas de arriba y abajo, respectivamente.
+	  
+	- Si desea ver las distintas funcionalidades, corra el
+	  comando "help".
 	
 Gracias por utilizar nuestro sistema operativo.
 

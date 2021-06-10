@@ -15,7 +15,6 @@ void strcpy(const char * str1, char * str2);
 void strcpyWithSeparator(const char * str1, char * str2, char separator);
 void putInBuff(char c);
 void reverse(char str[], int length);
-int strToInt(char *str, int *size);
 char* itoa(int num, char* str, int base);
 int isValidHexaAddress(char * buff);
 int hexToInt(char* num);

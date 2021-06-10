@@ -173,10 +173,11 @@ void reverse(char str[], int length)
 }
 
   
-// Implementation of itoa() - https://www.geeksforgeeks.org/implement-itoa/ adaptada
+// Implementation of itoa() - https://www.geeksforgeeks.org/implement-itoa/
 char* itoa(int num, char* str, int base)
 {
     int i = 0;
+    int isNegative = 0;
   
     //Handle 0 explicitely, otherwise empty string is printed for 0 
     if (num == 0)
@@ -184,6 +185,14 @@ char* itoa(int num, char* str, int base)
         str[i++] = '0';
         str[i] = '\0';
         return str;
+    }
+  
+    // In standard itoa(), negative numbers are handled only with 
+    // base 10. Otherwise numbers are considered unsigned.
+    if (num < 0 && base == 10)
+    {
+        isNegative = 1;
+        num = -num;
     }
   
     // Process individual digits
@@ -194,6 +203,10 @@ char* itoa(int num, char* str, int base)
         num = num/base;
     }
   
+    // If number is negative, append '-'
+    if (isNegative)
+        str[i++] = '-';
+  
     str[i] = '\0'; // Append string terminator
   
     // Reverse the string
@@ -201,7 +214,7 @@ char* itoa(int num, char* str, int base)
   
     return str;
 }
-
+ 
 //https://stackoverflow.com/questions/10156409/convert-hex-string-char-to-int
 int hexToInt(char * num){
     if (num[0] == '0' && (num[1] != 'x' || num[1] != 'X')){
@@ -221,8 +234,7 @@ int hexToInt(char * num){
     return -1;
 }
 
-
-//Inspirado en itoa. La adaptamos para que str tenga la cantidad de bytes que necesitamos
+//Inspirada en itoa. La adaptamos para que str tenga la cantidad de bytes que queremos
 char * intToHex(uint64_t num, char * str, int bytes) 
 { 
     int i = 0;

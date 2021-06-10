@@ -2,6 +2,7 @@
 #include "lib.h"
 #include "keyboard.h"
 #include "naiveConsole.h"
+#include "screen.h"
 
 //entre codes de pressed y released hay un defasaje de 128
 #define INPUT_BUFFER 255 //Cant max de caracteres en buffer de input

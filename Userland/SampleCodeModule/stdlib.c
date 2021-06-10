@@ -43,9 +43,6 @@ int scanf(char *command, ...){
     char *string;
     int stringIndex;
 
-    int *integer;
-    int integerLen;
-
     while (command[commandIndex] != '\0' && buffer[bufferIndex] != '\0' && !error){
         if (command[commandIndex] == '%'){
             commandIndex++;
@@ -176,11 +173,10 @@ void reverse(char str[], int length)
 }
 
   
-// Implementation of itoa()
+// Implementation of itoa() - https://www.geeksforgeeks.org/implement-itoa/ adaptada
 char* itoa(int num, char* str, int base)
 {
     int i = 0;
-    int isNegative = 0;
   
     //Handle 0 explicitely, otherwise empty string is printed for 0 
     if (num == 0)
@@ -188,14 +184,6 @@ char* itoa(int num, char* str, int base)
         str[i++] = '0';
         str[i] = '\0';
         return str;
-    }
-  
-    // In standard itoa(), negative numbers are handled only with 
-    // base 10. Otherwise numbers are considered unsigned.
-    if (num < 0 && base == 10)
-    {
-        isNegative = 1;
-        num = -num;
     }
   
     // Process individual digits
@@ -206,10 +194,6 @@ char* itoa(int num, char* str, int base)
         num = num/base;
     }
   
-    // If number is negative, append '-'
-    if (isNegative)
-        str[i++] = '-';
-  
     str[i] = '\0'; // Append string terminator
   
     // Reverse the string
@@ -218,48 +202,27 @@ char* itoa(int num, char* str, int base)
     return str;
 }
 
-int isValidHexaAddress(char * buff){
-    for(int i = 0; i < 8; i++){
-        if(i == 0 && buff[i] != '0'){
-            return 0;
+//https://stackoverflow.com/questions/10156409/convert-hex-string-char-to-int
+int hexToInt(char * num){
+    if (num[0] == '0' && (num[1] != 'x' || num[1] != 'X')){
+        int val = 0;
+        while (*num) {
+            // get current character then increment
+            char byte = *num++; 
+            // transform hex character to the 4bit equivalent number, using the ascii table indexes
+            if (byte >= '0' && byte <= '9') byte = byte - '0';
+            else if (byte >= 'a' && byte <='f') byte = byte - 'a' + 10;
+            else if (byte >= 'A' && byte <='F') byte = byte - 'A' + 10;    
+            // shift 4 to make space for new digit, and add the 4 bits of the new digit 
+            val = (val << 4) | (byte & 0xF);
         }
-        else if(i == 1 && buff[i] != 'x'){
-            return 0;
-        }
-        else{
-            if(!((buff[i] >= '0' && buff[i] <= '9') || (buff[i] >= 'A' && buff[i] <= 'F'))){
-                return 0;
-            }
-        }
+        return val;
     }
-    return 1;
+    return -1;
 }
 
-int hexToInt(char* num){
-    
-    int len = strlen(num);
-    int base = 1;
-    int returnValue = 0;
 
-    for (int i = len - 1; i >= 0; i--)
-    {
-        if (num[i] >= '0' && num[i] <= '9')
-        {
-            returnValue += (num[i] - '0') * base;
-        }
-        else if (num[i] >= 'A' && num[i] <= 'F')
-        {
-            returnValue += (num[i] - 'A') * base;
-        }
-	else if(num[i] != 'x'){
-	    printf("Direccion hexadecimal invalida\n");
-	    return -1;
-	}	
-	base = base * 16;
-    }
-    return returnValue;
-}
-
+//Inspirado en itoa. La adaptamos para que str tenga la cantidad de bytes que necesitamos
 char * intToHex(uint64_t num, char * str, int bytes) 
 { 
     int i = 0;

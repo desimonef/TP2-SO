@@ -72,15 +72,15 @@ SECTION .text
 	mov rsi, rsp
 
 	pushState
-	mov rdi, %1 ; pasaje de parametro
+	mov rdi, %1
 	call exceptionDispatcher
 
 	popState
 
-	sti ;Reactivo las interrupciones
+	sti 
 	call getStackBase
-	mov [rsp + 3*8], rax ;restablezco el stack
-	mov rax, 0x400000 ; Direccion del SampleCodeModule
+	mov [rsp + 3*8], rax 
+	mov rax, 0x400000 
 	mov [rsp], rax
 
 	iretq

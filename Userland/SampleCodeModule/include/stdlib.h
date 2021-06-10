@@ -6,6 +6,7 @@
 int getchar();
 int putchar(char c);
 int scanf(char * command, ...);
+void getCommandWithArgs();
 void printf(char * command, ...);
 int strlen(char * string);
 int strcmp(const char * str1, const char * str2);

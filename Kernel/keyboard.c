@@ -179,17 +179,16 @@ int keyboardRead(char *ret, int count)
     return -1;
   }
 
-  int size = 0;
-  for (int i = 0; i < count; i++)
+  int i = 0;
+  for ( ; i < count; i++)
   {
-    ret[size] = keyboardBuffer[readIndex];
-    size++;
+    ret[i] = keyboardBuffer[readIndex];
     readIndex++;
     checkIndex();
     unread--;
   }
-  ret[size] = 0;
-  return size;
+  ret[i] = 0;
+  return i;
 }
 
 void store(char c)

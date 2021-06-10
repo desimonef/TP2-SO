@@ -5,14 +5,10 @@
 
 int getchar();
 int putchar(char c);
-void clearBuff();
 int scanf(char * command, ...);
-void readLine();
 void printf(char * command, ...);
 int strlen(char * string);
 int strcmp(const char * str1, const char * str2);
-void strcpy(const char * str1, char * str2);
-void strcpyWithSeparator(const char * str1, char * str2, char separator);
 void putInBuff(char c);
 void reverse(char str[], int length);
 char* itoa(int num, char* str, int base);

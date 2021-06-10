@@ -23,27 +23,27 @@ int putchar(char c){
     return print(STDOUT, temp, 2);
 }
 
-void clearBuff() {
+void emptyBuffer() {
     buffSize = 0;
-    int c;
-    do {
-        scan(0, buffer, 512);
-    } while((c = getchar()) != -1);
+    int c = 0;
+    while(c != -1)
+        c = getchar();
+    
+}
     
 }
 
 int scanf(char *command, ...){
     va_list args;
     va_start(args, command);
-    clearBuff();
-    readLine(); //guarda en buffer los argumentos
+    getCommandWithArgs(); //guarda en buffer los argumentos
     int bufferIndex = 0;
     int error = 0;
     int commandIndex = 0;
     char *string;
     int stringIndex;
 
-    while (command[commandIndex] != '\0' && buffer[bufferIndex] != '\0' && !error){
+    while (!error && command[commandIndex] && buffer[bufferIndex]){
         if (command[commandIndex] == '%'){
             commandIndex++;
             switch (command[commandIndex]){
@@ -74,22 +74,21 @@ int scanf(char *command, ...){
     return bufferIndex;
 }
 
-void readLine(){
-    buffSize = 0;
-    int c;
+void getCommandWithArgs(){
+    emptyBuffer();
+    int c = 0;
     while ((c = getchar()) != '\n'){
         if (c == '\b'){
             if (buffSize != 0)
                 buffSize--;
         }
         else if (c != -1){
-            if (buffSize < MAX_BUFFER - 1)
-                buffer[buffSize++] = c;
+            putInBuff(c);
             putchar(c);
         }
     }
     putchar('\n');
-    buffer[buffSize++] = '\0';
+    putInBuff('\0');
 }
 
 void printf(char * command, ...){
@@ -142,20 +141,8 @@ int strcmp(const char * str1, const char * str2){
     return *str1 - *str2;
 }
 
-void strcpy(const char * str1, char * str2) {
-    strcpyWithSeparator(str1, str2, '\0');
-}
-
-void strcpyWithSeparator(const char * str1, char * str2, char separator) {
-    while(*str1 != separator) {
-        *str2 = *str1;
-        str1++;
-        str2++;
-    }
-}
-
 void putInBuff(char c) {
-    if(buffSize <= MAX_BUFFER)
+    if(buffSize < MAX_BUFFER - 1)
         buffer[buffSize++] = c;
 }
 

@@ -31,7 +31,7 @@ void emptyBuffer() {
     
 }
     
-}
+
 
 int scanf(char *command, ...){
     va_list args;

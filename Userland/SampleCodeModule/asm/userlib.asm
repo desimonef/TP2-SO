@@ -1,4 +1,4 @@
-GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, UDcaller
+GLOBAL scan, print, dumpRegs, dumpMem, accessClock, screenClear, UDcaller, syscall
 
 scan:
     push rbp
@@ -128,3 +128,23 @@ screenClear:
 UDcaller:
 	UD0 ; https://www.felixcloutier.com/x86/ud
 	ret
+
+syscall:
+	push rbp
+    mov rbp, rsp
+	pushStateNoRax
+
+;   mov rax,rdi
+;   mov rdi, rsi
+;   mov rsi,rdx
+;   mov rdx,rcx
+;   mov r10,r8
+;   mov r8,r9
+;	mov r9,[rbp+16]
+    int 80h
+
+	popStateNoRax
+	mov rsp, rbp
+    pop rbp
+
+    ret

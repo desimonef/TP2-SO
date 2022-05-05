@@ -7,16 +7,86 @@
 #include <sysCallDispatcher.h>
 #include <lib.h>
 
+#include "memManager.h"
+
 typedef uint64_t (*PSysCall) (uint64_t, uint64_t, uint64_t);
 
 
 static PSysCall sysCalls[] = {&sysRead, &sysWrite, &sysGetRegs, &sysGetMem, &sysGetDateTime, &sysClearScreen};
 
-uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx){
-    PSysCall sysCall = sysCalls[rdi];
-    if (sysCall != 0)
-        return sysCall(rsi, rdx, rcx);
-    return 0;
+uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
+    if(rdi < 6){    
+        PSysCall sysCall = sysCalls[rdi];
+        if (sysCall != 0)
+            return sysCall(rsi, rdx, r10);
+        return 0;
+    }
+    else{
+        switch(rdi){
+            //------------- MEMORY SYSCALLS -----------------
+            case MALLOC:
+                return (uint64_t) malloc(rsi);
+            case FREE:
+                free((void*)rsi);
+                return 0;
+            case PRINT_MEM:
+                memDump();
+                return 0;
+            
+            //------------ PROCESS SYSCALLS -----------------
+            /*case CREATE_P:
+                return addProcess((void (*)(int, char **))rsi, (int)rdx, (char **)r10, (int)r8, (int *)r9);
+            case KILL_P:
+                return killProcess(rsi);
+            case BLOCK_P:
+                return blockProcess(rsi);
+            case UNBLOCK_P:
+                return unblockProcess(rsi);
+            case PS:
+                processDisplay();
+                return 0;
+            case CURRENT_P:
+                return (uint64_t) getCurrPID();
+            case NICE:
+                setNewCycle(rsi, (int)rdx);
+                return 0;
+            case YIELD:
+                yield();
+                return 0;
+
+            // ----------- SEMAPHORE SYSCALLS ---------------
+            case OPEN_SEM:
+                return (uint64_t) sOpen((uint32_t) rsi, (uint32_t) rdx);
+            case WAIT_SEM:
+                return (uint64_t) sWait((uint32_t) rsi);
+            case POST_SEM:
+                return (uint64_t) sPost((uint32_t) rsi);
+            case CLOSE_SEM:
+                return (uint64_t) sClose((uint32_t) rsi);
+            case PRINT_SEMS:
+                sStatus();
+                return 0;
+
+            // ---------- PIPES SYSCALLS --------------------
+            case OPEN_PIPE:
+                return (uint64_t) pOpen((uint32_t) rsi);
+            case READ_PIPE:
+                return (uint64_t) pRead((uint32_t) rsi);
+            case WRITE_PIPE:   
+                return (uint64_t) pWrite((uint32_t) rsi, (char *) rdx);
+            case CLOSE_PIPE:
+                return (uint64_t) pClose((uint32_t) rsi);
+            case PRINT_PIPES:
+                dumpPipes();
+                return 0;
+            case TOTAL_P:
+                return 0;
+            case TICKS_ELAPSED:
+                return ticks_elapsed();*/
+            default:
+                return -1;
+        }
+    }
 }
 
 uint64_t sysRead(uint64_t fd, uint64_t buff, uint64_t amount){

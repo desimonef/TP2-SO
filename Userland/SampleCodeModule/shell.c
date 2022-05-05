@@ -10,7 +10,7 @@ int off = 0;
 
 void initShell(){
     screenClear(0);
-    shellWelcomeMsg();
+    /*shellWelcomeMsg();
 
     int c = -1;
     while (c != '1' && c != '2')
@@ -19,7 +19,8 @@ void initShell(){
     }
 
     screenClear(c-'0');
-    shellDivertida();
+    shellDivertida();*/
+    test_mm();
 }
 
 void shellWelcomeMsg(){

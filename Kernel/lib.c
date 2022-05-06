@@ -101,6 +101,41 @@ char * intToHexa(uint64_t num, char * str, int bytes){
     return str;
 } 
 
+char* itoa(int num, char* str, int base)
+{
+    int i = 0;
+    int isNegative = 0;
+  
+    if (num == 0)
+    {
+        str[i++] = '0';
+        str[i] = '\0';
+        return str;
+    }
+  
+    if (num < 0 && base == 10)
+    {
+        isNegative = 1;
+        num = -num;
+    }
+  
+    while (num != 0)
+    {
+        int rem = num % base;
+        str[i++] = (rem > 9)? (rem-10) + 'A' : rem + '0';
+        num = num/base;
+    }
+  
+    if (isNegative)
+        str[i++] = '-';
+  
+    str[i] = '\0'; 
+  
+    reverse(str, i);
+  
+    return str;
+}
+
 void sleep(int secs){
     int initSeconds = getDateTime(0x00);
     while(1){
@@ -108,3 +143,14 @@ void sleep(int secs){
             return;
     }
 }
+
+void acquire(int *mutex)
+{
+	while (_xchg(mutex, 1) != 0);
+}
+
+void release(int *mutex)
+{
+	_xchg(mutex, 0);
+}
+

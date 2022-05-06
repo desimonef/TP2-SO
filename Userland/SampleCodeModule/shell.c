@@ -8,7 +8,7 @@
 
 int off = 0;
 
-void initShell(){
+void initShell(int argc, char ** argv){
     screenClear(0);
     /*shellWelcomeMsg();
 
@@ -20,7 +20,19 @@ void initShell(){
 
     screenClear(c-'0');
     shellDivertida();*/
+    //shellNueva();
     test_mm();
+}
+
+void shellNueva(){
+    printf("Bienvenidos a Among-OS! Si necesita ayuda, ingresar el comando <help>\n");
+    char buffer[MAX_SIZE] ={0};
+    while(1){
+        //emptyBuffer(buffer);
+        printf("$>");
+        scanf("%s", buffer);
+        //processBuffer(buffer);
+    }
 }
 
 void shellWelcomeMsg(){

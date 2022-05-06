@@ -11,6 +11,7 @@
 #include "screen.h"
 
 #include "memManager.h"
+#include "schedule.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -43,8 +44,6 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
-	char buffer[10];
-	cpuVendor(buffer);
 
 	void * moduleAddresses[] = {
 		sampleCodeModuleAddress,
@@ -53,13 +52,21 @@ void * initializeKernelBinary()
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);	
-	load_idt();
+	//load_idt();
 	return getStackBase();
 }
 
 int main()
 {	
+	load_idt();
 	initMM();
-	((EntryPoint)sampleCodeModuleAddress)();
+	initScheduler();
+
+	char *argv[] = {"MasterProcess"};
+    addProcess(sampleCodeModuleAddress, 1, argv, 1, 0);
+	ncClear();
+    _hlt();
+
+	ncClear();
 	return 0;
 }

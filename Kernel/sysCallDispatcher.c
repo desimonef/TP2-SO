@@ -8,6 +8,7 @@
 #include <lib.h>
 
 #include "memManager.h"
+#include "schedule.h"
 
 typedef uint64_t (*PSysCall) (uint64_t, uint64_t, uint64_t);
 
@@ -34,7 +35,7 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
                 return 0;
             
             //------------ PROCESS SYSCALLS -----------------
-            /*case CREATE_P:
+            case CREATE_P:
                 return addProcess((void (*)(int, char **))rsi, (int)rdx, (char **)r10, (int)r8, (int *)r9);
             case KILL_P:
                 return killProcess(rsi);
@@ -54,6 +55,7 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
                 yield();
                 return 0;
 
+            /*
             // ----------- SEMAPHORE SYSCALLS ---------------
             case OPEN_SEM:
                 return (uint64_t) sOpen((uint32_t) rsi, (uint32_t) rdx);

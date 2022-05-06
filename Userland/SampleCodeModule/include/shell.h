@@ -1,7 +1,7 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-void initShell();
+void initShell(int argc, char ** argv);
 void shellWelcomeMsg();
 void shellDivertida();
 void displayHelpMenu();

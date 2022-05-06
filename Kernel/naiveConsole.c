@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "naiveConsole.h"
 #include "screen.h"
 
@@ -20,17 +22,17 @@ uint8_t * getCurrent() {
 
 void scrollUp(int screen)
 {
-	if(screen == 0){
-		for (int i = 0; i < mid_height -1; i++){
-			for (int j = 0; j < width * 2; j++){
-				video[j + i * width * 2] = video[j + (i+1) * width * 2];
-			}
+	//if(screen == 0){
+	for (int i = 0; i < mid_height -1; i++){
+		for (int j = 0; j < width * 2; j++){
+			video[j + i * width * 2] = video[j + (i+1) * width * 2];
 		}
-		for (int k = 0; k < width * 2; k++){
-			video[(mid_height - 1) * width * 2 + k] = '\0';
-		}
-		currentVideo = video + (mid_height - 1) * width * 2;
 	}
+	for (int k = 0; k < width * 2; k++){
+		video[(mid_height - 1) * width * 2 + k] = '\0';
+	}
+	currentVideo = video + (mid_height - 1) * width * 2;
+	/*}
 	else{
 		for (int i = mid_height+1; i < height -1; i++){
 			for (int j = 0; j < width * 2; j++){
@@ -41,7 +43,7 @@ void scrollUp(int screen)
 			video[(height - 1) * width * 2 + k] = '\0';
 		}
 		currentVideo = video + (height - 1) * width * 2;
-	}
+	}*/
 }
 
 void backspace(){

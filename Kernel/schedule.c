@@ -1,5 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <schedule.h>
 #include <lib.h>
 #include <memManager.h>
@@ -11,57 +12,6 @@
 #define INIT_PRIO_AUG 2
 #define PRIO_CAP 40
 
-typedef enum
-{
-      READY,
-      BLOCKED,
-      KILLED
-} State;
-
-typedef struct
-{
-      uint64_t pid;
-      uint64_t ppid;
-      int fg;
-      // 0 -> in - 1 -> out
-      int fd[2];
-      char name[30];
-      void *rsp;
-      void *rbp;
-      int priority;
-      int argc;
-      char **argv;
-} PCB;
-
-typedef struct
-{
-      uint64_t gs;
-      uint64_t fs;
-      uint64_t r15;
-      uint64_t r14;
-      uint64_t r13;
-      uint64_t r12;
-      uint64_t r11;
-      uint64_t r10;
-      uint64_t r9;
-      uint64_t r8;
-      uint64_t rsi;
-      uint64_t rdi;
-      uint64_t rbp;
-      uint64_t rdx;
-      uint64_t rcx;
-      uint64_t rbx;
-      uint64_t rax;
-
-      uint64_t rip;
-      uint64_t cs;
-      uint64_t eflags;
-      uint64_t rsp;
-      uint64_t ss;
-      uint64_t base;
-} StackFrame;
-
-// http://datastructs.io/home/c/queue
 typedef struct ProcessNode
 {
       PCB pcb;

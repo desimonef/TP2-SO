@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include "test_util.h"
-//#include "sysCalls.h"
+#include "sysCalls.h"
 
 #define MINOR_WAIT 1000000
 
@@ -38,7 +38,7 @@ void busyWait(uint64_t n)
     ;
 }
 
-/*void endlessLoop(int argc, char *argv[])
+void endlessLoop(int argc, char *argv[])
 {
   int pid = syscall(CURRENT_P, 0, 0, 0, 0, 0, 0);
 
@@ -47,4 +47,4 @@ void busyWait(uint64_t n)
     printf("%d ", pid);
     busyWait(MINOR_WAIT);
   }
-}*/
+}

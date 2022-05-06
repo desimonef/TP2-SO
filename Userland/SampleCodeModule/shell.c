@@ -2,6 +2,8 @@
 #include "userlib.h"
 #include "shell.h"
 #include "clock.h"
+#include "test_mm.h"
+#include "test_processes.h"
 
 #define MAXLEN 100
 #define MAX_SIZE 150
@@ -21,7 +23,8 @@ void initShell(int argc, char ** argv){
     screenClear(c-'0');
     shellDivertida();*/
     //shellNueva();
-    test_mm();
+    //test_mm();
+    test_processes();
 }
 
 void shellNueva(){

@@ -151,6 +151,7 @@ asmGetByte:
     leave
     ret
 
+
 callTimerTick:
 	int 20h
 	ret

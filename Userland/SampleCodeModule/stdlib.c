@@ -1,5 +1,3 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdarg.h>
 #include "stdlib.h"
 #include "userlib.h"
@@ -32,8 +30,6 @@ void emptyBuffer() {
         c = getchar();
     
 }
-    
-
 
 int scanf(char *command, ...){
     va_list args;
@@ -143,6 +139,29 @@ int strcmp(const char * str1, const char * str2){
     return *str1 - *str2;
 }
 
+int strtok(char * source, char ** dest, char token, int max){
+    int index = 0;
+
+    if (*source != token && *source != '\0')
+        dest[index++] = source;
+
+    while (*source != '\0')
+    {
+        if (*source == token)
+        {
+                *source = 0;
+                if (*(source + 1) != token && (*(source + 1) != '\0'))
+                {
+                    if (index >= max)
+                            return index;
+                    dest[index++] = source + 1;
+                }
+        }
+        source++;
+    }
+    return index;
+}
+
 void putInBuff(char c) {
     if(buffSize < MAX_BUFFER - 1)
         buffer[buffSize++] = c;
@@ -202,6 +221,41 @@ char* itoa(int num, char* str, int base)
     reverse(str, i);
   
     return str;
+}
+
+int atoi(char * str){
+    int number = 0;
+    int mult = 1;
+    int n = strlen(str);
+    n = (int)n < 0 ? -n : n; /* quick absolute value check  */
+    /* for each character in array */
+    while (n--)
+    {
+        /* if not digit or '-', check if number > 0, break or continue */
+        if ((str[n] < '0' || str[n] > '9') && str[n] != '-')
+        {
+                if (number)
+                    break;
+                else
+                    continue;
+        }
+
+        if (str[n] == '-')
+        { /* if '-' if number, negate, break */
+                if (number)
+                {
+                    number = -number;
+                    break;
+                }
+        }
+        else
+        { /* convert digit to numeric value   */
+                number += (str[n] - '0') * mult;
+                mult *= 10;
+        }
+    }
+
+    return number;
 }
  
 //https://stackoverflow.com/questions/10156409/convert-hex-string-char-to-int

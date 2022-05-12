@@ -57,7 +57,7 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
                 yield();
                 return 0;
 
-            /*
+            
             // ----------- SEMAPHORE SYSCALLS ---------------
             case OPEN_SEM:
                 return (uint64_t) sOpen((uint32_t) rsi, (uint32_t) rdx);
@@ -86,7 +86,7 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
             case TOTAL_P:
                 return 0;
             case TICKS_ELAPSED:
-                return ticks_elapsed();*/
+                return ticks_elapsed();
             default:
                 return -1;
         }

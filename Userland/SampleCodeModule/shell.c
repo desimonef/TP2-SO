@@ -1,16 +1,82 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "stdlib.h"
 #include "userlib.h"
 #include "shell.h"
 #include "clock.h"
-#include "test_mm.h"
+//#include "test_util.h"
+//#include "test_mm.h"
 #include "test_processes.h"
+#include "sysCalls.h"
+#include "commands.h"
+#include "phylo.h"
+#include "procLib.h"
+#include "semLib.h"
+#include "pipeLib.h"
 
 #define MAXLEN 100
 #define MAX_SIZE 150
+#define N_ARGS 8
+#define N_COMMANDS 26
+
+void helpWrp(int argc, char ** argv);
+void regWrp(int argc, char ** argv);
+void dumpWrp(int argc, char ** argv);
+void datetimeWrp(int argc, char ** argv);
+void divZeroWrp(int argc, char ** argv);
+void opCodeWrp(int argc, char ** argv);
+void clear(int argc, char ** argv);
+
+void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
+&divZeroWrp, &opCodeWrp, &ps, &mem, &test_prio,
+&testMM, &testProc, &testSync, &testNosync, &loop, &kill, &nice,
+&block, &unblock, &sem, &pipe, &cat, &wc, &filter, &philosopherProblem, &clear};
+
+char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime", "zerodiv", "invopcode",
+"ps", "mem", "testprio", "testmm", "testproc", "testsync", "testnosync", "loop", "kill", "nice",
+"block", "unblock", "sem", "pipe", "cat", "wc", "filter", "phylo", "clear"};
 
 int off = 0;
+static int pipeCounter = 0;
+
+int isItPiped(int argc, char **argv);
+void * getCommand(char * str);
+int runPipedCommands(int pipeIdx, int argc, char ** argv, int fg);
+int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut);
+int isBackground(int argc, char ** argv);
+void shellNueva();
+
+
+void helpWrp(int argc, char ** argv){
+    printf("\nestoy entrando a la funcion wrapper\n");
+    displayHelpMenu();
+}
+
+void regWrp(int argc, char ** argv){
+    inforeg();
+}
+
+void dumpWrp(int argc, char ** argv){
+    if(argc < 2){
+        printf("Por favor, indicar direccion\n");
+        return;
+    }
+    printMem(argv[1]);
+}
+
+void datetimeWrp(int argc, char ** argv){
+    getDateAndTime();
+}
+
+void divZeroWrp(int argc, char ** argv){
+    divZeroException();
+}
+
+void opCodeWrp(int argc, char ** argv){
+    opCodeException();
+}
+
+void clear(int argc, char ** argv){
+    screenClear(0);
+}
 
 void initShell(int argc, char ** argv){
     screenClear(0);
@@ -22,11 +88,32 @@ void initShell(int argc, char ** argv){
         c = getchar();
     }
 
-    screenClear(c-'0');
-    shellDivertida();*/
-    //shellNueva();
-    //test_mm();
-    test_processes();
+    //screenClear(c-'0');
+    screenClear(0);*/
+    //shellDivertida();
+    shellNueva();
+}
+
+void shellWelcomeMsg(){
+    printf("                    @###########@\n");              
+    printf("                   @-------------@\n");            
+    printf("                  @------@@@@@@@@@@\n");          
+    printf("                 @------@          @\n");        
+    printf("             @@@@------@            @\n");       
+    printf("            @---@------@            @\n");       
+    printf("           @----@-------@          @\n");        
+    printf("           @----@#-------@@@@@@@@@@.\n");        
+    printf("          .@----@#-----------------@\n");        
+    printf("          .@----@#-----------------@\n");        
+    printf("           @----@#----------------+@\n");        
+    printf("           @----@#----------------*@\n");        
+    printf("            @---@#----------------#@\n");         
+    printf("             @@@#@------####@-----@\n");         
+    printf("                 @-----=@   @-----@\n");         
+    printf("                 @-----=@   @-----@\n");          
+    printf("                 @######@   @#####@\n\n");
+    printf("          ¡Hola!\n"); 
+    printf("          Bienvenidos al sistema operativo Among-OS. Por favor, presione una tecla para continuar\n");
 }
 
 void shellNueva(){
@@ -34,34 +121,137 @@ void shellNueva(){
     char buffer[MAX_SIZE] ={0};
     while(1){
         //emptyBuffer(buffer);
-        printf("$>");
+        printf("\n$>");
         scanf("%s", buffer);
-        //processBuffer(buffer);
+        processBuffer(buffer);
     }
 }
 
-void shellWelcomeMsg(){
-    printf("          @###########@\n");              
-    printf("         @-------------@\n");            
-    printf("        @------@@@@@@@@@@\n");          
-    printf("       @------@          @\n");        
-    printf("   @@@@------@            @\n");       
-    printf("  @---@------@            @\n");       
-    printf(" @----@-------@          @\n");        
-    printf(" @----@#-------@@@@@@@@@@.\n");        
-    printf(".@----@#-----------------@\n");        
-    printf(".@----@#-----------------@\n");        
-    printf(" @----@#----------------+@\n");        
-    printf(" @----@#----------------*@\n");        
-    printf("  @---@#----------------#@\n");         
-    printf("   @@@#@------####@-----@\n");         
-    printf("       @-----=@   @-----@\n");         
-    printf("       @-----=@   @-----@\n");          
-    printf("       @######@   @#####@\n\n");
-    printf("Hola! Bienvenidos al sistema operativo Among-OS. Por favor, presione 1 o 2 para elegir que shell\n");
-    printf("quiere correr.\n\n1:Shell superior\n2:Shell inferior\n");
+void processBuffer(char * buffer){
+    int argc = 0;
+    char * argv[N_ARGS] = {0};
+    int fg = 1; //Unless stated otherwise ('&');
+    argc = strtok(buffer, argv, ' ', N_ARGS);
+    int pipe = isItPiped(argc, argv);
+    if(pipe != -1){
+        if(pipe == 0 || pipe == argc-1){
+            printf("El pipe se debe colocar entre argumentos.");
+            return;
+        }
+        if(runPipedCommands(pipe, argc, argv, fg) == -1){
+        //TODO: int runPipedCommands(int pipeIdx, int argc, char ** argv, int fg);
+            printf("Error corriendo comandos pipeados\n");
+        }
+        return;
+    }
+    if(isBackground(argc, argv) == 0){
+        fg = 0;
+        argc--;
+    }
+    int idx = getCommand(argv[0]);
+    if(idx == -1){
+        printf("Comando invalido\n");
+        return;
+    }
+    createProcess(cmds[idx], argc, argv, fg, 0);
 }
 
+void * getCommand(char * str){
+    int idx = 0; 
+    while(idx < N_COMMANDS){
+        if(strcmp(str, cmdsNames[idx]) == 0){
+            return idx;
+        }
+        idx++;
+    }
+    return -1;
+}
+
+int isItPiped(int argc, char **argv)
+{
+      for (int i = 0; i < argc; i++)
+      {
+            if (strcmp(argv[i], "|") == 0)
+                  return i;
+      }
+      return -1;
+}
+
+int runPipedCommands(int pipeIdx, int argc, char **argv, int fg)
+{
+    char *currentArgv[N_ARGS];
+    int currentArgc = 0;
+    uint32_t pids[2];
+
+    int pipe = pipeOpen(pipeCounter++);
+
+    if (pipe == -1)
+    {
+        printf("Error creating pipe");
+        return -1;
+    }
+
+    for (int i = pipeIdx + 1, j = 0; i < argc; i++, j++)
+    {
+        currentArgv[j] = argv[i];
+        currentArgc++;
+    }
+
+    pids[0] = runPipeCommand(currentArgc, currentArgv, BG, pipe, 1);
+
+    if (pids[0] == -1)
+    {
+        pipeClose(pipe);
+        return -1;
+    }
+
+    currentArgc = 0;
+
+    for (int i = 0; i < pipeIdx; i++)
+    {
+        currentArgv[i] = argv[i];
+        currentArgc++;
+    }
+
+    pids[1] = runPipeCommand(currentArgc, currentArgv, fg, 0, pipe);
+
+    if (pids[1] == -1)
+    {
+        return -1;
+        pipeClose(pipe);
+    }
+
+    int a = -1;
+    if (fg == 0)
+        semWait(pids[1]);
+    pipeWrite(pipe, (char *)&a);
+    semWait(pids[0]);
+    pipeClose(pipe);
+
+    return 1;
+};
+
+int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut)
+{
+
+      int fd[2];
+      int cmdIdx = getCommand(argv[0]);
+
+      if (cmdIdx == -1)
+            return -1;
+
+      fd[0] = fdIn;
+      fd[1] = fdOut;
+
+      return createProcess(cmds[cmdIdx], argc, argv, fg, fd);
+}
+
+int isBackground(int argc, char ** argv){
+    if(argv[argc - 1][0] == '&'){
+        return 0;
+    }
+    return -1;
+}
 
 void shellDivertida(){
     printf("Bienvenidos a Among-OS! Si necesita ayuda, ingresar el comando <help>\n");
@@ -75,8 +265,12 @@ void shellDivertida(){
             if(strcmp(command, "help") == 0){
                 displayHelpMenu();
             }
+            else if(strcmp(command, "clear") == 0){
+                screenClear(0);
+            }
             else if(strcmp(command, "inforeg") == 0){
-                inforeg();
+                char * argv[] = {"inforeg"};
+                inforeg(1, argv);
             }
             else if(strcmp(command, "zerodiv") == 0){
                 divZeroException();
@@ -96,6 +290,18 @@ void shellDivertida(){
                 else
                     printf("Falta argumento.\n");
             }
+            //TODO: Cuando armemos bien la shell, cambiar esto de los tests. 
+            //Es momentaneo para testear
+            else if(strcmp(command, "testproc") == 0){
+                test_processes();
+            }
+            else if(strcmp(command, "testt") == 0){
+                char * argv[] = {"inforeg"};
+                syscall(CREATE_P, (uint64_t) &inforeg, 1, (uint64_t) argv, 0, 1, 0);
+            }
+            else if(strcmp(command, "testmm") == 0){
+                test_mm();
+            }
             else{
                 printf("No entendi su comando, por favor ingresar nuevamente\n");
             }
@@ -110,7 +316,7 @@ void shellDivertida(){
 }
 
 void displayHelpMenu(){
-    printf("Los comandos disponibles para ejecucion son:\n\n");
+    printf("\nLos comandos disponibles para ejecucion son:\n\n");
     printf("~help~: muestra el menu de ayuda\n");
     printf("~kill~: termina la ejecución del SO\n");
     printf("~zerodiv~: se genera una excepcion de division por cero\n");
@@ -119,6 +325,17 @@ void displayHelpMenu(){
     printf("~printmem~: muestra el contenido de 32 bytes de memoria a partir de\n");
     printf("la direccion hexadecimal provista\n");
     printf("~datetime~: muestra la hora y la fecha a la hora de ejecutarse\n");
+    printf("~mem~: imprime estado actual de la memoria\n");
+    printf("~ps~: imprime procesos\n");
+    printf("~loop~: imprime el PID del proceso\n");
+    printf("~nice~: cambia prioridad de un proceso\n");
+    printf("~kill, block, unblock~: cambia estados de los procesos\n");
+    printf("~sem~: imprime semaforos\n");
+    printf("~cat~: imprime stdin como lo recibe\n");
+    printf("~wc~: cuenta cantidad de lineas del input\n");
+    printf("~filter~: filtra vocales del input\n");
+    printf("~pipe~: imprime estado actual de los pipes\n");
+    printf("~phylo~: implementacion del problema de los filosofos\n");
 }
 
 void divZeroException(){
@@ -129,7 +346,7 @@ void opCodeException(){
     UDcaller();
 }
 
-void inforeg(){
+void inforeg(int argc, char ** argv){
     char * registers[16] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RSI: ", "RDI: ", "RBP: ", "RSP: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
     uint64_t buff[16];
     char hexa[20];

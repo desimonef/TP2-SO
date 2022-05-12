@@ -95,7 +95,7 @@ void *scheduler(void *oldRSP)
 
             currentProcess->pcb.rsp = oldRSP;
 
-            if (currentProcess->pcb.pid != idleProcess->pcb.pid) //idleProcess should never be pushed into the queue
+            if (currentProcess->pcb.pid != idleProcess->pcb.pid)
             {
                   if (currentProcess->state == KILLED)
                   {

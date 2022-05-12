@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdarg.h>
 #include "stdlib.h"
 #include "userlib.h"
@@ -89,6 +91,34 @@ void getCommandWithArgs(){
     putInBuff('\0');
 }
 
+void strcpy(char *str1, char *str2)
+{ //copies str1 into str2
+      int i;
+      for (i = 0; str1[i] != 0; i++)
+            str2[i] = str1[i];
+      str2[i] = 0;
+}
+
+char * getCommandWithArgsBis(){
+    emptyBuffer();
+    int c = 0;
+    while ((c = getchar()) != '\n'){
+        if (c == '\b'){
+            if (buffSize != 0)
+                buffSize--;
+        }
+        else if (c != -1){
+            putInBuff(c);
+            putchar(c);
+        }
+    }
+    putchar('\n');
+    putInBuff('\0');
+    char retString[buffSize];
+    strcpy(buffer, retString);
+    return retString;
+}
+
 void printf(char * command, ...){
     char buffer[MAX_BUFFER];
     va_list args;
@@ -139,6 +169,12 @@ int strcmp(const char * str1, const char * str2){
     return *str1 - *str2;
 }
 
+void cleanBuffer(char * buffer){
+    int len = strlen(buffer);
+    for(int i = 0; i < len; i++)
+        buffer[i] = 0;
+}
+
 int strtok(char * source, char ** dest, char token, int max){
     int index = 0;
 
@@ -160,6 +196,30 @@ int strtok(char * source, char ** dest, char token, int max){
         source++;
     }
     return index;
+}
+
+int tokenizeBuffer(char token, char **dest, char *source, int max)
+{
+      int index = 0;
+
+      if (*source != token && *source != '\0')
+            dest[index++] = source;
+
+      while (*source != '\0')
+      {
+            if (*source == token)
+            {
+                  *source = 0;
+                  if (*(source + 1) != token && (*(source + 1) != '\0'))
+                  {
+                        if (index >= max)
+                              return index;
+                        dest[index++] = source + 1;
+                  }
+            }
+            source++;
+      }
+      return index;
 }
 
 void putInBuff(char c) {
@@ -323,3 +383,30 @@ void sleep(int secs){
     }
 }
 
+char *strstrip(char *s, char c) {
+  while (*s != 0) {
+    if (*s != c)
+      break;
+    s++;
+  }
+  return s;
+}
+
+char *strtokLib(char *s, char delim) {
+  char *ptr = s;
+
+  if (s == 0) {
+    return 0;
+  }
+
+  int flag = 0;
+  while (*ptr != 0) {
+    if (*ptr == delim) {
+      flag = 1;
+      *ptr = 0;
+    } else if (flag == 1)
+      return ptr;
+    ptr++;
+  }
+  return ptr;
+}

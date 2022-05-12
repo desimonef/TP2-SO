@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "stdlib.h"
 #include "userlib.h"
 #include "shell.h"
@@ -116,22 +118,65 @@ void shellWelcomeMsg(){
     printf("          Bienvenidos al sistema operativo Among-OS. Por favor, presione una tecla para continuar\n");
 }
 
+
 void shellNueva(){
     printf("Bienvenidos a Among-OS! Si necesita ayuda, ingresar el comando <help>\n");
     char buffer[MAX_SIZE] ={0};
     while(1){
         //emptyBuffer(buffer);
         printf("\n$>");
-        scanf("%s", buffer);
-        processBuffer(buffer);
+        cleanBuffer(buffer);
+        char * parsed = getCommandWithArgsBis(buffer);
+        //scanf("%s", buffer);
+        printf("\nbuffer sin parsear = ");
+        printf(parsed);
+        printf("\n");
+
+        processBuffer(parsed);
     }
 }
 
 void processBuffer(char * buffer){
-    int argc = 0;
-    char * argv[N_ARGS] = {0};
+    char *argv2[4] = {0};
+    argv2[0] = strstrip(buffer, ' ');
+    argv2[1] = strtokLib(argv2[0], ' ');
+    argv2[2] = strtokLib(argv2[1], ' ');
+    argv2[3] = strtokLib(argv2[2], '\n');
+
+    printf("\nToken 1 = ");
+    printf(argv2[0]);
+    printf("\nToken 2 = ");
+    printf(argv2[1]);
+    printf("\nToken 3 = ");
+    printf(argv2[2]);
+    printf("\nToken 4 = ");
+    printf(argv2[3]);
+
+    int argc = 3;
+    char * argv[N_ARGS];
+    for(int i = 0; i < 4; i++){
+        argv[i] = argv2[i];
+        strcpy(argv2[i], argv[i]);
+    }
+    // printf("\nToken 1 = ");
+    // printf(argv[0]);
+    // printf("\nToken 2 = ");
+    // printf(argv[1]);
+    // printf("\nToken 3 = ");
+    // printf(argv[2]);
+    // printf("\nToken 4 = ");
+    // printf(argv[3]);
+
     int fg = 1; //Unless stated otherwise ('&');
-    argc = strtok(buffer, argv, ' ', N_ARGS);
+    //argc = strtok(buffer, argv, ' ', N_ARGS);
+    //argc = tokenizeBuffer(' ', argv, buffer, N_ARGS);
+    // printf("\nbuffer post strtok = ");
+    // printf(buffer);
+    // printf("\n\nargv[0] = ");
+    // printf(argv[0]);
+    // printf(", argv[1] = ");
+    // printf(argv[1]);
+    // printf("\n");   
     int pipe = isItPiped(argc, argv);
     if(pipe != -1){
         if(pipe == 0 || pipe == argc-1){

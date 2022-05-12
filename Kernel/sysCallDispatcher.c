@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <time.h>
 #include <keyboard.h>
 #include <screen.h>
@@ -11,6 +13,8 @@
 
 #include "memManager.h"
 #include "schedule.h"
+#include "semaphores.h"
+#include "pipes.h"
 
 typedef uint64_t (*PSysCall) (uint64_t, uint64_t, uint64_t);
 
@@ -60,26 +64,26 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
             
             // ----------- SEMAPHORE SYSCALLS ---------------
             case OPEN_SEM:
-                return (uint64_t) sOpen((uint32_t) rsi, (uint32_t) rdx);
+                return (uint64_t) semOpen((uint32_t) rsi, (uint32_t) rdx);
             case WAIT_SEM:
-                return (uint64_t) sWait((uint32_t) rsi);
+                return (uint64_t) semWait((uint32_t) rsi);
             case POST_SEM:
-                return (uint64_t) sPost((uint32_t) rsi);
+                return (uint64_t) semPost((uint32_t) rsi);
             case CLOSE_SEM:
-                return (uint64_t) sClose((uint32_t) rsi);
+                return (uint64_t) semClose((uint32_t) rsi);
             case PRINT_SEMS:
-                sStatus();
+                semStatus();
                 return 0;
 
             // ---------- PIPES SYSCALLS --------------------
             case OPEN_PIPE:
-                return (uint64_t) pOpen((uint32_t) rsi);
+                return (uint64_t) pipeOpen((uint32_t) rsi);
             case READ_PIPE:
-                return (uint64_t) pRead((uint32_t) rsi);
+                return (uint64_t) pipeRead((uint32_t) rsi);
             case WRITE_PIPE:   
-                return (uint64_t) pWrite((uint32_t) rsi, (char *) rdx);
+                return (uint64_t) pipeWrite((uint32_t) rsi, (char *) rdx);
             case CLOSE_PIPE:
-                return (uint64_t) pClose((uint32_t) rsi);
+                return (uint64_t) pipeClose((uint32_t) rsi);
             case PRINT_PIPES:
                 dumpPipes();
                 return 0;

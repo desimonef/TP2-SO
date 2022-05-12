@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "sysCalls.h"
 #include "stdlib.h"
 #include "test_mm.h"
@@ -95,7 +97,7 @@ void wc(int argc, char ** argv){
         if ((char)c == '\n')
                 count++;
     }
-    print("\nNumber of lines: %d\n", count);
+    printf("\nNumber of lines: %d\n", count);
 }
 
 int check_vowel(char a)
@@ -111,6 +113,9 @@ int check_vowel(char a)
 
 void filter(int argc, char ** argv){
     int c;
+    printf("\nargv[1] = ");
+    printf(argv[1]);
+    printf("\n");
     while ((c = getchar()) != -1)
     {
         if (!check_vowel(c))

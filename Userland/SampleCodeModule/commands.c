@@ -82,20 +82,32 @@ void sem(int argc, char ** argv){
 }
 
 void cat(int argc, char ** argv){
-    int c;
-    while ((c = getchar()) != -1)
-            putchar(c);
+    // int c;
+    // while ((c = getchar()) != -1)
+    //         putchar(c);
+
+    int i = 0;
+    while(argv[1][i] != '\0' && argv[1][i] != '\n')
+        putchar(argv[1][i++]);
 }
 
 void wc(int argc, char ** argv){
-    int c;
-    int count = 1;
+    // int c;
+    // int count = 1;
 
-    while ((c = getchar()) != -1)
-    {
-        putchar(c);
-        if ((char)c == '\n')
-                count++;
+    // while ((c = getchar()) != -1)
+    // {
+    //     putchar(c);
+    //     if ((char)c == '\n')
+    //             count++;
+    // }
+    // printf("\nNumber of lines: %d\n", count);
+
+    int count = 1;
+    while(argv[1][i] != '\0' && argv[1][i] != '\n'){
+        putchar(argv[1][i++]);
+        if(argv[1][i++] == '\n')
+            count++;
     }
     printf("\nNumber of lines: %d\n", count);
 }
@@ -112,15 +124,15 @@ int check_vowel(char a)
 }
 
 void filter(int argc, char ** argv){
-    int c;
     printf("\nargv[1] = ");
     printf(argv[1]);
     printf("\n");
-    while ((c = getchar()) != -1)
+    while (argv[1][i] != '\0' && argv[1][i] != '\n')
     {
         if (!check_vowel(c))
                 putchar(c);
     }
+
 }
 
 void pipe(int argc, char ** argv){

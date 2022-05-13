@@ -1,11 +1,12 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include "sysCalls.h"
 #include "stdlib.h"
 #include "test_mm.h"
 //#include "test_prio.h"
 #include "test_processes.h"
-//#include "test_sync.h"
+#include "test_sync.h"
 
 int check_vowel(char a);
 
@@ -104,6 +105,7 @@ void wc(int argc, char ** argv){
     // printf("\nNumber of lines: %d\n", count);
 
     int count = 1;
+    int i = 0;
     while(argv[1][i] != '\0' && argv[1][i] != '\n'){
         putchar(argv[1][i++]);
         if(argv[1][i++] == '\n')
@@ -127,10 +129,12 @@ void filter(int argc, char ** argv){
     printf("\nargv[1] = ");
     printf(argv[1]);
     printf("\n");
+    int i = 0;
     while (argv[1][i] != '\0' && argv[1][i] != '\n')
     {
-        if (!check_vowel(c))
-                putchar(c);
+        if (!check_vowel(argv[1][i]))
+                putchar(argv[1][i]);
+        i++;
     }
 
 }
@@ -139,8 +143,8 @@ void pipe(int argc, char ** argv){
     syscall(PRINT_PIPES, 0, 0, 0, 0, 0, 0);
 }
 
-void test_prio(int argc, char ** argv){
-    
+void testPrio(int argc, char ** argv){
+    //test_prio();
 };
 
 void testMM(int argc, char ** argv){
@@ -151,5 +155,9 @@ void testProc(int argc, char ** argv){
     test_processes();
 };
 
-void testSync(int argc, char ** argv){};
-void testNosync(int argc, char ** argv){};
+void testSync(int argc, char ** argv){
+    test_sync();
+};
+void testNosync(int argc, char ** argv){
+    test_no_sync();
+};

@@ -1,18 +1,20 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <schedule.h>
 #include <lib.h>
 #include <memManager.h>
 #include <stddef.h>
 #include <interrupts.h>
+#include "lib.h"
 
 #define STACK_SIZE (4 * 1024)
 #define INIT_PRIO 1
 #define INIT_PRIO_AUG 2
 #define PRIO_CAP 40
+#define MAX_LEN 30
+
+void emptyBuff(char * buff);
 
 typedef struct ProcessNode
 {
@@ -316,27 +318,49 @@ char *stateToStr(State state)
       switch (state)
       {
       case READY:
-            return "R";
+            return "Ready";
             break;
       case BLOCKED:
-            return "B";
+            return "Blocked";
       default:
-            return "D";
+            return "Killed";
             break;
       };
 }
 
+void emptyBuff(char * buff){
+      for(int i = 0; buff[i] != '\0'; i++){
+            buff[i] = 0;
+      }
+}
+
 void printProcess(ProcessNode *process)
 {
-      //ncPrint()
-      //if (process != NULL)
-      //      print("%d        %d        %x        %x        %s            %s\n", process->pcb.pid, (int)process->pcb.fg,
-      //            (uint64_t)process->pcb.rsp, (uint64_t)process->pcb.rbp, stateToStr(process->state), process->pcb.name);
+      if(process != NULL){
+            char buff[MAX_LEN] = {0};
+            ncPrint("   ");
+            ncPrint(itoa(process->pcb.pid, buff, 10));
+            emptyBuff(buff);
+            ncPrint("     ");
+            ncPrint(itoa(process->pcb.fg,buff,10));
+            emptyBuff(buff);
+            ncPrint("     ");
+            ncPrint(itoa((uint64_t)process->pcb.rsp, buff, 16));
+            emptyBuff(buff);
+            ncPrint("     ");
+            ncPrint(itoa((uint64_t)process->pcb.rbp, buff, 16));
+            ncPrint("     ");
+            ncPrint(stateToStr(process->state));
+            ncPrint("     ");
+            ncPrint(process->pcb.name);
+            ncNewline();
+      }
 }
 
 void processDisplay()
 {
       ncPrint("PID      FG       RSP              RBP              STATE        NAME");
+      ncNewline();
 
       if (currentProcess != NULL)
             printProcess(currentProcess);

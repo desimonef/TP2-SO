@@ -19,7 +19,7 @@ void filter(int argc, char ** argv);
 
 void pipe(int argc, char ** argv);
 
-void test_prio(int argc, char ** argv);
+void testPrio(int argc, char ** argv);
 void testMM(int argc, char ** argv);
 void testProc(int argc, char ** argv);
 void testSync(int argc, char ** argv);

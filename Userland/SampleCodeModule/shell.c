@@ -1,11 +1,12 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include "stdlib.h"
 #include "userlib.h"
 #include "shell.h"
 #include "clock.h"
-//#include "test_util.h"
-//#include "test_mm.h"
+#include "test_util.h"
+#include "test_mm.h"
 #include "test_processes.h"
 #include "sysCalls.h"
 #include "commands.h"
@@ -13,6 +14,7 @@
 #include "procLib.h"
 #include "semLib.h"
 #include "pipeLib.h"
+#include "test_sync.h"
 
 #define MAXLEN 100
 #define MAX_SIZE 150
@@ -26,11 +28,12 @@ void datetimeWrp(int argc, char ** argv);
 void divZeroWrp(int argc, char ** argv);
 void opCodeWrp(int argc, char ** argv);
 void clear(int argc, char ** argv);
-
+//4,5,7,7,4   -   4,9,16,23,27
 void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
-&divZeroWrp, &opCodeWrp, &ps, &mem, &test_prio,
+&divZeroWrp, &opCodeWrp, &ps, &mem, &testPrio,
 &testMM, &testProc, &testSync, &testNosync, &loop, &kill, &nice,
-&block, &unblock, &sem, &pipe, &cat, &wc, &filter, &philosopherProblem, &clear};
+&block, &unblock, &sem, &pipe, &cat, &wc, &filter, 
+&philosopherProblem, &clear};
 
 char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime", "zerodiv", "invopcode",
 "ps", "mem", "testprio", "testmm", "testproc", "testsync", "testnosync", "loop", "kill", "nice",
@@ -93,7 +96,14 @@ void initShell(int argc, char ** argv){
     //screenClear(c-'0');
     screenClear(0);*/
     //shellDivertida();
-    shellNueva();
+    
+    
+    //shellNueva();
+    printf("Test sync:\n");
+    int argcc = 1;
+    char * argvv[] = {"ps"};
+    createProcess(cmds[6], argcc, argvv, 1, 0);
+    while(1);
 }
 
 void shellWelcomeMsg(){
@@ -124,7 +134,7 @@ void shellNueva(){
     char buffer[MAX_SIZE] ={0};
     while(1){
         //emptyBuffer(buffer);
-        printf("\n$>");
+        printf("$>");
         cleanBuffer(buffer);
         char * parsed = getCommandWithArgsBis(buffer);
         //scanf("%s", buffer);

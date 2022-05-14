@@ -19,7 +19,8 @@
 #define MAXLEN 100
 #define MAX_SIZE 150
 #define N_ARGS 8
-#define N_COMMANDS 26
+#define MAX_ARGS 4
+#define N_COMMANDS 27
 
 void helpWrp(int argc, char ** argv);
 void regWrp(int argc, char ** argv);
@@ -51,7 +52,6 @@ void shellNueva();
 
 
 void helpWrp(int argc, char ** argv){
-    printf("\nestoy entrando a la funcion wrapper\n");
     displayHelpMenu();
 }
 
@@ -85,25 +85,15 @@ void clear(int argc, char ** argv){
 
 void initShell(int argc, char ** argv){
     screenClear(0);
-    /*shellWelcomeMsg();
+    shellWelcomeMsg();
 
     int c = -1;
-    while (c != '1' && c != '2')
+    while (c == -1)
     {
         c = getchar();
     }
-
-    //screenClear(c-'0');
-    screenClear(0);*/
-    //shellDivertida();
-    
-    
-    //shellNueva();
-    printf("Test sync:\n");
-    int argcc = 1;
-    char * argvv[] = {"ps"};
-    createProcess(cmds[6], argcc, argvv, 1, 0);
-    while(1);
+    screenClear(0);
+    shellNueva();
 }
 
 void shellWelcomeMsg(){
@@ -143,50 +133,44 @@ void shellNueva(){
         printf("\n");
 
         processBuffer(parsed);
+        printf("\n");
     }
 }
 
 void processBuffer(char * buffer){
-    char *argv2[4] = {0};
-    argv2[0] = strstrip(buffer, ' ');
-    argv2[1] = strtokLib(argv2[0], ' ');
-    argv2[2] = strtokLib(argv2[1], ' ');
-    argv2[3] = strtokLib(argv2[2], '\n');
+    // char *argv2[4] = {0};
+    // argv2[0] = strstrip(buffer, ' ');
+    // argv2[1] = strtokLib(argv2[0], ' ');
+    // argv2[2] = strtokLib(argv2[1], ' ');
+    // argv2[3] = strtokLib(argv2[2], ' ');
 
-    printf("\nToken 1 = ");
-    printf(argv2[0]);
-    printf("\nToken 2 = ");
-    printf(argv2[1]);
-    printf("\nToken 3 = ");
-    printf(argv2[2]);
-    printf("\nToken 4 = ");
-    printf(argv2[3]);
-
-    int argc = 3;
-    char * argv[N_ARGS];
-    for(int i = 0; i < 4; i++){
-        argv[i] = argv2[i];
-        strcpy(argv2[i], argv[i]);
-    }
     // printf("\nToken 1 = ");
-    // printf(argv[0]);
+    // printf(argv2[0]);
     // printf("\nToken 2 = ");
-    // printf(argv[1]);
+    // printf(argv2[1]);
     // printf("\nToken 3 = ");
-    // printf(argv[2]);
+    // printf(argv2[2]);
     // printf("\nToken 4 = ");
-    // printf(argv[3]);
+    // printf(argv2[3]);
+    // printf("\n");
 
-    int fg = 1; //Unless stated otherwise ('&');
-    //argc = strtok(buffer, argv, ' ', N_ARGS);
-    //argc = tokenizeBuffer(' ', argv, buffer, N_ARGS);
-    // printf("\nbuffer post strtok = ");
-    // printf(buffer);
-    // printf("\n\nargv[0] = ");
-    // printf(argv[0]);
-    // printf(", argv[1] = ");
-    // printf(argv[1]);
-    // printf("\n");   
+    // int argc = 3;
+    // char * argv[N_ARGS];
+    // for(int i = 0; i < 4; i++){
+    //     argv[i] = argv2[i];
+    //     strcpy(argv2[i], argv[i]);
+    // }
+
+    int argc = 0;
+    char *argv[MAX_ARGS] = {0};
+    argc = tokenizeBuffer(' ', argv, buffer, MAX_ARGS);
+
+    for(int i = 0; i < argc; i++){
+        printf("\n");
+        printf(argv[i]);
+    }
+
+    int fg = 1; //Unless stated otherwise ('&');  
     int pipe = isItPiped(argc, argv);
     if(pipe != -1){
         if(pipe == 0 || pipe == argc-1){
@@ -204,6 +188,9 @@ void processBuffer(char * buffer){
         argc--;
     }
     int idx = getCommand(argv[0]);
+    char buff[MAXLEN];
+    printf(itoa(idx, buff, 10));
+    printf("\n");
     if(idx == -1){
         printf("Comando invalido\n");
         return;
@@ -212,8 +199,12 @@ void processBuffer(char * buffer){
 }
 
 void * getCommand(char * str){
+    //printf(str);
+    //printf("\n");
     int idx = 0; 
     while(idx < N_COMMANDS){
+        //printf("\n");
+        //printf(cmdsNames[idx]);
         if(strcmp(str, cmdsNames[idx]) == 0){
             return idx;
         }

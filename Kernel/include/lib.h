@@ -10,6 +10,7 @@ char * intToHexa (uint64_t num, char * str, int bytes);
 char * itoa(int num, char* str, int base);
 void reverse(char * str, int length);
 int strlen(char * string);
+void strcpy(char *str1, char *str2);
 void sleep(int secs);
 
 void acquire(int *mutex);

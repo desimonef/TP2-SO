@@ -1,6 +1,8 @@
 #ifndef MEMMANAGER_H
 #define MEMMANAGER_H
 
+#include "naiveConsole.h"
+
 #define NULL ((void *) 0)
 #define EMPTY 0
 #define PARTIAL 1

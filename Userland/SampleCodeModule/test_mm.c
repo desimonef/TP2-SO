@@ -35,7 +35,7 @@ void test_mm(){
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
       mm_rqs[rq].address = (void *) syscall(MALLOC, mm_rqs[rq].size, 0, 0, 0, 0, 0); // TODO: Port this call as required
       if(mm_rqs[rq].address == NULL){
-        printf("Malloc failed, exiting\n");
+        printf("Test failed\n");
         return;
       }
       total += mm_rqs[rq].size;
@@ -62,10 +62,10 @@ void test_mm(){
     contador--;
 
     if(LOOPS >= 100000 && contador == LOOPS/2 ){
-      printf("Yeah, it takes a while ;)");
+      printf("Please hold, still testing");
       printf("\n");
     }  
   } 
-  printf("Memory manager test OK");
+  printf("Test succesfully passed! :)");
   printf("\n");
 }

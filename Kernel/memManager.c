@@ -23,7 +23,8 @@ static Header * startingNode = NULL;
 unsigned long totalUnits;
 
 void initMM(){
-    ncPrint("Entering MM\n");
+    ncPrint("Entering MEM_LIST MM\n");
+    //sleep(5);
     totalUnits = (TOTALMEM + sizeof(Header) - 1) / sizeof(Header) + 1;
     startingNode = base = (Header *) MEM_START;
     startingNode->data.size = totalUnits;
@@ -104,6 +105,10 @@ void free(void * addr){
     }
 
     startingNode = currNode;
+}
+
+void memDump(){
+    ncPrint("Memdump!\n");
 }
 
 #endif

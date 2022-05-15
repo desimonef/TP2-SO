@@ -10,8 +10,8 @@
 
 Semaphore *semaphores = NULL;
 
-static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
-static Semaphore *findSem(uint32_t id);
+static void printBlockedPIDsForSem(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
+static Semaphore * findSem(uint32_t id);
 
 uint32_t semOpen(uint32_t id, uint32_t initValue)
 {
@@ -130,7 +130,7 @@ void semStatus()
 
 }
 
-static void dumpBlockedPIDs(uint32_t *blockedPIDs, uint16_t blockedPIDsSize)
+static void printBlockedPIDsForSem(uint32_t *blockedPIDs, uint16_t blockedPIDsSize)
 {
 
 }

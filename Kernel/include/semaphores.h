@@ -9,7 +9,7 @@ typedef struct Semaphore
 {
     uint32_t id;
     uint32_t value;
-    uint16_t attachedProc;
+    uint16_t listeners;
     uint32_t blockedPIDs[MAX_BLOCKED];
     uint16_t blockedPIDsSize;
     int mutex;

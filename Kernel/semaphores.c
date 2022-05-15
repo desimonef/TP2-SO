@@ -13,9 +13,7 @@ Semaphore *semaphores = NULL;
 static void printBlockedPIDsForSem(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
 static Semaphore * findSem(uint32_t id);
 
-uint32_t semOpen(uint32_t id, uint32_t initValue)
-{
-
+uint32_t semOpen(uint32_t id, uint32_t initValue){
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
@@ -24,32 +22,31 @@ uint32_t semOpen(uint32_t id, uint32_t initValue)
             return -1;
 
         sem->value = initValue;
-        sem->attachedProc = 0;
+        sem->listeners = 0;
         sem->blockedPIDsSize = 0;
         sem->id = id;
         sem->next = NULL;
         sem->mutex = 0;
 
-        Semaphore *lastSem = semaphores;
+        Semaphore * lastSem = semaphores;
 
-        if (lastSem == NULL)
+        if (lastSem == NULL){
             semaphores = sem;
-        else
-        {
+        }
+        else{
             while (lastSem->next != NULL)
                 lastSem = lastSem->next;
             lastSem->next = sem;
         }
     }
 
-    if (sem->attachedProc >= MAX_BLOCKED)
-    {
+    if (sem->listeners >= MAX_BLOCKED){
         ncPrint("No space for this listener");
         ncNewline();
         return -1;
     }
 
-    sem->attachedProc++;
+    sem->listeners++;
     return id;
 }
 
@@ -60,14 +57,12 @@ int semWait(uint32_t id)
         return -1;
 
     acquire(&(sem->mutex));
-    if (sem->value > 0)
-    {
+    if (sem->value > 0){
         sem->value--;
         release(&(sem->mutex));
         return 0;
     }
-    else
-    {
+    else{
         int currPid = getCurrPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
         release(&(sem->mutex));
@@ -84,8 +79,7 @@ int semPost(uint32_t id)
         return -1;
 
     acquire(&(sem->mutex));
-    if (sem->blockedPIDsSize > 0)
-    {
+    if (sem->blockedPIDsSize > 0){
         int nextPid = sem->blockedPIDs[0];
         for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
@@ -94,8 +88,10 @@ int semPost(uint32_t id)
         release(&(sem->mutex));
         return 0;
     }
-    else
+
+    else{
         sem->value++;
+    }
 
     release(&(sem->mutex));
     return 0;
@@ -107,13 +103,14 @@ int semClose(uint32_t id)
     if (sem == NULL)
         return -1;
 
-    sem->attachedProc--;
-    if (sem->attachedProc > 0)
+    sem->listeners--;
+    if (sem->listeners > 0)
         return 0;
 
     Semaphore *aux = semaphores;
-    if (aux == sem)
+    if (aux == sem){
         semaphores = aux->next;
+    }
     else
     {
         while (aux->next != sem)

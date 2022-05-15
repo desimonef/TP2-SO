@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
-#ifdef MEM_LIST
+#ifndef BUDDY
 
 #include "memManager.h"
 #include "defs.h"
@@ -24,7 +24,7 @@ unsigned long totalUnits;
 
 void initMM(){
     ncPrint("Entering MEM_LIST MM\n");
-    //sleep(5);
+    sleep(5);
     totalUnits = (TOTALMEM + sizeof(Header) - 1) / sizeof(Header) + 1;
     startingNode = base = (Header *) MEM_START;
     startingNode->data.size = totalUnits;

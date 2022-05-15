@@ -62,8 +62,7 @@ void * malloc(int size){
 void free(void * addr){
     if(addr == NULL || (((long) addr - (long) base) % sizeof(Header)) != 0)
         return;
-
-
+        
     Header *freeBlock;
     Header *currNode;
 

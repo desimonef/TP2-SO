@@ -111,6 +111,7 @@ void cat(int argc, char ** argv){
     int i = 0;
     while(argv[1][i] != '\0' && argv[1][i] != '\n')
         putchar(argv[1][i++]);
+    printf("\n");
 }
 
 void wc(int argc, char ** argv){

@@ -179,6 +179,7 @@ void memDump(void) {
     ncPrintDec((uint64_t) TOTALMEM - (uint64_t) memAllocated);
     ncNewline();
     ncPrint("---------------------------");
+    ncNewline();
 }
 
 

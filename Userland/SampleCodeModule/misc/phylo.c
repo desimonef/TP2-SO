@@ -18,13 +18,13 @@ typedef enum
     THINKING = 1,
     EATING = 2,
     HUNGRY = 3,
-} STATE;
+} State;
 
 typedef struct Philosopher
 {
     int pid;
     int sem;
-    STATE state;
+    State State;
 } Philosopher;
 
 Philosopher *philos[MAX_PHILOS];
@@ -32,8 +32,8 @@ static int actualPhilosopherCount = 0;
 static int tableMutex;
 static int problemRunning;
 
-#define RIGHT(i) ((i) + 1) % (actualPhilosopherCount)                         /* number of i’s right neighbor */
-#define LEFT(i) ((i) + actualPhilosopherCount - 1) % (actualPhilosopherCount) /* number of i’s left neighbor */
+#define RIGHT(i) ((i) + 1) % (actualPhilosopherCount)                         
+#define LEFT(i) ((i) + actualPhilosopherCount - 1) % (actualPhilosopherCount) 
 
 void philo(int argc, char *argv[]);
 void takeForks(int i);
@@ -50,7 +50,6 @@ void philo(int argc, char *argv[])
     {
         takeForks(idx);
         sleep(1);
-        //TODO: void sleep(int seconds);
         placeForks(idx);
         sleep(1);
     }
@@ -59,7 +58,7 @@ void philo(int argc, char *argv[])
 void takeForks(int i)
 {
     semWait(tableMutex);
-    philos[i]->state = HUNGRY;
+    philos[i]->State = HUNGRY;
     test(i);
     semPost(tableMutex);
     semWait(philos[i]->sem);
@@ -68,7 +67,7 @@ void takeForks(int i)
 void placeForks(int i)
 {
     semWait(tableMutex);
-    philos[i]->state = THINKING;
+    philos[i]->State = THINKING;
     test(LEFT(i));
     test(RIGHT(i));
     semPost(tableMutex);
@@ -76,9 +75,9 @@ void placeForks(int i)
 
 void test(int i)
 {
-    if (philos[i]->state == HUNGRY && philos[LEFT(i)]->state != EATING && philos[RIGHT(i)]->state != EATING)
+    if (philos[i]->State == HUNGRY && philos[LEFT(i)]->State != EATING && philos[RIGHT(i)]->State != EATING)
     {
-        philos[i]->state = EATING;
+        philos[i]->State = EATING;
         semPost(philos[i]->sem);
     }
 }
@@ -87,10 +86,10 @@ void philosopherProblem(int argc, char *argv[])
 {
     problemRunning = 1;
     tableMutex = semOpen(MUTEX_ID, 1);
-    printf("Welcome to the Philosophers Problem!\n");
-    printf("To add a philosopher, use 'a'. To delete one, use 'd'. To exit, press 'q'\n");
+    printf("Problema de los filosofos.\n");
+    printf("Instrucciones:\n- 'a': Agrega un filosofo\n- 'b': Borra un filosofo\n- 'q': Cierra el programa\nComencemos :)\n\n");
 
-    sleep(5);
+    sleep(2);
 
     for (int i = 0; i < BASE_PHILOS; i++)
         addPhilosopher();
@@ -104,18 +103,18 @@ void philosopherProblem(int argc, char *argv[])
         {
         case 'a':
             if (addPhilosopher() == -1)
-                printf("Can\'t add another philosopher. Maximum 8 philosophers.\n");
+                printf("No se puede agregar (maximo 8)\n");
             else
-                printf("A new philosopher joined!\n");
+                printf("Agregando filósofo...\n");
             break;
-        case 'd':
+        case 'b':
             if (removePhilosopher() == -1)
-                printf("Can\'t remove another philosopher. Minimum 4 philosophers.\n");
+                printf("No se puede remover (minimo 4)\n");
             else
-                printf("One philosopher has left!\n");
+                printf("Removiendo filosofo...\n");
             break;
         case 'q':
-            printf("Program Finished!\n");
+            printf("\nFinalizando. Hasta la proxima :)\n\n");
             problemRunning = 0;
             break;
         default:
@@ -143,7 +142,7 @@ int addPhilosopher()
     Philosopher *auxPhilo = malloc(sizeof(Philosopher));
     if (auxPhilo == NULL)
         return -1;
-    auxPhilo->state = THINKING;
+    auxPhilo->State = THINKING;
     auxPhilo->sem = semOpen(BASE_SEM_ID + actualPhilosopherCount, 1);
     char buffer[3];
     char *name[] = {"philosopher", itoa(actualPhilosopherCount, buffer, 10)};
@@ -177,7 +176,7 @@ void printfTable(int argc, char *argv[])
         semWait(tableMutex);
         for (int i = 0; i < actualPhilosopherCount; i++)
         {
-            philos[i]->state == EATING ? putchar('E') : putchar('.');
+            philos[i]->State == EATING ? putchar('E') : putchar('.');
             putchar(' ');
         }
         putchar('\n');

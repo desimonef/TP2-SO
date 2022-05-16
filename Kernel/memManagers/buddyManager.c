@@ -28,7 +28,6 @@ unsigned int memAllocated = 0;
 
 void initMM(void) {
     ncPrint("Entering BUDDY MM.\n");
-    sleep(5);
     root = (node *) BEGIN_MEM;
     root->address = (void *) MEM_START;
     root->index = 0;

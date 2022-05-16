@@ -88,7 +88,7 @@ void philosopherProblem(int argc, char *argv[])
     problemRunning = 1;
     tableMutex = semOpen(MUTEX_ID, 1);
     printf("Welcome to the Philosophers Problem!\n");
-    printf("To add a philosopher, use 'a'. To delete one, use 'd'. To exit, press 'q'");
+    printf("To add a philosopher, use 'a'. To delete one, use 'd'. To exit, press 'q'\n");
 
     sleep(5);
 

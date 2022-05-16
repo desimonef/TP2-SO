@@ -136,7 +136,7 @@ int check_vowel(char a)
 }
 
 void filter(int argc, char ** argv){
-    printf("\nargv[1] = ");
+    printf("\nPalabra a filtrar = ");
     printf(argv[1]);
     printf("\n");
     int i = 0;
@@ -146,7 +146,7 @@ void filter(int argc, char ** argv){
                 putchar(argv[1][i]);
         i++;
     }
-
+    printf("\n");
 }
 
 void pipe(int argc, char ** argv){

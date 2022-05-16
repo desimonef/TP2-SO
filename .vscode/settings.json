@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "stdarg.h": "c",
-        "stdlib.h": "c",
-        "*.asm": "asm-intel-x86-generic"
-    }
-}

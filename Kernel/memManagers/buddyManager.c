@@ -3,11 +3,11 @@
 
 #ifdef BUDDY
 
-#include "include/memManager.h"
+#include "memManager.h"
 #include <stdint.h>
 #include <stdio.h>
-#include "include/naiveConsole.h"
-#include "include/lib.h"
+#include "naiveConsole.h"
+#include "lib.h"
 
 #define IS_POWER_OF_2(x) (!((x)&((x)-1)))
 

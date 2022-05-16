@@ -1,5 +1,13 @@
+*.bin
+*.elf
+*.sys
+
+*.img
+*.qcow2
+*.vdmk
+*.o
+
 .vscode/
 .idea/
 .bash_history
 .DS_Store
-/Toolchain/ModulePacker/mp.bin

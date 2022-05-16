@@ -25,5 +25,13 @@ void testProc(int argc, char ** argv);
 void testSync(int argc, char ** argv);
 void testNosync(int argc, char ** argv);
 
+void helpWrp(int argc, char ** argv);
+void regWrp(int argc, char ** argv);
+void dumpWrp(int argc, char ** argv);
+void datetimeWrp(int argc, char ** argv);
+void divZeroWrp(int argc, char ** argv);
+void opCodeWrp(int argc, char ** argv);
+void clear(int argc, char ** argv);
+
 #endif
 

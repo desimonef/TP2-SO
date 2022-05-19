@@ -30,7 +30,7 @@ void inc(int argc, char *argv[]){
   int N = atoi(argv[2]  );
 
   if (sem && semOpen(SEM_ID, 1) == -1){
-    printf("ERROR OPENING SEM\n");
+    printf("Error al crear proceso\n");
     return;
   }
   

@@ -389,7 +389,7 @@ uint64_t killProcess(uint64_t pid)
       int aux = setNewState(pid, KILLED);
 
       if (pid == currentP->pcb.pid)
-            callTimerTick();
+            _timerTick();
 
       return aux;
 }
@@ -399,7 +399,7 @@ uint64_t blockProcess(uint64_t pid)
       int aux = setNewState(pid, BLOCKED);
 
       if (pid == currentP->pcb.pid)
-            callTimerTick();
+            _timerTick();
       return aux;
 }
 
@@ -498,7 +498,7 @@ static void haltFunc(int argc, char **argv){
 static void exit()
 {
       killProcess(currentP->pcb.pid);
-      callTimerTick();
+      _timerTick();
 }
 
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)

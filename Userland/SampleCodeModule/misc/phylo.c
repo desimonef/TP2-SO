@@ -82,7 +82,7 @@ void test(int i)
     }
 }
 
-void philosopherProblem(int argc, char *argv[])
+void runPhylos(int argc, char *argv[])
 {
     problemRunning = 1;
     tableMutex = semOpen(MUTEX_ID, 1);

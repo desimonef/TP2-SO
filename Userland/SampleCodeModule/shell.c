@@ -27,7 +27,7 @@ void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
 &divZeroWrp, &opCodeWrp, &ps, &mem, &testPrio,
 &testMM, &testProc, &testSync, &testNosync, &loop, &kill, &nice,
 &block, &unblock, &sem, &pipe, &cat, &wc, &filter, 
-&philosopherProblem, &clear};
+&runPhylos, &clear};
 
 char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime", "zerodiv", "invopcode",
 "ps", "mem", "testprio", "testmm", "testproc", "testsync", "testnosync", "loop", "kill", "nice",
@@ -123,7 +123,7 @@ void processBuffer(char * buffer){
 
 void * getCommand(char * str){
     int idx = 0; 
-    while(idx < N_COMMANDS){
+    while(idx < N_COMMANDS-1){
         if(strcmp(str, cmdsNames[idx]) == 0){
             return idx;
         }

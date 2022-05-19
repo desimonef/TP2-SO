@@ -37,7 +37,6 @@ void test_processes()
         {
             char *argv[] = {"endlessLoop"};
             p_rqs[rq].pid = syscall(CREATE_P, &endlessLoop, 1, argv, 0, 0, 0);
-            //createProcess(&endlessLoop, 1, argv, BG, NULL);
 
             if (p_rqs[rq].pid == -1)
             {

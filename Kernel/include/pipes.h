@@ -5,16 +5,21 @@
 
 #define LEN 2048
 #define MAX_PIPES 20
+#define OCCUPIED 1
+#define EMPTY 0
+
 
 typedef struct
 {
     uint32_t id;
     char buffer[LEN];
-    int readIndex;
-    int writeIndex;
+
+    int readIdx;
+    int writeIdx;
+
     long totalProcesses;
-    int lockW;
-    int lockR;
+    int writeLock;
+    int readLock;
     int state;
 } Pipe;
 

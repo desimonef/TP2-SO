@@ -4,151 +4,135 @@
 #include "semaphores.h"
 #include "pipes.h"
 #include "lib.h"
+#include "naiveConsole.h"
 
-#define IN_USE 1
-#define EMPTY 0
-
-uint32_t semId = 420;
-static PipeArray pipesArray;
-
-static int putCharPipeByIdx(int pipeIndex, char c);
-static int getPipeIdx(uint32_t pipeId);
 static int getFreePipe();
 static uint32_t newPipe(uint32_t pipeId);
 
-uint32_t pipeOpen(uint32_t pipeId)
-{
-    int pipeIndex = getPipeIdx(pipeId);
+static int setCharAtIdx(int idx, char c);
+static int getPipeIdx(uint32_t pipeId);
 
-    if (pipeIndex == -1)
-    {
-        pipeIndex = newPipe(pipeId);
-        if (pipeIndex == -1)
-            return -1;
-    }
+uint32_t baseSemID = 300;
+static PipeArray pipesAdmin;
 
-    pipesArray.pipes[pipeIndex].totalProcesses++;
+//    ----------------------------
+//    |                          |
+//    |     Pipes functions      |
+//    |                          |
+//    |                          |
+//    ----------------------------
+
+static uint32_t newPipe(uint32_t pipeId){
+    int free = getFreePipe();
+    if (free == -1)
+        return -1;
+
+    Pipe * pipe = &pipesAdmin.pipes[free];
+    pipe->id = pipeId;
+    pipe->state = OCCUPIED;
+    pipe->readIdx = 0;
+    pipe->writeIdx = 0;
+    pipe->totalProcesses = 0;
+
+    if ((pipe->readLock = semOpen(baseSemID++, 0)) == -1)
+        return -1;
+
+    if ((pipe->writeLock = semOpen(baseSemID++, LEN)) == -1)
+        return -1;
 
     return pipeId;
 }
 
-int pipeClose(uint32_t pipeId)
-{
-    int pipeIndex = getPipeIdx(pipeId);
+uint32_t pipeOpen(uint32_t pipeId){
+    int idx = getPipeIdx(pipeId);
+    if (idx == -1)
+    {
+        idx = newPipe(pipeId);
+        if (idx == -1){
+            ncPrint("Pipe could not be created");
+            return -1;
+        }
+    }
+    pipesAdmin.pipes[idx].totalProcesses++;
+    return pipeId;
+}
 
-    if (pipeIndex == -1)
+int pipeClose(uint32_t pipeId){
+    int idx = getPipeIdx(pipeId);
+    if (idx == -1)
         return -1;
 
-    Pipe *pipe = &pipesArray.pipes[pipeIndex];
-
+    Pipe *pipe = &pipesAdmin.pipes[idx];
     pipe->totalProcesses--;
     if (pipe->totalProcesses > 0)
         return 1;
 
-    semClose(pipe->lockR);
-    semClose(pipe->lockW);
+    semClose(pipe->readLock);
+    semClose(pipe->writeLock);
     pipe->state = EMPTY;
-
     return 1;
 }
 
-int pipeRead(uint32_t pipeId)
-{
-    int pipeIndex = getPipeIdx(pipeId);
-
-    if (pipeIndex == -1)
+int pipeRead(uint32_t pipeId){
+    int idx = getPipeIdx(pipeId);
+    if (idx == -1)
         return -1;
 
-    Pipe *pipe = &pipesArray.pipes[pipeIndex];
+    Pipe * pipe = &pipesAdmin.pipes[idx];
+    semWait(pipe->readLock);
 
-    semWait(pipe->lockR);
+    char c = pipe->buffer[pipe->readIdx];
+    pipe->readIdx = (pipe->readIdx + 1) % LEN;
 
-    char c = pipe->buffer[pipe->readIndex];
-    pipe->readIndex = (pipe->readIndex + 1) % LEN;
-
-    semPost(pipe->lockW);
-
+    semPost(pipe->writeLock);
     return c;
 }
 
-uint32_t pipeWrite(uint32_t pipeId, char *str)
-{
-    int pipeIndex = getPipeIdx(pipeId);
-
-    if (pipeIndex == -1)
+uint32_t pipeWrite(uint32_t pipeId, char *str){
+    int idx = getPipeIdx(pipeId);
+    if (idx == -1)
         return -1;
 
     while (*str != 0)
-        putCharPipeByIdx(pipeIndex, *str++);
+        setCharAtIdx(idx, *str++);
 
     return pipeId;
 }
 
-static int putCharPipeByIdx(int pipeIndex, char c)
-{
-    Pipe *pipe = &pipesArray.pipes[pipeIndex];
+static int setCharAtIdx(int idx, char c){
+    Pipe * pipe = &pipesAdmin.pipes[idx];
+    semWait(pipe->writeLock);
 
-    semWait(pipe->lockW);
+    pipe->buffer[pipe->writeIdx] = c;
+    pipe->writeIdx = (pipe->writeIdx + 1) % LEN;
 
-    pipe->buffer[pipe->writeIndex] = c;
-    pipe->writeIndex = (pipe->writeIndex + 1) % LEN;
-
-    semPost(pipe->lockR);
-
+    semPost(pipe->readLock);
     return 0;
 }
 
-uint32_t putCharPipe(uint32_t pipeId, char c)
-{
-    int pipeIndex = getPipeIdx(pipeId);
-
-    if (pipeIndex == -1)
+uint32_t putCharPipe(uint32_t pipeId, char c){
+    int idx = getPipeIdx(pipeId);
+    if (idx == -1)
         return -1;
 
-    putCharPipeByIdx(pipeIndex, c);
-
+    setCharAtIdx(idx, c);
     return pipeId;
 }
 
-static uint32_t newPipe(uint32_t pipeId)
-{
-    int newIdx = getFreePipe();
-
-    if (newIdx == -1)
-        return -1;
-
-    Pipe *pipe = &pipesArray.pipes[newIdx];
-
-    pipe->id = pipeId;
-    pipe->state = IN_USE;
-    pipe->readIndex = pipe->writeIndex = pipe->totalProcesses = 0;
-
-    if ((pipe->lockR = semOpen(semId++, 0)) == -1)
-        return -1;
-
-    if ((pipe->lockW = semOpen(semId++, LEN)) == -1)
-        return -1;
-
-    return pipeId;
-}
-
-static int getPipeIdx(uint32_t pipeId)
-{
+static int getPipeIdx(uint32_t pipeId){
     for (int i = 0; i < MAX_PIPES; i++)
-        if (pipesArray.pipes[i].state == IN_USE && pipesArray.pipes[i].id == pipeId)
+        if (pipesAdmin.pipes[i].state == OCCUPIED && pipesAdmin.pipes[i].id == pipeId)
             return i;
     return -1;
 }
 
-static int getFreePipe()
-{
+static int getFreePipe(){
     for (int i = 0; i < MAX_PIPES; i++)
-        if (pipesArray.pipes[i].state == EMPTY)
+        if (pipesAdmin.pipes[i].state == EMPTY)
             return i;
     return -1;
 }
 
-void dumpPipes()
-{
-    
+void dumpPipes(){
+    //TODO
 }

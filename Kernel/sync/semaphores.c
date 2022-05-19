@@ -8,51 +8,84 @@
 #include "naiveConsole.h"
 #include "defs.h"
 
-Semaphore *semaphores = NULL;
+Semaphore * semaphores = NULL;
 
 static void printBlockedPIDsForSem(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
 static Semaphore * findSem(uint32_t id);
 
+
+//    ----------------------------
+//    |                          |
+//    |   Semaphore functions    |
+//    |                          |
+//    |                          |
+//    ----------------------------
+
 uint32_t semOpen(uint32_t id, uint32_t initValue){
-    Semaphore *sem = findSem(id);
-    if (sem == NULL)
-    {
+    Semaphore * sem = findSem(id);
+    if (sem == NULL){
         sem = malloc(sizeof(Semaphore));
         if (sem == NULL)
             return -1;
 
         sem->value = initValue;
-        sem->listeners = 0;
-        sem->blockedPIDsSize = 0;
         sem->id = id;
+
+        sem->attachedProcesses = 0;
+        sem->blockedPIDsSize = 0;
+
         sem->next = NULL;
         sem->mutex = 0;
 
-        Semaphore * lastSem = semaphores;
+        Semaphore * auxSem = semaphores;
 
-        if (lastSem == NULL){
-            semaphores = sem;
+        if(auxSem != NULL){
+            while (auxSem->next != NULL)
+                auxSem = auxSem->next;
+            auxSem->next = sem;
         }
         else{
-            while (lastSem->next != NULL)
-                lastSem = lastSem->next;
-            lastSem->next = sem;
+            semaphores = sem;
         }
     }
 
-    if (sem->listeners >= MAX_BLOCKED){
-        ncPrint("No space for this listener");
+    if (sem->attachedProcesses >= MAX_BLOCKED){
+        ncPrint("Max number of attached processes reached");
         ncNewline();
         return -1;
     }
 
-    sem->listeners++;
+    sem->attachedProcesses++;
     return id;
+}
+
+int semPost(uint32_t id){
+    Semaphore * sem = findSem(id);
+    if (sem == NULL)
+        return -1;
+
+    // PAra evaluar valor de semáforo, necesitamos su mutex (sección crítica)
+    acquire(&(sem->mutex));
+    if (sem->blockedPIDsSize > 0){
+        int nextPid = sem->blockedPIDs[0];
+        for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
+            sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
+        sem->blockedPIDsSize--;
+        unblockProcess(nextPid);
+        release(&(sem->mutex));
+        return 0;
+    }
+    else{
+        sem->value++;
+    }
+
+    release(&(sem->mutex));
+    return 0;
 }
 
 int semWait(uint32_t id)
 {
-    Semaphore *sem = findSem(id);
+    Semaphore * sem = findSem(id);
     if (sem == NULL)
         return -1;
 
@@ -72,47 +105,21 @@ int semWait(uint32_t id)
     return 0;
 }
 
-int semPost(uint32_t id)
-{
-    Semaphore *sem = findSem(id);
-    if (sem == NULL)
-        return -1;
-
-    acquire(&(sem->mutex));
-    if (sem->blockedPIDsSize > 0){
-        int nextPid = sem->blockedPIDs[0];
-        for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
-            sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
-        sem->blockedPIDsSize--;
-        unblockProcess(nextPid);
-        release(&(sem->mutex));
-        return 0;
-    }
-
-    else{
-        sem->value++;
-    }
-
-    release(&(sem->mutex));
-    return 0;
-}
-
 int semClose(uint32_t id)
 {
-    Semaphore *sem = findSem(id);
+    Semaphore * sem = findSem(id);
     if (sem == NULL)
         return -1;
 
-    sem->listeners--;
-    if (sem->listeners > 0)
+    sem->attachedProcesses--;
+    if (sem->attachedProcesses > 0)
         return 0;
 
     Semaphore *aux = semaphores;
     if (aux == sem){
         semaphores = aux->next;
     }
-    else
-    {
+    else{
         while (aux->next != sem)
             aux = aux->next;
         aux->next = sem->next;
@@ -124,19 +131,18 @@ int semClose(uint32_t id)
 
 void semStatus()
 {
-
+    //TODO
 }
 
 static void printBlockedPIDsForSem(uint32_t *blockedPIDs, uint16_t blockedPIDsSize)
 {
-
+    //TODO
 }
 
 static Semaphore *findSem(uint32_t id)
 {
-    Semaphore *sem = semaphores;
-    while (sem)
-    {
+    Semaphore * sem = semaphores;
+    while (sem){
         if (sem->id == id)
             return sem;
         sem = sem->next;

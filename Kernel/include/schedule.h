@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define NAME_SIZE 50
+
 typedef enum
 {
       READY,
@@ -14,14 +16,17 @@ typedef struct
 {
       uint64_t pid;
       uint64_t ppid;
-      int fg;
+
+      void * rsp;
+      void * rbp;
+
       int fd[2];
-      char name[30];
-      void *rsp;
-      void *rbp;
       int priority;
+      int fg;
+
+      char name[NAME_SIZE];
       int argc;
-      char **argv;
+      char ** argv;
 } PCB;
 
 typedef struct

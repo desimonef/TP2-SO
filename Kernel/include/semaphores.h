@@ -5,15 +5,14 @@
 
 #include <stdint.h>
 
-typedef struct Semaphore
-{
+typedef struct Semaphore{
     uint32_t id;
     uint32_t value;
-    uint16_t listeners;
+    uint16_t attachedProcesses;
     uint32_t blockedPIDs[MAX_BLOCKED];
     uint16_t blockedPIDsSize;
     int mutex;
-    struct Semaphore *next;
+    struct Semaphore * next;
 
 } Semaphore;
 

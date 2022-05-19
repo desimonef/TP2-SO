@@ -22,6 +22,6 @@ int readKey();
 uint64_t getRegister(int index);
 int asmGetByte(int pos);
 
-void callTimerTick ();
+void _timerTick ();
 
 #endif

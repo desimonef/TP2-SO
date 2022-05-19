@@ -1,4 +1,4 @@
-GLOBAL cpuVendor, getDateTime, readKey, getRegister, asmGetByte, callTimerTick, _xchg
+GLOBAL cpuVendor, getDateTime, readKey, getRegister, asmGetByte, _timerTick, _xchg
 
 section .text
 	
@@ -152,7 +152,7 @@ asmGetByte:
     ret
 
 
-callTimerTick:
+_timerTick:
 	int 20h
 	ret
 

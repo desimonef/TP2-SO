@@ -54,7 +54,9 @@ El kernel ofrece diferentes funcionalidades, que se encuentran listadas mediante
 - **filter**: filtra vocales del input
 - **pipe**: imprime estado actual de los pipes
 - **phylo**: implementacion del problema de los filosofos
+
 **Aclaración**: Para utilizar las teclas & y |, se deben clickear las teclas a la derecha de la 'ñ' en un teclado estándar (nuestro layout utilizado fue el [siguiente](https://cdn.shopify.com/s/files/1/0810/3669/files/spanish-american_1024x1024.png?v=1510790458))
+
 ## Integrantes:
 Nombre | Legajo
 -------|--------

@@ -6,15 +6,14 @@
 #include "memManager.h"
 #include "defs.h"
 
-typedef long Align;
 typedef union header Header;
 
-union header {
+union header{
     struct {
         union header *ptr;
         unsigned size;
     } data;
-    Align x;
+    long x;
 };
 
 static Header * base;
@@ -86,6 +85,7 @@ void free(void * addr){
     freeBlock + freeBlock->data.size > currNode->data.ptr))
         return ;
 
+    // Uno por derecha
     if(freeBlock + freeBlock->data.size == currNode->data.ptr){
         freeBlock->data.size += currNode->data.ptr->data.size; 
         freeBlock->data.ptr = currNode->data.ptr->data.ptr;
@@ -94,6 +94,7 @@ void free(void * addr){
         freeBlock->data.ptr = currNode->data.ptr;
     }
 
+    // Uno por izquierda
     if(currNode + currNode->data.size == freeBlock){
         currNode->data.size += freeBlock->data.size;
         currNode->data.ptr = freeBlock->data.ptr;
@@ -101,7 +102,6 @@ void free(void * addr){
     else{
         currNode->data.ptr = freeBlock;
     }
-
     startingNode = currNode;
 }
 

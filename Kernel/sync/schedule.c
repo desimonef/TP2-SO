@@ -102,11 +102,11 @@ void *scheduler(void * setRSP){
                   }
             }
       }
-
+      
+      // There is no active running process
       if (processes->readySize > 0){
             currentP = pDequeue();
             while (currentP->state != READY){
-
                   if (currentP->state == KILLED){
                         freeP(currentP);
                   }

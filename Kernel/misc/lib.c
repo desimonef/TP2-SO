@@ -154,12 +154,12 @@ void sleep(int secs){
     }
 }
 
-void acquire(int *mutex)
+void acquire(int * mutex)
 {
 	while (_xchg(mutex, 1) != 0);
 }
 
-void release(int *mutex)
+void release(int * mutex)
 {
 	_xchg(mutex, 0);
 }

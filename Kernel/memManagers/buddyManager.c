@@ -13,20 +13,20 @@
 
 static unsigned align(unsigned size);
 
-typedef struct node {
-    struct node *left;
-    struct node *right;
+typedef struct node{
+    struct node * left;
+    struct node * right;
     unsigned int index;
-    void *address;
+    void * address;
     unsigned int size;
     int status;
 } node;
 
-typedef struct node *node_t;
+typedef struct node * node_t;
 node_t root;
 unsigned int memAllocated = 0;
 
-void initMM(void) {
+void initMM(void){
     ncPrint("Entering BUDDY MM.\n");
     root = (node *) BEGIN_MEM;
     root->address = (void *) MEM_START;
@@ -43,7 +43,7 @@ void setDescendants(node_t node) {
     node->left = node + leftIdx;
 
     if ((uint64_t) node->left >= LIMIT) {
-        ncPrint("Not enough space to allocate descendants (testing print)\n");
+        ncPrint("Error: No hay suficiente espacio para alocar descendientes\n");
         return;
     }
     node->left->index = leftIdx;
@@ -54,7 +54,7 @@ void setDescendants(node_t node) {
     unsigned int rightIdx = leftIdx + 1;
     node->right = node + rightIdx;
     if ((uint64_t) node->right >= LIMIT) {
-        ncPrint("Not enough space to allocate descendants (testing print)\n");
+        ncPrint("Error: No hay suficiente espacio para alocar descendientes\n");
         return;
     }
     node->right->index = rightIdx;
@@ -83,19 +83,20 @@ void finalizeRecursiveCall(node_t node) {
 
 }
 
-void *mallocRec(node_t node, unsigned int size) {
-    if (node->status == FULL) {
+void * mallocRec(node_t node, unsigned int size){
+    if(node->status == FULL){
         return NULL;
     }
 
-    if (node->left != NULL || node->right != NULL) {
+    if(node->left != NULL || node->right != NULL){
         void *auxNode = mallocRec(node->left, size);
         if (auxNode == NULL) {
             auxNode = mallocRec(node->right, size);
         }
         finalizeRecursiveCall(node);
         return auxNode;
-    } else {
+    } 
+    else{
         if (size > node->size) {
             return NULL;
         }
@@ -111,56 +112,49 @@ void *mallocRec(node_t node, unsigned int size) {
     }
 }
 
-void *malloc(int size) {
-    if (size < MIN_SIZE) {
+void * malloc(int size){
+    if(size < MIN_SIZE){
         size = MIN_SIZE;
-    } else if (size > root->size) {
-        ncPrint("No hay memoria existente para alocar tanto.\n");
+    }
+    else if(size > root->size){
+        ncPrint("Error: No hay memoria suficiente.\n");
         return NULL;
     }
-    if (!IS_POWER_OF_2(size)) {
+    if(!IS_POWER_OF_2(size)){
         size = align(size);
     }
-    void *allocAttempt = mallocRec(root, size);
+    void * allocAttempt = mallocRec(root, size);
     return allocAttempt;
 }
 
-void freeRec(node_t node, void *addr) {
-    if (node->left != NULL || node->right != NULL) {
-        if (node->right != 0 && (uint64_t) node->right->address > (uint64_t) addr) {
+void freeRec(node_t node, void *addr){
+    if (node->left != NULL || node->right != NULL){
+        if (node->right != 0 && (uint64_t) node->right->address > (uint64_t) addr){
             freeRec(node->left, addr);
-
-        } else {
+        } 
+        else{
             freeRec(node->right, addr);
         }
-
         finalizeRecursiveCall(node);
-
-        if (node->status == EMPTY) {
+        if (node->status == EMPTY){
             node->right = NULL;
             node->left = NULL;
-
         }
-        return;
-
-
-    } else if (node->status == FULL) {
+    } 
+    else if (node->status == FULL) {
         if (node->address == addr) {
             node->status = EMPTY;
             memAllocated -= node->size;
-            return;
         }
-
-        return;
-
     }
+    return;
 }
 
-void free(void *addr) {
+void free(void *addr){
     freeRec(root, addr);
 }
 
-void memDump(void) {
+void memDump(void){
     ncNewline();
     ncNewline();
     ncPrint("-----Estado de memoria-----");
@@ -183,7 +177,7 @@ void memDump(void) {
 }
 
 
-static unsigned align(unsigned size) {
+static unsigned align(unsigned size){
     size |= size >> 1;
     size |= size >> 2;
     size |= size >> 4;

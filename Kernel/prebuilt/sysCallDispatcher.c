@@ -43,18 +43,18 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
             case CREATE_P:
                 return addProcess((void (*)(int, char **))rsi, (int)rdx, (char **)r10, (int)r8, (int *)r9);
             case KILL_P:
-                return killProcess(rsi);
+                return kill(rsi);
             case BLOCK_P:
-                return blockProcess(rsi);
+                return block(rsi);
             case UNBLOCK_P:
-                return unblockProcess(rsi);
+                return unblock(rsi);
             case PS:
                 processDisplay();
                 return 0;
             case CURRENT_P:
                 return (uint64_t) getCurrPID();
             case NICE:
-                setNewCycle(rsi, (int)rdx);
+                changePriority(rsi, (int)rdx);
                 return 0;
             case YIELD:
                 yield();

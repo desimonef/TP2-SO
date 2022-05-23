@@ -10,7 +10,7 @@ typedef union header Header;
 
 union header{
     struct {
-        union header *ptr;
+        union header * ptr;
         unsigned size;
     } data;
     long x;

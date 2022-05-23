@@ -2,18 +2,17 @@
 #define SCHEDULE_H
 
 #include <stdint.h>
+#include "lib.h"
 
 #define NAME_SIZE 50
 
-typedef enum
-{
+typedef enum{
       READY,
       BLOCKED,
       KILLED
 } State;
 
-typedef struct
-{
+typedef struct{
       uint64_t pid;
       uint64_t ppid;
 
@@ -29,8 +28,7 @@ typedef struct
       char ** argv;
 } PCB;
 
-typedef struct
-{
+typedef struct{
       uint64_t gs;
       uint64_t fs;
       uint64_t r15;
@@ -59,17 +57,17 @@ typedef struct
 void initScheduler();
 void *scheduler(void *oldRSP);
 int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd);
-uint64_t killProcess(uint64_t pid);
-uint64_t blockProcess(uint64_t pid);
-uint64_t unblockProcess(uint64_t pid);
+uint64_t kill(uint64_t pid);
+uint64_t block(uint64_t pid);
+uint64_t unblock(uint64_t pid);
 int getCurrPID();
 void processDisplay();
-void setNewCycle(uint64_t pid, int priority);
+void changePriority(uint64_t pid, int priority);
 void killFgProcess();
 void yield();
 int currentReadsFrom();
 int currentWritesTo();
-int currentProcessFg();
+int currentPFg();
 void waitForPID(uint64_t pid);
 
 #endif

@@ -4,9 +4,10 @@
 #include <stdint.h>
 #include "lib.h"
 #include "naiveConsole.h"
+#include "defs.h"
+#include "memManager.h"
 
-void * memset(void * destination, int32_t c, uint64_t length)
-{
+void * memset(void * destination, int32_t c, uint64_t length){
 	uint8_t chr = (uint8_t)c;
 	char * dst = (char*)destination;
 
@@ -16,8 +17,7 @@ void * memset(void * destination, int32_t c, uint64_t length)
 	return destination;
 }
 
-void * memcpy(void * destination, const void * source, uint64_t length)
-{
+void * memcpy(void * destination, const void * source, uint64_t length){
 	/*
 	* memcpy does not support overlapping buffers, so always do it
 	* forwards. (Don't change this without adjusting memmove.)
@@ -81,6 +81,19 @@ void reverse(char * str, int length){
     }
 }
 
+int argsCopy(char ** buffer, char ** argv, int argc){
+      for (int i = 0; i < argc; i++){
+            buffer[i] = malloc(sizeof(char) * (strlen(argv[i]) + 1));
+            if(buffer[i] == NULL){
+                  ncPrint("[Kernel] ERROR: Malloc failure.");
+                  ncNewline();
+                  return -1;
+            }
+            strcpy(argv[i], buffer[i]);
+      }
+      return 1;
+}
+
 //https://www.geeksforgeeks.org/program-decimal-hexadecimal-conversion/
 char * intToHexa(uint64_t num, char * str, int bytes){ 
     // counter for hexadecimal number array
@@ -111,26 +124,22 @@ char * intToHexa(uint64_t num, char * str, int bytes){
     return str;
 } 
 
-char* itoa(int num, char* str, int base)
-{
+char* itoa(int num, char* str, int base){
     int i = 0;
     int isNegative = 0;
   
-    if (num == 0)
-    {
+    if (num == 0){
         str[i++] = '0';
         str[i] = '\0';
         return str;
     }
   
-    if (num < 0 && base == 10)
-    {
+    if (num < 0 && base == 10){
         isNegative = 1;
         num = -num;
     }
   
-    while (num != 0)
-    {
+    while (num != 0){
         int rem = num % base;
         str[i++] = (rem > 9)? (rem-10) + 'A' : rem + '0';
         num = num/base;
@@ -140,9 +149,7 @@ char* itoa(int num, char* str, int base)
         str[i++] = '-';
   
     str[i] = '\0'; 
-  
     reverse(str, i);
-  
     return str;
 }
 

@@ -6,6 +6,8 @@
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
 
+int argsCopy(char ** buffer, char ** argv, int argc);
+
 char * intToHexa (uint64_t num, char * str, int bytes);
 char * itoa(int num, char* str, int base);
 void reverse(char * str, int length);
@@ -22,6 +24,6 @@ int readKey();
 uint64_t getRegister(int index);
 int asmGetByte(int pos);
 
-void _timerTick ();
+void _timerTick();
 
 #endif

@@ -10,20 +10,18 @@
 
 #define STACK_SIZE (4 * 1024)
 #define INITIAL_P 1
-#define INITIAL_P_NOT_MASTER 2
+#define INITIAL_P_AUX 2
 #define MAX_PRIORITY 40
 #define MAX_LEN 30
 
-typedef struct PNode
-{
+typedef struct PNode{
       struct PNode * next;
 
       PCB pcb;
       State state;
 } PNode;
 
-typedef struct PList
-{
+typedef struct PList{
       PNode * first;
       PNode * last;
 
@@ -37,7 +35,6 @@ static void haltFunc(int argc, char **argv);
 void emptyBuff(char * buff);
 static void createStackFrame(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
 static int createPCB(PCB *process, char *name, int fg, int *fd);
-static int argsCopy(char **buffer, char **argv, int argc);
 static uint64_t getPID();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void exit();
@@ -46,7 +43,7 @@ static PNode * getProcess(uint64_t pid);
 
 // Queue declarations
 
-static void pEnqueue(PNode *newProcess);
+static void pEnqueue(PNode *newP);
 static PNode * pDequeue();
 static int isEmptyQ();
 
@@ -65,12 +62,10 @@ static PNode * haltP;
 
 void initScheduler(){
       processes = malloc(sizeof(PList));
-
       if (processes == NULL){
             ncPrint("Error initializing scheduler.");
             return;
       }
-
       processes->first = NULL;
       processes->last = processes->first;
       processes->size = 0;
@@ -82,7 +77,7 @@ void initScheduler(){
 }
 
 void *scheduler(void * setRSP){
-      if (currentP){
+      if (currentP != NULL){
             if (currentP->state == READY && ticks > 0){
                   ticks--;
                   return setRSP;
@@ -90,15 +85,16 @@ void *scheduler(void * setRSP){
 
             currentP->pcb.rsp = setRSP;
             if (currentP->pcb.pid != haltP->pcb.pid){
-                  if (currentP->state == KILLED){
-                        PNode *parent = getProcess(currentP->pcb.ppid);
-                        if (parent != NULL && currentP->pcb.fg && parent->state == BLOCKED){
-                              unblockProcess(parent->pcb.pid);
-                        }
-                        freeP(currentP);
+                  if(currentP->state == READY || currentP->state == BLOCKED){
+                        //Reschedule process, its not done
+                        pEnqueue(currentP);
                   }
                   else{
-                        pEnqueue(currentP);
+                        PNode * parent = getProcess(currentP->pcb.ppid);
+                        if (parent != NULL && currentP->pcb.fg && parent->state == BLOCKED){
+                              unblock(parent->pcb.pid);
+                        }
+                        freeP(currentP);
                   }
             }
       }
@@ -115,75 +111,274 @@ void *scheduler(void * setRSP){
                   }
                   currentP = pDequeue();
             }
+            if(currentP->state != READY){
+                  ncPrint("[Kernel] ERROR: No ready processes found. Now returning."); // NO debería llegar aca igual
+            }
       }
       else{
-            currentP = haltP;
+            currentP = haltP; // No tenemos procesos listos --> Haltea el kernel
       }
       ticks = currentP->pcb.priority;
       return currentP->pcb.rsp;
 }
 
-int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd)
-{
+int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd){
       if (entryPoint == NULL)
             return -1;
 
-      PNode *newProcess = malloc(sizeof(PNode));
-      if (newProcess == NULL){
+      PNode * newP = malloc(sizeof(PNode));
+      if (newP == NULL){
             return -1;
       }
 
-      if (createPCB(&newProcess->pcb, argv[0], fg, fd) == -1){
-            free(newProcess);
+      if (createPCB(&newP->pcb, argv[0], fg, fd) == -1){
+            free(newP);
             return -1;
       }
 
-      char **argvCopy = malloc(sizeof(char *) * argc);
+      char ** argvCopy = malloc(sizeof(char *) * argc);
       if (argvCopy == 0)
             return -1;
 
       argsCopy(argvCopy, argv, argc);
-      newProcess->pcb.argc = argc;
-      newProcess->pcb.argv = argvCopy;
-      createStackFrame(entryPoint, argc, argvCopy, newProcess->pcb.rbp);
+      newP->pcb.argc = argc;
+      newP->pcb.argv = argvCopy;
+      createStackFrame(entryPoint, argc, argvCopy, newP->pcb.rbp);
 
-      newProcess->state = READY;
-      pEnqueue(newProcess);
-      if (newProcess->pcb.fg && newProcess->pcb.ppid){
-            blockProcess(newProcess->pcb.ppid);
+      newP->state = READY;
+      pEnqueue(newP);
+      if (newP->pcb.fg && newP->pcb.ppid){
+            block(newP->pcb.ppid);
       }
 
-      return newProcess->pcb.pid;
+      return newP->pcb.pid;
 }
 
-static int createPCB(PCB *process, char *name, int fg, int *fd){
+static int createPCB(PCB * process, char * name, int fg, int * fd){
       process->pid = getPID();
-
-      process->ppid = currentP == NULL ? 0 : currentP->pcb.pid;
       if (fg > 1 || fg < 0){
-            ncPrint("Error creating process, fg value out of bounds");
+            ncPrint("[Kernel] ERROR: Error creating process, fg value out of bounds");
             return -1;
+      }
+      if(currentP == NULL){
+            process->ppid = 0;
+            process->fg = fg;
+      }
+      else{
+            process->ppid = currentP->pcb.pid;
+            process->fg = currentP->pcb.fg ? fg : 0;
       }
 
       strcpy(name, process->name);
-      process->fg = currentP == NULL ? fg : (currentP->pcb.fg ? fg : 0);
 
       process->rbp = malloc(STACK_SIZE);
       if (process->rbp == NULL){
+            ncPrint("[Kernel] ERROR: Malloc failure.");
             return -1;
       }
+
       process->rbp = (void *)((char *)process->rbp + STACK_SIZE - 1);
       process->rsp = (void *)((StackFrame *)process->rbp - 1);
 
-      process->priority = process->fg ? INITIAL_P_NOT_MASTER : INITIAL_P;
+      process->priority = process->fg ? INITIAL_P_AUX : INITIAL_P;
+
       process->fd[0] = fd ? fd[0] : 0;
       process->fd[1] = fd ? fd[1] : 1;
 
       return 0;
 }
 
-static void createStackFrame(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp)
+static void freeP(PNode * process){
+      for (int i = 0; i < process->pcb.argc; i++){
+            free(process->pcb.argv[i]);
+      }
+      free(process->pcb.argv);
+      free((void *)((char *)process->pcb.rbp - STACK_SIZE + 1));
+      free((void *)process);
+}
+
+static PNode * getProcess(uint64_t pid){
+      // Chequeamos si es el que está corriendo
+      if (currentP != NULL && currentP->pcb.pid == pid){
+            return currentP;
+      }
+      PNode * aux = processes->first;
+      for (; aux != NULL; aux = aux->next){
+            if (aux->pcb.pid == pid){
+                  return aux;
+            }
+      }
+      return NULL;
+}
+
+void changePriority(uint64_t pid, int priority){
+      if (priority < 0){
+            ncPrint("[Kernel] WARNING: Priority required is invalid. Setting to minimum.");
+            priority = 0;
+      }
+      if (priority > MAX_PRIORITY){
+            ncPrint("[Kernel] WARNING: Priority required is invalid. Setting to maximum.");
+            priority = MAX_PRIORITY;
+      }
+      PNode * aux = getProcess(pid);
+      if (aux != NULL){
+            uint64_t prevPriority = aux->pcb.priority;
+            aux->pcb.priority = priority;
+            ncPrint("New priority set for process with PID: ");
+            ncPrintDec(pid);
+            ncPrint(" from ");
+            ncPrintDec(prevPriority);
+            ncPrint(" to ");
+            ncPrintDec(priority);
+            ncNewline();
+      }
+      else{
+            ncPrint("[Kernel] ERROR: Process PID does not match with any existing processes. Returning.");
+            ncNewline();
+      }
+}
+
+void yield(){
+      ticks = 0;
+      _timerTick();
+}
+
+int currentPFg(){
+      if (currentP)
+            return currentP->pcb.fg;
+      return -1;
+}
+
+//    ----------------------------
+//    |                          |
+//    |     Queue functions      |
+//    |                          |
+//    |                          |
+//    ----------------------------
+
+static void pEnqueue(PNode * newP){
+      if (isEmptyQ()){
+            processes->first = newP;
+            processes->last = processes->first;
+      }
+      else{
+            processes->last->next = newP;
+            newP->next = NULL;
+            processes->last = newP;
+      }
+      if (newP->state == READY){
+            processes->readySize++;
+      }
+      processes->size++;
+}
+
+static PNode * pDequeue(){
+      if (isEmptyQ()){
+            return NULL;
+      }
+      PNode * aux = processes->first;
+      processes->first = processes->first->next;
+      processes->size--;
+
+      if (aux->state == READY)
+            processes->readySize--;
+
+      return aux;
+}
+
+static int isEmptyQ(){
+      return processes->size == 0;
+}
+
+//    ----------------------------
+//    |                          |
+//    |     Status functions     |
+//    |                          |
+//    |                          |
+//    ----------------------------
+
+char * stateName(State state){
+      if(state == READY)
+            return "Ready";
+      else if(state == BLOCKED)
+            return "Blocked";
+      else
+            return "Killed";
+}
+
+static uint64_t changeState(uint64_t pid, State newState){
+      PNode * process = getProcess(pid);
+      if (process == NULL || process->state == KILLED){
+            ncPrint("[Kernel] ERROR: Process PID is not valid.");
+            return -1;
+      }
+      if (process == currentP){
+            process->state = newState;
+            return process->pcb.pid;
+      }
+      if (process->state != READY && newState == READY){
+            processes->readySize++;
+      }
+      if (process->state == READY && newState != READY){
+            processes->readySize--;
+      }
+      // State oldState = process->state;
+      process->state = newState;
+      // ncPrint("Process of PID: ");
+      // ncPrintDec(pid);
+      // ncPrint(" changed status from ");
+      // ncPrint(stateName(oldState));
+      // ncPrint(" to ");
+      // ncPrint(stateName(newState));
+      // ncNewline();
+      return process->pcb.pid;
+}
+
+uint64_t kill(uint64_t pid){
+      if (pid <= 2){
+            ncPrint("[Kernel] ERROR: Invalid PID.");
+            return -1;
+      }
+      int aux = changeState(pid, KILLED);
+      if (pid == currentP->pcb.pid)
+            _timerTick();
+      return aux;
+}
+
+uint64_t block(uint64_t pid){
+      int aux = changeState(pid, BLOCKED);
+      if (pid == currentP->pcb.pid){
+            _timerTick();
+      }
+      return aux;
+}
+
+uint64_t unblock(uint64_t pid){
+      return changeState(pid, READY);
+}
+
+
+void killFgProcess()
 {
+      if (currentP != NULL && currentP->pcb.fg && currentP->state == READY)
+      {
+            kill(currentP->pcb.pid);
+            return;
+      }
+}
+
+//    ----------------------------
+//    |                          |
+//    |      Misc functions      |
+//    |                          |
+//    |                          |
+//    ----------------------------
+
+static uint64_t getPID(){
+      return currPID++;
+}
+
+static void createStackFrame(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp){
       StackFrame *frame = (StackFrame *)rbp - 1;
       frame->gs = 0x001;
       frame->fs = 0x002;
@@ -210,244 +405,13 @@ static void createStackFrame(void (*entryPoint)(int, char **), int argc, char **
       frame->base = 0x000;
 }
 
-static uint64_t getPID()
-{
-      return currPID++;
-}
-
-static void freeP(PNode *process)
-{
-      for (int i = 0; i < process->pcb.argc; i++){
-            free(process->pcb.argv[i]);
-      }
-      free(process->pcb.argv);
-      free((void *)((char *)process->pcb.rbp - STACK_SIZE + 1));
-      free((void *)process);
-}
-
-static PNode *getProcess(uint64_t pid)
-{
-      if (currentP != NULL && currentP->pcb.pid == pid)
-            return currentP;
-
-      for (PNode *p = processes->first; p != NULL; p = p->next)
-            if (p->pcb.pid == pid)
-                  return p;
-
-      return NULL;
-}
-
-
-
-void setNewCycle(uint64_t pid, int priority)
-{
-
-      if (priority < 0)
-            priority = 0;
-      if (priority > MAX_PRIORITY)
-            priority = MAX_PRIORITY;
-
-      PNode *p = getProcess(pid);
-
-      if (p != NULL)
-            p->pcb.priority = priority;
-}
-
-void yield()
-{
-      ticks = 0;
-      _timerTick();
-}
-
-int currentReadsFrom()
-{
-      if (currentP)
-      {
-            return currentP->pcb.fd[0];
-      }
-      return -1;
-}
-
-int currentWritesTo()
-{
-      if (currentP)
-            return currentP->pcb.fd[1];
-      return -1;
-}
-
-int currentPFg()
-{
-      if (currentP)
-            return currentP->pcb.fg;
-      return -1;
-}
-
-void waitForPID(uint64_t pid)
-{
-      PNode *process = getProcess(pid);
-      if (process)
-      {
-            process->pcb.fg = 1;
-            blockProcess(currentP->pcb.pid);
-      }
-}
-
-static int argsCopy(char **buffer, char **argv, int argc)
-{
-      for (int i = 0; i < argc; i++)
-      {
-            buffer[i] = malloc(sizeof(char) * (strlen(argv[i]) + 1));
-            strcpy(argv[i], buffer[i]);
-      }
-      return 1;
-}
-
-//    ----------------------------
-//    |                          |
-//    |     Queue functions      |
-//    |                          |
-//    |                          |
-//    ----------------------------
-
-static void pEnqueue(PNode *newProcess)
-{
-      if (isEmptyQ())
-      {
-            processes->first = newProcess;
-            processes->last = processes->first;
-      }
-      else
-      {
-            processes->last->next = newProcess;
-            newProcess->next = NULL;
-            processes->last = newProcess;
-      }
-
-      if (newProcess->state == READY)
-            processes->readySize++;
-
-      processes->size++;
-}
-
-static PNode *pDequeue()
-{
-      if (isEmptyQ())
-            return NULL;
-
-      PNode *p = processes->first;
-      processes->first = processes->first->next;
-      processes->size--;
-
-      if (p->state == READY)
-            processes->readySize--;
-
-      return p;
-}
-
-static int isEmptyQ()
-{
-      return processes->size == 0;
-}
-
-//    ----------------------------
-//    |                          |
-//    |     Status functions     |
-//    |                          |
-//    |                          |
-//    ----------------------------
-
-static uint64_t setNewState(uint64_t pid, State newState)
-{
-
-      PNode *process = getProcess(pid);
-
-      if (process == NULL || process->state == KILLED)
-            return -1;
-
-      if (process == currentP)
-      {
-            process->state = newState;
-            return process->pcb.pid;
-      }
-
-      if (process->state != READY && newState == READY)
-            processes->readySize++;
-
-      if (process->state == READY && newState != READY)
-            processes->readySize--;
-
-      process->state = newState;
-
-      return process->pcb.pid;
-}
-
-uint64_t killProcess(uint64_t pid)
-{
-      if (pid <= 2)
-            return -1;
-
-      int aux = setNewState(pid, KILLED);
-
-      if (pid == currentP->pcb.pid)
-            _timerTick();
-
-      return aux;
-}
-
-uint64_t blockProcess(uint64_t pid)
-{
-      int aux = setNewState(pid, BLOCKED);
-
-      if (pid == currentP->pcb.pid)
-            _timerTick();
-      return aux;
-}
-
-uint64_t unblockProcess(uint64_t pid)
-{
-      return setNewState(pid, READY);
-}
-
-char *stateToStr(State state)
-{
-      switch (state)
-      {
-      case READY:
-            return "Ready";
-            break;
-      case BLOCKED:
-            return "Blocked";
-      default:
-            return "Killed";
-            break;
-      };
-}
-
-
-void killFgProcess()
-{
-      if (currentP != NULL && currentP->pcb.fg && currentP->state == READY)
-      {
-            killProcess(currentP->pcb.pid);
-            return;
-      }
-}
-
-//    ----------------------------
-//    |                          |
-//    |      Misc functions      |
-//    |                          |
-//    |                          |
-//    ----------------------------
-
 void emptyBuff(char * buff){
       for(int i = 0; buff[i] != '\0'; i++){
             buff[i] = 0;
       }
 }
 
-void printProcess(PNode *process)
-{
+void printIndividualProcess(PNode * process){
       if(process != NULL){
             char buff[MAX_LEN] = {0};
             ncPrint("   ");
@@ -462,47 +426,42 @@ void printProcess(PNode *process)
             ncPrint("     ");
             ncPrint(itoa((uint64_t)process->pcb.rbp, buff, 16));
             ncPrint("     ");
-            ncPrint(stateToStr(process->state));
+            ncPrint(stateName(process->state));
             ncPrint("     ");
             ncPrint(process->pcb.name);
             ncNewline();
       }
 }
 
-void processDisplay()
-{
+void processDisplay(){
       ncPrint("PID      FG       RSP              RBP              STATE        NAME");
       ncNewline();
-
-      if (currentP != NULL)
-            printProcess(currentP);
-
-      PNode *curr = processes->first;
-      while (curr)
-      {
-            printProcess(curr);
-            curr = curr->next;
+      if (currentP != NULL){
+            printIndividualProcess(currentP);
+      }
+      PNode * iter = processes->first;
+      while(iter){
+            printIndividualProcess(iter);
+            iter = iter->next;
       }
 }
 
-int getCurrPID()
-{
+int getCurrPID(){
       return currentP ? currentP->pcb.pid : -1;
 }
 
-static void haltFunc(int argc, char **argv){
-      while (1)
+static void haltFunc(int argc, char ** argv){
+      while (1){
             _hlt();
+      }
 }
 
-static void exit()
-{
-      killProcess(currentP->pcb.pid);
+static void exit(){
+      kill(currentP->pcb.pid);
       _timerTick();
 }
 
-static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)
-{
+static void wrapper(void (*entryPoint)(int, char **), int argc, char ** argv){
       entryPoint(argc, argv);
       exit();
 }

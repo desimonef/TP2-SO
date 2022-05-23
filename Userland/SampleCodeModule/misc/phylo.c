@@ -58,7 +58,7 @@ void runPhylos(int argc, char *argv[])
             if (addPhilosopher() == -1)
                 printf("No se puede agregar (maximo 8)\n");
             else
-                printf("Agregando filósofo...\n");
+                printf("Agregando filosofo...\n");
             break;
         case 'b':
             if (removePhilosopher() == -1)

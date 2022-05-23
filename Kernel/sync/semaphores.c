@@ -71,7 +71,7 @@ int semPost(uint32_t id){
         for (int i = 0; i < sem->blockedPIDsSize - 1; i++)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
         sem->blockedPIDsSize--;
-        unblockProcess(nextPid);
+        unblock(nextPid);
         release(&(sem->mutex));
         return 0;
     }
@@ -99,7 +99,7 @@ int semWait(uint32_t id)
         int currPid = getCurrPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
         release(&(sem->mutex));
-        blockProcess(currPid);
+        block(currPid);
     }
 
     return 0;

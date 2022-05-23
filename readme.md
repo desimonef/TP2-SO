@@ -22,7 +22,7 @@ Una vez en docker, ejecutamos el siguiente comando:
 ```
 cd root && make all/buddy && exit
 ```
-- Nota 2: El kernel permite la compilación con 2 administradores de memoria diferentes. Si se desea utilizar el administrador _buddy_, ejecutar indicando `make buddy`. Caso contrario, usar make all.
+- Nota 2: El kernel permite la compilación con 2 administradores de memoria diferentes. Si se desea utilizar el administrador _buddy_, ejecutar indicando `make buddy`. Caso contrario, usar `make all`.
 
 Una vez que se tiene el programa ejecutado, nos podemos ubicar sobre el directorio  `Image` donde debería figurar el archivo `x64BareBonesImage.qcow2`. Para ejecutarlo, es necesario contar con _qemu_ instalado en el entorno de trabajo. **Se asume que el usuario posee conocimientos para instalar qemu en su entorno de trabajo**.
 

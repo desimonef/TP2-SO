@@ -199,20 +199,16 @@ int strtok(char * source, char ** dest, char token, int max){
     return index;
 }
 
-int tokenizeBuffer(char token, char **dest, char *source, int max)
-{
+int tokenizeBuffer(char token, char **dest, char *source, int max){
       int index = 0;
 
       if (*source != token && *source != '\0')
             dest[index++] = source;
 
-      while (*source != '\0')
-      {
-            if (*source == token)
-            {
+      while (*source != '\0'){
+            if (*source == token){
                   *source = 0;
-                  if (*(source + 1) != token && (*(source + 1) != '\0'))
-                  {
+                  if (*(source + 1) != token && (*(source + 1) != '\0')){
                         if (index >= max)
                               return index;
                         dest[index++] = source + 1;

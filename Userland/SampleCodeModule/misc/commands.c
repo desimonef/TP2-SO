@@ -34,28 +34,24 @@ void ps(int argc, char ** argv){
     syscall(PS, 0, 0, 0, 0, 0, 0);
 }
 
-int ticksElapsed()
-{
+int ticksElapsed(){
       return syscall(TICKS_ELAPSED, 0, 0, 0, 0, 0, 0);
 }
 
 
-void waitCycles(int cycles)
-{
+void waitCycles(int cycles){
       int goal = ticksElapsed() + cycles;
-      while (ticksElapsed() < goal)
-            ;
+      while (ticksElapsed() < goal);
 }
 
 void loop(int argc, char ** argv){
     int pid = syscall(CURRENT_P, 0, 0, 0, 0, 0, 0);
     int obj = -1;
     int counter = 1;
-    while (1 && obj == -1)
-    {
+    while (1 && obj == -1){
         waitCycles(10);
         printf("%d\n", pid);
-        if(counter == 10000)
+        if(counter == 100)
             obj = 0;
         else{
             counter++;
@@ -125,14 +121,11 @@ void wc(int argc, char ** argv){
     printf("\nNumber of lines: %d\n", count);
 }
 
-int check_vowel(char a)
-{
+int check_vowel(char a){
       if (a >= 'A' && a <= 'Z')
-            a = a + 'a' - 'A'; /* Converting to lower case or use a = a + 32 */
-
+            a = a + 'a' - 'A';
       if (a == 'a' || a == 'e' || a == 'i' || a == 'o' || a == 'u')
             return 1;
-
       return 0;
 }
 
@@ -141,10 +134,9 @@ void filter(int argc, char ** argv){
     printf(argv[1]);
     printf("\n");
     int i = 0;
-    while (argv[1][i] != '\0' && argv[1][i] != '\n')
-    {
+    while (argv[1][i] != '\0' && argv[1][i] != '\n'){
         if (!check_vowel(argv[1][i]))
-                putchar(argv[1][i]);
+            putchar(argv[1][i]);
         i++;
     }
     printf("\n");

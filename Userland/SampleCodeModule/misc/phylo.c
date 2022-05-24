@@ -30,30 +30,23 @@ int addPhilosopher();
 int removePhilosopher();
 void printerAssistant();
 
-void runPhylos(int argc, char *argv[])
-{
+void runPhylos(int argc, char *argv[]){
     working = 1;
     tableMutex = semOpen(MUTEX_ID, 1);
     if(tableMutex == -1){
         printf("\nError opening semaphores! Returning...\n");
         return;
     }
-
     printf("Problema de los filosofos.\n");
     printf("Instrucciones:\n- 'a': Agrega un filosofo\n- 'b': Borra un filosofo\n- 'q': Cierra el programa\nComencemos :)\n\n");
-
     sleep(2);
-
     for (int i = 0; i < BASE_PHILOS; i++)
         addPhilosopher();
     char *args[] = {"printerAssistant"};
     int printerAssistantPid = createProcess(&printerAssistant, 1, args, BG, NULL);
-    while (working)
-    {
-
+    while (working){
         char key = getchar();
-        switch (key)
-        {
+        switch (key){
         case 'a':
             if (addPhilosopher() == -1)
                 printf("No se puede agregar (maximo 8)\n");
@@ -114,8 +107,7 @@ void lifecycle(int argc, char *argv[])
 //    |                          |
 //    ----------------------------
 
-void attemptForForks(int i)
-{
+void attemptForForks(int i){
     semWait(tableMutex);
 
     philos[i]->State = HUNGRY;
@@ -126,8 +118,7 @@ void attemptForForks(int i)
     semWait(philos[i]->sem);
 }
 
-void releaseForks(int i)
-{
+void releaseForks(int i){
     semWait(tableMutex);
     philos[i]->State = THINKING;
     checkForForks(LEFT(i));
@@ -135,10 +126,8 @@ void releaseForks(int i)
     semPost(tableMutex);
 }
 
-void checkForForks(int i)
-{
-    if (philos[i]->State == HUNGRY && philos[LEFT(i)]->State != EATING && philos[RIGHT(i)]->State != EATING)
-    {
+void checkForForks(int i){
+    if (philos[i]->State == HUNGRY && philos[LEFT(i)]->State != EATING && philos[RIGHT(i)]->State != EATING){
         philos[i]->State = EATING;
         semPost(philos[i]->sem);
     }
@@ -171,8 +160,7 @@ int addPhilosopher(){
 
 int removePhilosopher()
 {
-    if (currentPhilos == BASE_PHILOS)
-    {
+    if (currentPhilos == BASE_PHILOS){
         return -1;
     }
 

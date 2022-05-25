@@ -25,8 +25,8 @@
 //4,5,7,7,4   -   4,9,16,23,27
 void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
 &divZeroWrp, &opCodeWrp, &ps, &mem, &testPrio,
-&testMM, &testProc, &testSync, &testNosync, &loop, &kill, &nice,
-&block, &unblock, &sem, &pipe, &cat, &wc, &filter, 
+&testMM, &testProc, &testSync, &testNosync, &loop, &killProc, &niceProc,
+&blockProc, &unblockProc, &sem, &pipe, &cat, &wc, &filter, 
 &runPhylos, &clear};
 
 char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime", "zerodiv", "invopcode",
@@ -48,8 +48,7 @@ void initShell(int argc, char ** argv){
     shellWelcomeMsg();
 
     int c = -1;
-    while (c == -1)
-    {
+    while (c == -1){
         c = getchar();
     }
     screenClear(0);
@@ -57,23 +56,23 @@ void initShell(int argc, char ** argv){
 }
 
 void shellWelcomeMsg(){
-    printf("                    @###########@\n");              
-    printf("                   @-------------@\n");            
-    printf("                  @------@@@@@@@@@@\n");          
-    printf("                 @------@          @\n");        
-    printf("             @@@@------@            @\n");       
-    printf("            @---@------@            @\n");       
-    printf("           @----@-------@          @\n");        
-    printf("           @----@#-------@@@@@@@@@@.\n");        
-    printf("          .@----@#-----------------@\n");        
-    printf("          .@----@#-----------------@\n");        
-    printf("           @----@#----------------+@\n");        
-    printf("           @----@#----------------*@\n");        
-    printf("            @---@#----------------#@\n");         
-    printf("             @@@#@------####@-----@\n");         
-    printf("                 @-----=@   @-----@\n");         
-    printf("                 @-----=@   @-----@\n");          
-    printf("                 @######@   @#####@\n\n");
+    printf("                    @###########@          .-. .  . .-. . . .-.   .-. .-. \n");              
+    printf("                   @-------------@         |-| |\/| | | |\| |..   | | `-. \n");            
+    printf("                  @------@@@@@@@@@@        ` ' '  ` `-' ' ` `-'   `-' `-'  \n");          
+    printf("                 @------@          @          \n");        
+    printf("             @@@@------@            @          \n");       
+    printf("            @---@------@            @          \n");       
+    printf("           @----@-------@          @          \n");        
+    printf("           @----@#-------@@@@@@@@@@.          \n");        
+    printf("          .@----@#-----------------@          \n");        
+    printf("          .@----@#-----------------@          \n");        
+    printf("           @----@#----------------+@          \n");        
+    printf("           @----@#----------------*@          \n");        
+    printf("            @---@#----------------#@          \n");         
+    printf("             @@@#@------####@-----@          \n");         
+    printf("                 @-----=@   @-----@          \n");         
+    printf("                 @-----=@   @-----@          \n");          
+    printf("                 @######@   @#####@          \n\n");
     printf("¡Hola!\n"); 
     printf("Bienvenidos al sistema operativo Among-OS. Por favor, presione una tecla para continuar\n");
 }

@@ -6,47 +6,53 @@
 #include "memManager.h"
 #include "defs.h"
 
-typedef union header Header;
+// typedef union data data;
 
-union header{
+/* union data{
     struct {
-        union header * ptr;
+        union data * ptr;
         unsigned size;
     } data;
     long x;
 };
+*/
 
-static Header * base;
-static Header * startingNode = NULL;
+typedef struct data{
+    struct data * ptr;
+    unsigned size;
+} data;
+
+static data * base;
+static data * startingNode = NULL;
 
 unsigned long totalUnits;
 
 void initMM(){
     ncPrint("Entering MEM_LIST MM\n");
-    totalUnits = (TOTALMEM + sizeof(Header) - 1) / sizeof(Header) + 1;
-    startingNode = base = (Header *) MEM_START;
-    startingNode->data.size = totalUnits;
-    startingNode->data.ptr = startingNode; 
+    totalUnits = (TOTALMEM + sizeof(data) - 1) / sizeof(data) + 1;
+    startingNode = base = (data *) MEM_START;
+    startingNode->size = totalUnits;
+    startingNode->ptr = startingNode; 
 }
 
 void * malloc(int size){
     if(size == 0)
         return NULL;
 
-    unsigned long nunits = (size + sizeof(Header) - 1) / sizeof(Header) + 1;
-    Header * currNode;
-    Header * prevNode;
+    unsigned long nunits = (size + sizeof(data) - 1) / sizeof(data) + 1;
+    data * currNode;
+    data * prevNode;
     prevNode = startingNode;
-    currNode = prevNode->data.ptr;
+    currNode = prevNode->ptr;
 
-    for(;;prevNode = currNode, currNode = currNode->data.ptr){
-        if(currNode->data.size >= nunits){
-            if(currNode->data.size == nunits)
-                prevNode->data.ptr = currNode->data.ptr;
+    for(;;prevNode = currNode, currNode = currNode->ptr){
+        if(currNode->size >= nunits){
+            if(currNode->size == nunits)
+                prevNode->ptr = currNode->ptr;
             else{
-                currNode->data.size -= nunits;
-                currNode += currNode->data.size;
-                currNode->data.size = nunits;
+                currNode->size -= nunits;
+                currNode += currNode->size;
+                currNode->size = nunits;
             }
             startingNode = prevNode;
             return (void *)(currNode + 1);
@@ -58,49 +64,49 @@ void * malloc(int size){
 }
 
 void free(void * addr){
-    if(addr == NULL || (((long) addr - (long) base) % sizeof(Header)) != 0)
+    if(addr == NULL || (((long) addr - (long) base) % sizeof(data)) != 0)
         return;
         
-    Header *freeBlock;
-    Header *currNode;
+    data *freeBlock;
+    data *currNode;
 
-    freeBlock = (Header *) addr - 1;
+    freeBlock = (data *) addr - 1;
 
-    if(freeBlock < base || freeBlock >= (base + totalUnits * sizeof(Header)))
+    if(freeBlock < base || freeBlock >= (base + totalUnits * sizeof(data)))
         return;
     
     char isExternal = 0;
 
     currNode = startingNode;
-    for(; !(freeBlock > currNode && freeBlock < currNode->data.ptr); currNode = currNode->data.ptr){
-        if(freeBlock == currNode || freeBlock == currNode->data.ptr)
+    for(; !(freeBlock > currNode && freeBlock < currNode->ptr); currNode = currNode->ptr){
+        if(freeBlock == currNode || freeBlock == currNode->ptr)
             return;
-        if(currNode >= currNode->data.ptr && (freeBlock > currNode || freeBlock < currNode->data.ptr)){
+        if(currNode >= currNode->ptr && (freeBlock > currNode || freeBlock < currNode->ptr)){
             isExternal = 1;
             break;
         }
     }
 
-    if(!isExternal && (currNode + currNode->data.size > freeBlock ||
-    freeBlock + freeBlock->data.size > currNode->data.ptr))
+    if(!isExternal && (currNode + currNode->size > freeBlock ||
+    freeBlock + freeBlock->size > currNode->ptr))
         return ;
 
     // Uno por derecha
-    if(freeBlock + freeBlock->data.size == currNode->data.ptr){
-        freeBlock->data.size += currNode->data.ptr->data.size; 
-        freeBlock->data.ptr = currNode->data.ptr->data.ptr;
+    if(freeBlock + freeBlock->size == currNode->ptr){
+        freeBlock->size += currNode->ptr->size; 
+        freeBlock->ptr = currNode->ptr->ptr;
     }
     else{
-        freeBlock->data.ptr = currNode->data.ptr;
+        freeBlock->ptr = currNode->ptr;
     }
 
     // Uno por izquierda
-    if(currNode + currNode->data.size == freeBlock){
-        currNode->data.size += freeBlock->data.size;
-        currNode->data.ptr = freeBlock->data.ptr;
+    if(currNode + currNode->size == freeBlock){
+        currNode->size += freeBlock->size;
+        currNode->ptr = freeBlock->ptr;
     }
     else{
-        currNode->data.ptr = freeBlock;
+        currNode->ptr = freeBlock;
     }
     startingNode = currNode;
 }

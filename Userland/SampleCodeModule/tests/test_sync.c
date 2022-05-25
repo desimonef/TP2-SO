@@ -55,7 +55,7 @@ void inc(int argc, char *argv[]){
     }
   } 
   printf("Final value: ");
-  char* buff;
+  char buff[MAXLEN];
   printf(itoa(global, buff, 10));
   if(semPost(SEM_SHELL) == -1){
     return;

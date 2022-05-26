@@ -6,17 +6,6 @@
 #include "memManager.h"
 #include "defs.h"
 
-// typedef union data data;
-
-/* union data{
-    struct {
-        union data * ptr;
-        unsigned size;
-    } data;
-    long x;
-};
-*/
-
 typedef struct data{
     struct data * ptr;
     unsigned size;

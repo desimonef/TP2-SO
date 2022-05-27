@@ -36,6 +36,9 @@
 #define PROCESS_COUNT 29
 #define GET_PIPES 30
 #define PRINT_MEM 31
+#define NEW_WRITE 32
+#define NEW_READ 33
+
 
 #define MAXLEN 100
 

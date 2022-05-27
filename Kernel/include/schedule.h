@@ -69,5 +69,7 @@ int currentReadsFrom();
 int currentWritesTo();
 int currentPFg();
 void waitForPID(uint64_t pid);
+int getCurrentOutFD();
+int getCurrentInFD();
 
 #endif

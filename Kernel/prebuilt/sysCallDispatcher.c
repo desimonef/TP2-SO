@@ -90,9 +90,39 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
                 return 0;
             case TICKS_ELAPSED:
                 return ticks_elapsed();
+
+            // ---------- SOME MISC SYSCALLS --------------------
+            case NEW_WRITE:
+                return newWrite(rsi,rdx,r10);
+                break;
+            case NEW_READ:
+                return newRead(rsi,rdx,r10);
+                break;
             default:
                 return -1;
         }
+    }
+}
+
+uint64_t newWrite(uint64_t fd, uint64_t buff, uint64_t count){
+    uint64_t whereTo = getCurrentOutFD();
+    if(whereTo == 1){
+        //ncPrint("Entro a sysWrite\n");
+        return sysWrite(fd, buff, count);
+    }
+    else{
+        return pipeWrite(whereTo, buff);
+    }
+}
+
+uint64_t newRead(uint64_t fd, uint64_t buff, uint64_t amount){
+    uint64_t whereFrom = getCurrentInFD();
+    if(whereFrom == 1){
+        ncPrint("Entro a sysRead\n");
+        return sysRead(fd, buff, amount);
+    }
+    else{
+        return pipeRead(whereFrom);
     }
 }
 

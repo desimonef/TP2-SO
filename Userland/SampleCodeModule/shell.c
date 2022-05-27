@@ -24,14 +24,20 @@
 
 //4,5,7,7,4   -   4,9,16,23,27
 void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
-&divZeroWrp, &opCodeWrp, &ps, &mem, &testPrio,
-&testMM, &testProc, &testSync, &testNosync, &loop, &killProc, &niceProc,
-&blockProc, &unblockProc, &sem, &pipe, &cat, &wc, &filter, 
-&runPhylos, &clear};
+&divZeroWrp, &opCodeWrp, &ps, &mem, 
+&testPrio, &testMM, &testProc, &testSync, 
+&testNosync, &loop, &kill, &niceProc,
+&block, &unblock, &sem, &pipe, 
+&cat, &wc, &filter, &runPhylos, 
+&clear};
 
-char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime", "zerodiv", "invopcode",
-"ps", "mem", "testprio", "testmm", "testproc", "testsync", "testnosync", "loop", "kill", "nice",
-"block", "unblock", "sem", "pipe", "cat", "wc", "filter", "phylo", "clear"};
+char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime", 
+"zerodiv", "invopcode", "ps", "mem", 
+"testprio", "testmm", "testproc", "testsync", 
+"testnosync", "loop", "kill", "nice",
+"block", "unblock", "sem", "pipe", 
+"cat", "wc", "filter", "phylo", 
+"clear"};
 
 int off = 0;
 static int pipeCounter = 0;

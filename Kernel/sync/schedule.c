@@ -358,10 +358,8 @@ uint64_t unblock(uint64_t pid){
 }
 
 
-void killFgProcess()
-{
-      if (currentP != NULL && currentP->pcb.fg && currentP->state == READY)
-      {
+void killFgProcess(){
+      if (currentP != NULL && currentP->pcb.fg && currentP->state == READY){
             kill(currentP->pcb.pid);
             return;
       }
@@ -459,6 +457,20 @@ static void haltFunc(int argc, char ** argv){
 static void exit(){
       kill(currentP->pcb.pid);
       _timerTick();
+}
+
+int getCurrentOutFD(){
+      if(currentP != NULL){
+            return currentP->pcb.fd[1];
+      }
+      return -1;
+}
+
+int getCurrentInFD(){
+      if(currentP != NULL){
+            return currentP->pcb.fd[0];
+      }
+      return -1;
 }
 
 static void wrapper(void (*entryPoint)(int, char **), int argc, char ** argv){

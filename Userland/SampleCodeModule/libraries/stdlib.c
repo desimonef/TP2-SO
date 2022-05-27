@@ -121,7 +121,7 @@ char * getCommandWithArgsBis(){
 }
 
 void printf(char * command, ...){
-    char buffer[MAX_BUFFER];
+    char auxBuff[MAX_BUFFER];
     va_list args;
     va_start(args, command);
     while(*command != 0){
@@ -130,10 +130,10 @@ void printf(char * command, ...){
             char * string;
             switch(*command){
                 case 'd':
-                    string = itoa(va_arg(args, int), buffer, 10);
+                    string = itoa(va_arg(args, int), auxBuff, 10);
                 break;
                 case 'x':
-                    string = itoa(va_arg(args, int), buffer, 16);
+                    string = itoa(va_arg(args, int), auxBuff, 16);
                 break;
                 case 's':
                     string = va_arg(args,char*);
@@ -317,7 +317,7 @@ int atoi(char * str){
  
 //https://stackoverflow.com/questions/10156409/convert-hex-string-char-to-int
 int hexToInt(char * num){
-    if (num[0] == '0' && (num[1] != 'x' || num[1] != 'X')){
+    if (num[0] == '0' && (num[1] == 'x' || num[1] == 'X')){
         int val = 0;
         while (*num) {
             // get current character then increment
@@ -369,12 +369,12 @@ char * intToHex(uint64_t num, char * str, int bytes)
 }
 
 void sleep(int secs){
-    char buffer[3] = {0};
+    char auxBuff[3] = {0};
     seconds(buffer);
-    int initialSecs = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+    int initialSecs = (auxBuff[0] - '0') * 10 + (auxBuff[1] - '0');
     while(1){
-        seconds(buffer);
-        int auxSeconds = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+        seconds(auxBuff);
+        int auxSeconds = (auxBuff[0] - '0') * 10 + (auxBuff[1] - '0');
         if (auxSeconds - initialSecs >= secs)
             return;
     }

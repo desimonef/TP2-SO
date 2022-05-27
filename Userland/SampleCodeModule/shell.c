@@ -49,6 +49,7 @@ int runPipedCommands(int pipeIdx, int argc, char ** argv, int fg);
 int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut);
 int isBackground(int argc, char ** argv);
 void shellNueva();
+void processInputChar(char * buffer, char c);
 
 void initShell(int argc, char ** argv){
     screenClear(0);
@@ -85,12 +86,33 @@ void shellWelcomeMsg(){
 }
 
 
+void processInputChar(char * buffer, char c){
+    if(c != 0){
+        switch(c){
+            case '\n':
+                putchar('\n');
+                processBuffer(buffer);
+                break;
+            case '\b':
+                if(strlen(buffer) > 0)
+                    buffer[strlen(buffer)-1] = 0;
+                break;
+            default:
+                buffer[strlen(buffer)] = c;
+                putchar(c);
+                break;
+        }
+    }
+}
+
 void shellNueva(){
     printf("Bienvenidos a Among-OS! Si necesita ayuda, ingresar el comando <help>\n");
     char buffer[MAX_SIZE] ={0};
     while(1){
         printf("$>");
         cleanBuffer(buffer);
+        //int c = getchar();
+        //processInputChar(buffer, c);
         char * parsed = getCommandWithArgsBis(buffer);
         processBuffer(parsed);
     }

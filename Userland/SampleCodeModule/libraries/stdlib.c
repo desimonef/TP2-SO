@@ -5,6 +5,7 @@
 #include "stdlib.h"
 #include "userlib.h"
 #include "clock.h"
+#include "sysCalls.h"
 
 #define MAX_BUFFER 100
 #define STDIN 0
@@ -18,6 +19,7 @@ int getchar(){
     if (read <= 0)
         return -1;
     return *temp;
+    //return syscall(NEW_READ,0,0,0,0,0,0);
 }
 
 int putchar(char c){

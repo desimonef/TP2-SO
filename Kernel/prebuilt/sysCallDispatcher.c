@@ -106,8 +106,12 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
 
 uint64_t newWrite(uint64_t fd, uint64_t buff, uint64_t count){
     uint64_t whereTo = getCurrentOutFD();
+    /*ncPrint("FD adonde escribe: ");
+    ncPrintDec(whereTo);
+    ncNewline();*/
     if(whereTo == 1){
-        //ncPrint("Entro a sysWrite\n");
+        ncPrint("Entro a sysWrite");
+        ncNewline();
         return sysWrite(fd, buff, count);
     }
     else{
@@ -117,8 +121,11 @@ uint64_t newWrite(uint64_t fd, uint64_t buff, uint64_t count){
 
 uint64_t newRead(uint64_t fd, uint64_t buff, uint64_t amount){
     uint64_t whereFrom = getCurrentInFD();
-    if(whereFrom == 1){
-        ncPrint("Entro a sysRead\n");
+    /*ncPrint("FD de donde leo: ");
+    ncPrintDec(whereFrom);
+    ncNewline();*/
+    if(whereFrom == 0){
+        //ncPrint("Entro a sysRead\n");
         return sysRead(fd, buff, amount);
     }
     else{

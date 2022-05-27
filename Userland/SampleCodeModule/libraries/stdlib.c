@@ -121,7 +121,7 @@ char * getCommandWithArgsBis(){
 }
 
 void printf(char * command, ...){
-    char buffer[MAX_BUFFER];
+    char auxBuff[MAX_BUFFER];
     va_list args;
     va_start(args, command);
     while(*command != 0){
@@ -130,10 +130,10 @@ void printf(char * command, ...){
             char * string;
             switch(*command){
                 case 'd':
-                    string = itoa(va_arg(args, int), buffer, 10);
+                    string = itoa(va_arg(args, int), auxBuff, 10);
                 break;
                 case 'x':
-                    string = itoa(va_arg(args, int), buffer, 16);
+                    string = itoa(va_arg(args, int), auxBuff, 16);
                 break;
                 case 's':
                     string = va_arg(args,char*);
@@ -174,29 +174,6 @@ void cleanBuffer(char * buffer){
     int len = strlen(buffer);
     for(int i = 0; i < len; i++)
         buffer[i] = 0;
-}
-
-int strtok(char * source, char ** dest, char token, int max){
-    int index = 0;
-
-    if (*source != token && *source != '\0')
-        dest[index++] = source;
-
-    while (*source != '\0')
-    {
-        if (*source == token)
-        {
-                *source = 0;
-                if (*(source + 1) != token && (*(source + 1) != '\0'))
-                {
-                    if (index >= max)
-                            return index;
-                    dest[index++] = source + 1;
-                }
-        }
-        source++;
-    }
-    return index;
 }
 
 int tokenizeBuffer(char token, char **dest, char *source, int max){
@@ -317,7 +294,7 @@ int atoi(char * str){
  
 //https://stackoverflow.com/questions/10156409/convert-hex-string-char-to-int
 int hexToInt(char * num){
-    if (num[0] == '0' && (num[1] != 'x' || num[1] != 'X')){
+    if (num[0] == '0' && (num[1] == 'x' || num[1] == 'X')){
         int val = 0;
         while (*num) {
             // get current character then increment
@@ -369,41 +346,13 @@ char * intToHex(uint64_t num, char * str, int bytes)
 }
 
 void sleep(int secs){
-    char buffer[3] = {0};
-    seconds(buffer);
-    int initialSecs = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+    char auxBuff[3] = {0};
+    seconds(auxBuff);
+    int initialSecs = (auxBuff[0] - '0') * 10 + (auxBuff[1] - '0');
     while(1){
-        seconds(buffer);
-        int auxSeconds = (buffer[0] - '0') * 10 + (buffer[1] - '0');
+        seconds(auxBuff);
+        int auxSeconds = (auxBuff[0] - '0') * 10 + (auxBuff[1] - '0');
         if (auxSeconds - initialSecs >= secs)
             return;
     }
-}
-
-char *strstrip(char *s, char c) {
-  while (*s != 0) {
-    if (*s != c)
-      break;
-    s++;
-  }
-  return s;
-}
-
-char *strtokLib(char *s, char delim) {
-  char *ptr = s;
-
-  if (s == 0) {
-    return 0;
-  }
-
-  int flag = 0;
-  while (*ptr != 0) {
-    if (*ptr == delim) {
-      flag = 1;
-      *ptr = 0;
-    } else if (flag == 1)
-      return ptr;
-    ptr++;
-  }
-  return ptr;
 }

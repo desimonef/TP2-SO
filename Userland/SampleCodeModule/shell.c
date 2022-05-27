@@ -20,7 +20,7 @@
 #define MAX_SIZE 150
 #define N_ARGS 8
 #define MAX_ARGS 4
-#define N_COMMANDS 26
+#define N_COMMANDS 25
 
 //4,5,7,7,4   -   4,9,16,23,27
 void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
@@ -118,7 +118,8 @@ void processBuffer(char * buffer){
         argc--;
     }
     int idx = getCommand(argv[0]);
-    char buff[MAXLEN];
+    char buff[MAXLEN]; // Nota: Esta declaración no aporta nada al código. Sin embargo, sacarla
+                       // no permite reconocer los comandos. Se queda.
     if(idx == -1){
         printf("Comando invalido\n");
         return;
@@ -128,7 +129,7 @@ void processBuffer(char * buffer){
 
 void * getCommand(char * str){
     int idx = 0; 
-    while(idx < N_COMMANDS-1){
+    while(idx < N_COMMANDS){
         if(strcmp(str, cmdsNames[idx]) == 0){
             return idx;
         }

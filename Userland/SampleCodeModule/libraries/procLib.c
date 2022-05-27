@@ -14,6 +14,7 @@ int killProc(uint64_t pid)
     return syscall(KILL_P, pid, 0, 0, 0, 0, 0);
 }
 
+/*
 int blockProc(uint64_t pid)
 {
     return syscall(BLOCK_P, pid, 0, 0, 0, 0, 0);
@@ -22,17 +23,17 @@ int blockProc(uint64_t pid)
 int unblockProc(uint64_t pid)
 {
     return syscall(UNBLOCK_P, pid, 0, 0, 0, 0, 0);
-}
+}*/
 
 int getPID()
 {
     return syscall(CURRENT_P, 0, 0, 0, 0, 0, 0);
 }
 
-void niceProc(uint64_t pid, int priority)
+/*void niceProc(uint64_t pid, int priority)
 {
     syscall(NICE, pid, priority, 0, 0, 0, 0);
-}
+}*/
 
 void yieldProc()
 {

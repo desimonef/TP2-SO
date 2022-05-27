@@ -206,7 +206,7 @@ void displayHelpMenu(){
     printf("~zerodiv~: se genera una excepcion de division por cero\n");
     printf("~invopcode~: se genera una excepcion de codigo de operacion equivocado\n");
     printf("~inforeg~: muestra los valores de los registros en el momento de ejecucion\n");
-    printf("~printmem~: muestra el contenido de 32 bytes de memoria a partir de\n");
+    printf("~dumpMem~: muestra el contenido de 32 bytes de memoria a partir de\n");
     printf("la direccion hexadecimal provista\n");
     printf("~datetime~: muestra la hora y la fecha a la hora de ejecutarse\n");
     printf("~mem~: imprime estado actual de la memoria\n");

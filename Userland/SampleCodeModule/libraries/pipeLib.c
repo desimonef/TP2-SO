@@ -25,7 +25,7 @@ int pipeClose(uint64_t id)
     return syscall(CLOSE_PIPE, id, 0, 0, 0, 0, 0);
 }
 
-int printPipes()
+/*int printPipes()
 {
     return syscall(PRINT_PIPES, 0, 0, 0, 0, 0, 0);
-}
+}*/

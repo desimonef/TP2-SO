@@ -128,6 +128,9 @@ void * malloc(int size){
 }
 
 void freeRec(node_t node, void *addr){
+    if(node == NULL){
+        return;
+    }
     if (node->left != NULL || node->right != NULL){
         if (node->right != 0 && (uint64_t) node->right->address > (uint64_t) addr){
             freeRec(node->left, addr);

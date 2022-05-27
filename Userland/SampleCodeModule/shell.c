@@ -181,8 +181,8 @@ int runPipedCommands(int pipeIdx, int argc, char **argv, int fg)
     pids[1] = runPipeCommand(currentArgc, currentArgv, fg, 0, pipe);
 
     if (pids[1] == -1){
-        return -1;
         pipeClose(pipe);
+        return -1;
     }
 
     int a = -1;

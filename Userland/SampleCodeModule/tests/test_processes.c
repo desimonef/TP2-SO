@@ -5,6 +5,7 @@
 //#include <stringLib.h>
 #include "sysCalls.h"
 #include "test_processes.h"
+#include "stdlib.h"
 #define MAX_PROCESSES 10 //Should be around 80% of the the processes handled by the kernel
 #define MAJOR_WAIT 10000000
 
@@ -36,7 +37,7 @@ void test_processes()
         for (rq = 0; rq < MAX_PROCESSES; rq++)
         {
             char *argv[] = {"endlessLoop"};
-            p_rqs[rq].pid = syscall(CREATE_P, &endlessLoop, 1, argv, 0, 0, 0);
+            p_rqs[rq].pid = syscall(CREATE_P, (uint64_t)&endlessLoop, 1, (uint64_t)argv, 0, 0, 0);
 
             if (p_rqs[rq].pid == -1)
             {

@@ -3,7 +3,7 @@
 
 #include "naiveConsole.h"
 
-#define NULL ((void *) 0)
+//#define NULL ((void *) 0)
 #define EMPTY 0
 #define PARTIAL 1
 #define FULL 2

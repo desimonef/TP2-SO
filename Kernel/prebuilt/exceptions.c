@@ -18,7 +18,7 @@ void exceptionDispatcher(int exception, uint64_t rsp) {
 		message = "Exception: INVALID OPERATION\n";
 	else
 		return;
-	sysWrite(2, message, strlen(message));
+	sysWrite(2, (uint64_t)message, strlen(message));
 	ncNewline();
 	ncNewline();
 	printRegisters();

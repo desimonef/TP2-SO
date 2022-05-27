@@ -231,7 +231,7 @@ void inforeg(int argc, char ** argv){
     char * registers[16] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RSI: ", "RDI: ", "RBP: ", "RSP: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
     uint64_t buff[16];
     char hexa[20];
-    dumpRegs(buff);
+    dumpRegs((char*)buff);
     printf("Los valores de los registros son:\n");
     for (int i=0 ;i < 16;i++){
         if(i % 2 == 0){

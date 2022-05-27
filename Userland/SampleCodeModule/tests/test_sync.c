@@ -12,7 +12,6 @@
 #define TOTAL_PAIR_PROCESSES 2
 #define SEM_ID 101
 #define SEM_SHELL 102
-#define NULL (void*) 0
 
 int64_t global;  //shared memory
 

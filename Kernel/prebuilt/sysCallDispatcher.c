@@ -111,7 +111,7 @@ uint64_t newWrite(uint64_t fd, uint64_t buff, uint64_t count){
         return sysWrite(fd, buff, count);
     }
     else{
-        return pipeWrite(whereTo, buff);
+        return pipeWrite(whereTo, (char*)buff);
     }
 }
 

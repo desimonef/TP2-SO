@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "test_util.h"
 #include "sysCalls.h"
+#include "stdlib.h"
 
 #define MINOR_WAIT 1000000
 

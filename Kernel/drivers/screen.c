@@ -10,7 +10,7 @@
 static uint8_t * const video = (uint8_t *)0xB8000;
 static uint32_t width;
 static uint32_t height;
-static char divider = '-';
+//static char divider = '-';
 static int screen = 1;
 static int canMove = 1;
 static int start = 0;

@@ -20,7 +20,7 @@
 #define MAX_SIZE 150
 #define N_ARGS 8
 #define MAX_ARGS 4
-#define N_COMMANDS 27
+#define N_COMMANDS 26
 
 //4,5,7,7,4   -   4,9,16,23,27
 void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,

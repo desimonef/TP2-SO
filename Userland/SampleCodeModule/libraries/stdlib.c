@@ -137,6 +137,10 @@ void printf(char * command, ...){
                 break;
                 case 's':
                     string = va_arg(args,char*);
+                break;
+                default:
+                    printf("Error en formato");
+                    return;
                 break;  
             }
             print(1, string, strlen(string));
@@ -174,29 +178,6 @@ void cleanBuffer(char * buffer){
     int len = strlen(buffer);
     for(int i = 0; i < len; i++)
         buffer[i] = 0;
-}
-
-int strtok(char * source, char ** dest, char token, int max){
-    int index = 0;
-
-    if (*source != token && *source != '\0')
-        dest[index++] = source;
-
-    while (*source != '\0')
-    {
-        if (*source == token)
-        {
-                *source = 0;
-                if (*(source + 1) != token && (*(source + 1) != '\0'))
-                {
-                    if (index >= max)
-                            return index;
-                    dest[index++] = source + 1;
-                }
-        }
-        source++;
-    }
-    return index;
 }
 
 int tokenizeBuffer(char token, char **dest, char *source, int max){
@@ -284,7 +265,7 @@ int atoi(char * str){
     int number = 0;
     int mult = 1;
     int n = strlen(str);
-    n = (int)n < 0 ? -n : n; /* quick absolute value check  */
+    //n = (int)n < 0 ? -n : n; /* quick absolute value check  */
     /* for each character in array */
     while (n--)
     {
@@ -370,7 +351,7 @@ char * intToHex(uint64_t num, char * str, int bytes)
 
 void sleep(int secs){
     char auxBuff[3] = {0};
-    seconds(buffer);
+    seconds(auxBuff);
     int initialSecs = (auxBuff[0] - '0') * 10 + (auxBuff[1] - '0');
     while(1){
         seconds(auxBuff);
@@ -378,32 +359,4 @@ void sleep(int secs){
         if (auxSeconds - initialSecs >= secs)
             return;
     }
-}
-
-char *strstrip(char *s, char c) {
-  while (*s != 0) {
-    if (*s != c)
-      break;
-    s++;
-  }
-  return s;
-}
-
-char *strtokLib(char *s, char delim) {
-  char *ptr = s;
-
-  if (s == 0) {
-    return 0;
-  }
-
-  int flag = 0;
-  while (*ptr != 0) {
-    if (*ptr == delim) {
-      flag = 1;
-      *ptr = 0;
-    } else if (flag == 1)
-      return ptr;
-    ptr++;
-  }
-  return ptr;
 }

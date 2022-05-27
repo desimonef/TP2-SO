@@ -111,9 +111,6 @@ void *scheduler(void * setRSP){
                   }
                   currentP = pDequeue();
             }
-            if(currentP->state != READY){
-                  ncPrint("[Kernel] ERROR: No ready processes found. Now returning."); // NO debería llegar aca igual
-            }
       }
       else{
             currentP = haltP; // No tenemos procesos listos --> Haltea el kernel
@@ -243,12 +240,6 @@ void yield(){
       _timerTick();
 }
 
-int currentPFg(){
-      if (currentP)
-            return currentP->pcb.fg;
-      return -1;
-}
-
 //    ----------------------------
 //    |                          |
 //    |     Queue functions      |
@@ -355,14 +346,6 @@ uint64_t block(uint64_t pid){
 
 uint64_t unblock(uint64_t pid){
       return changeState(pid, READY);
-}
-
-
-void killFgProcess(){
-      if (currentP != NULL && currentP->pcb.fg && currentP->state == READY){
-            kill(currentP->pcb.pid);
-            return;
-      }
 }
 
 //    ----------------------------

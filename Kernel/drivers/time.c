@@ -12,7 +12,3 @@ void timer_handler() {
 int ticks_elapsed() {
 	return ticks;
 }
-
-int seconds_elapsed() {
-	return ticks / 18;
-}

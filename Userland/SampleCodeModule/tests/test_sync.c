@@ -74,7 +74,10 @@ void test_sync(){
   printf("CREATING PROCESSES...(WITH SEM)\n");
   int error;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    char **argv1 = malloc(4*sizeof(char));
+    char ** argv1 = malloc(4*sizeof(char));
+    if(argv1 == NULL){
+      return;
+    }
     argv1[0] = "inc";
     argv1[1] = "1";
     argv1[2] = "1";
@@ -83,12 +86,18 @@ void test_sync(){
     if (error == -1)
     {
         printf("Error al crear el proceso");
-    
+        for(int p = 0; p < 4; p++){
+          freeMem(argv1[p]);
+        }
+        freeMem(argv1);
         return ;
     }
    
     
     char **argv2 = malloc(4*sizeof(char));
+    if(argv2 == NULL){
+      return;
+    }
     argv2[0] = "inc";
     argv2[1] = "1";
     argv2[2] = "-1";
@@ -97,9 +106,13 @@ void test_sync(){
     if (error == -1)
     {
         printf("Error al crear el proceso");
-    
-        return ;
     }
+    for(int k = 0; k < 4; k++){
+      freeMem(argv1[k]);
+      freeMem(argv2[k]);
+    }
+    freeMem(argv1);
+    freeMem(argv2);
   }
 
   for (int i = 0; i < TOTAL_PAIR_PROCESSES*2; i++)

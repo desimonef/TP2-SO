@@ -32,7 +32,6 @@ uint32_t pipeOpen(uint32_t pipeId);
 int pipeClose(uint32_t pipeId);
 int pipeRead(uint32_t pipeId);
 uint32_t pipeWrite(uint32_t pipeId, char *str);
-uint32_t putCharPipe(uint32_t pipeId, char c);
 void dumpPipes();
 
 #endif

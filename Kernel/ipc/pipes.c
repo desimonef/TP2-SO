@@ -115,15 +115,6 @@ static int setCharAtIdx(int idx, char c){
     return 0;
 }
 
-uint32_t putCharPipe(uint32_t pipeId, char c){
-    int idx = getPipeIdx(pipeId);
-    if (idx == -1)
-        return -1;
-
-    setCharAtIdx(idx, c);
-    return pipeId;
-}
-
 static int getPipeIdx(uint32_t pipeId){
     for (int i = 0; i < MAX_PIPES; i++){
         if (pipesAdmin.pipes[i].state == OCCUPIED && pipesAdmin.pipes[i].id == pipeId)

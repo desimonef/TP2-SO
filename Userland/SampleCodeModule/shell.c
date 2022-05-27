@@ -26,7 +26,7 @@
 void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
 &divZeroWrp, &opCodeWrp, &ps, &mem, 
 &testPrio, &testMM, &testProc, &testSync, 
-&testNosync, &loop, &kill, &niceProc,
+&testNosync, &loop, &kill, &nice,
 &block, &unblock, &sem, &pipe, 
 &cat, &wc, &filter, &runPhylos, 
 &clear};

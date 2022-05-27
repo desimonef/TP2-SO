@@ -61,7 +61,7 @@ void test_mm(){
         syscall(FREE, (uint64_t) mm_rqs[i].address, 0, 0, 0, 0, 0);  // TODO: Port this call as required
     contador--;
 
-    if(LOOPS >= 100000 && contador == LOOPS/2 ){
+    if(contador == LOOPS/2 ){
       printf("Please hold, still testing");
       printf("\n");
     }  

@@ -25,5 +25,6 @@ uint64_t getRegister(int index);
 int asmGetByte(int pos);
 
 void _timerTick();
+int _xchg(int * mutex, int val);
 
 #endif

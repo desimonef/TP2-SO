@@ -130,9 +130,6 @@ int check_vowel(char a){
 }
 
 void filter(int argc, char ** argv){
-    printf("\nPalabra a filtrar = ");
-    printf(argv[1]);
-    printf("\n");
     int i = 0;
     while (argv[1][i] != '\0' && argv[1][i] != '\n'){
         if (!check_vowel(argv[1][i]))

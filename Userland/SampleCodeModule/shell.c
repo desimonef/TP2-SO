@@ -42,8 +42,9 @@ char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime",
 int off = 0;
 static int pipeCounter = 0;
 
+void processBuffer(char * buffer);
 int isItPiped(int argc, char **argv);
-void * getCommand(char * str);
+int getCommand(char * str);
 int runPipedCommands(int pipeIdx, int argc, char ** argv, int fg);
 int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut);
 int isBackground(int argc, char ** argv);
@@ -127,7 +128,7 @@ void processBuffer(char * buffer){
     createProcess(cmds[idx], argc, argv, fg, 0);
 }
 
-void * getCommand(char * str){
+int getCommand(char * str){
     int idx = 0; 
     while(idx < N_COMMANDS){
         if(strcmp(str, cmdsNames[idx]) == 0){
@@ -181,8 +182,8 @@ int runPipedCommands(int pipeIdx, int argc, char **argv, int fg)
     pids[1] = runPipeCommand(currentArgc, currentArgv, fg, 0, pipe);
 
     if (pids[1] == -1){
-        return -1;
         pipeClose(pipe);
+        return -1;
     }
 
     int a = -1;

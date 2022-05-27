@@ -111,9 +111,6 @@ void *scheduler(void * setRSP){
                   }
                   currentP = pDequeue();
             }
-            if(currentP->state != READY){
-                  ncPrint("[Kernel] ERROR: No ready processes found. Now returning."); // NO debería llegar aca igual
-            }
       }
       else{
             currentP = haltP; // No tenemos procesos listos --> Haltea el kernel

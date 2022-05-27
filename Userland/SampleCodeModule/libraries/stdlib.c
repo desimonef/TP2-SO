@@ -137,6 +137,10 @@ void printf(char * command, ...){
                 break;
                 case 's':
                     string = va_arg(args,char*);
+                break;
+                default:
+                    printf("Error en formato");
+                    return;
                 break;  
             }
             print(1, string, strlen(string));
@@ -261,7 +265,7 @@ int atoi(char * str){
     int number = 0;
     int mult = 1;
     int n = strlen(str);
-    n = (int)n < 0 ? -n : n; /* quick absolute value check  */
+    //n = (int)n < 0 ? -n : n; /* quick absolute value check  */
     /* for each character in array */
     while (n--)
     {

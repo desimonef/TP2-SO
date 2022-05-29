@@ -11,42 +11,42 @@ typedef struct data{
     unsigned size;
 } data;
 
-static data * base;
-static data * startingNode = NULL;
+unsigned long quantity;
 
-unsigned long totalUnits;
+static data * base;
+static data * start = NULL;
 
 void initMM(){
     ncPrint("Entering MEM_LIST MM\n");
-    totalUnits = (TOTALMEM + sizeof(data) - 1) / sizeof(data) + 1;
-    startingNode = base = (data *) MEM_START;
-    startingNode->size = totalUnits;
-    startingNode->ptr = startingNode; 
+    start = base = (data *) MEM_START;
+    quantity = (TOTALMEM + sizeof(data) - 1) / sizeof(data) + 1;
+    start->size = quantity;
+    start->ptr = start; 
 }
 
 void * malloc(int size){
     if(size == 0)
         return NULL;
 
-    unsigned long nunits = (size + sizeof(data) - 1) / sizeof(data) + 1;
-    data * currNode;
-    data * prevNode;
-    prevNode = startingNode;
-    currNode = prevNode->ptr;
+    unsigned long num = (size + sizeof(data) - 1) / sizeof(data) + 1;
+    data * current;
+    data * last;
+    last = start;
+    current = last->ptr;
 
-    for(;;prevNode = currNode, currNode = currNode->ptr){
-        if(currNode->size >= nunits){
-            if(currNode->size == nunits)
-                prevNode->ptr = currNode->ptr;
+    for(;;last = current, current = current->ptr){
+        if(current->size >= num){
+            if(current->size == num)
+                last->ptr = current->ptr;
             else{
-                currNode->size -= nunits;
-                currNode += currNode->size;
-                currNode->size = nunits;
+                current->size -= num;
+                current += current->size;
+                current->size = num;
             }
-            startingNode = prevNode;
-            return (void *)(currNode + 1);
+            start = last;
+            return (void *)(current + 1);
         }
-        if(currNode == startingNode)
+        if(current == start)
             return NULL;
             
     }
@@ -57,47 +57,47 @@ void free(void * addr){
         return;
         
     data *freeBlock;
-    data *currNode;
+    data *current;
+
+    char outer = 0;
 
     freeBlock = (data *) addr - 1;
 
-    if(freeBlock < base || freeBlock >= (base + totalUnits * sizeof(data)))
+    if(freeBlock < base || freeBlock >= (base + quantity * sizeof(data)))
         return;
-    
-    char isExternal = 0;
 
-    currNode = startingNode;
-    for(; !(freeBlock > currNode && freeBlock < currNode->ptr); currNode = currNode->ptr){
-        if(freeBlock == currNode || freeBlock == currNode->ptr)
+    current = start;
+    for(; !(freeBlock > current && freeBlock < current->ptr); current = current->ptr){
+        if(freeBlock == current || freeBlock == current->ptr)
             return;
-        if(currNode >= currNode->ptr && (freeBlock > currNode || freeBlock < currNode->ptr)){
-            isExternal = 1;
+        if(current >= current->ptr && (freeBlock > current || freeBlock < current->ptr)){
+            outer = 1;
             break;
         }
     }
 
-    if(!isExternal && (currNode + currNode->size > freeBlock ||
-    freeBlock + freeBlock->size > currNode->ptr))
+    if(!outer && (current + current->size > freeBlock ||
+    freeBlock + freeBlock->size > current->ptr))
         return ;
 
-    // Uno por derecha
-    if(freeBlock + freeBlock->size == currNode->ptr){
-        freeBlock->size += currNode->ptr->size; 
-        freeBlock->ptr = currNode->ptr->ptr;
+    
+    if(freeBlock + freeBlock->size == current->ptr){
+        freeBlock->size += current->ptr->size; 
+        freeBlock->ptr = current->ptr->ptr;
     }
     else{
-        freeBlock->ptr = currNode->ptr;
+        freeBlock->ptr = current->ptr;
     }
 
-    // Uno por izquierda
-    if(currNode + currNode->size == freeBlock){
-        currNode->size += freeBlock->size;
-        currNode->ptr = freeBlock->ptr;
+    
+    if(current + current->size == freeBlock){
+        current->size += freeBlock->size;
+        current->ptr = freeBlock->ptr;
     }
     else{
-        currNode->ptr = freeBlock;
+        current->ptr = freeBlock;
     }
-    startingNode = currNode;
+    start = current;
 }
 
 void memDump(){
@@ -107,7 +107,7 @@ void memDump(){
     ncPrint("-----Estado de memoria-----");
     ncNewline();
     ncPrint("Memoria total: ");
-    int total =  totalUnits*sizeof(data);
+    int total =  quantity*sizeof(data);
     ncPrintDec((uint64_t) total);
     ncPrint(" B");
     ncNewline();
@@ -115,8 +115,8 @@ void memDump(){
     ncNewline();
     ncPrint("Memoria libre: ");
 
-    data * auxPointer = startingNode;
-    data * auxPointer2 = startingNode;
+    data * auxPointer = start;
+    data * auxPointer2 = start;
     int sum = 0;
     int flag = 1;
     while(auxPointer != auxPointer2 || flag){

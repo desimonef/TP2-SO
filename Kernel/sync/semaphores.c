@@ -129,14 +129,27 @@ int semClose(uint32_t id)
     return 0;
 }
 
+void printSemsRecursive(){
+    Semaphore * auxPointer = semaphores;
+    while(auxPointer != NULL){
+        ncPrintDec(auxPointer->id);
+        ncPrint("         ");
+        ncPrintDec(auxPointer->value);
+        ncPrint("         ");
+        ncPrintDec(auxPointer->attachedProcesses);
+        ncPrint("         ");
+        ncPrintDec(auxPointer->blockedPIDsSize);
+        ncNewline();
+        auxPointer = auxPointer->next;
+    }
+}
+
 void semStatus()
 {
     //TODO
-}
-
-static void printBlockedPIDsForSem(uint32_t *blockedPIDs, uint16_t blockedPIDsSize)
-{
-    //TODO
+    ncPrint("ID         Value         NOfAttachedProcs         NOfBlocked");
+    ncNewline();
+    printSemsRecursive();
 }
 
 static Semaphore *findSem(uint32_t id)

@@ -133,15 +133,15 @@ static int getFreePipe(){
 
 void printIndividualPipe(Pipe pipe){
     ncPrintDec(pipe.id);
-    ncPrint("    ");
+    ncPrint("         ");
     ncPrintDec((int)pipe.totalProcesses);
-    ncPrint("    ");
+    ncPrint("         ");
     ncPrint(pipe.buffer);
     ncNewline();
 }
 
 void dumpPipes(){
-    ncPrint("ID    N°OfProcs    Content");
+    ncPrint("ID         NOfProcs         Content");
     ncNewline();
     for(int i = 0; i < baseSemID; i++){
         if(pipesAdmin.pipes[i].state == OCCUPIED){

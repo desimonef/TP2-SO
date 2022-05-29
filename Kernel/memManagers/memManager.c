@@ -101,7 +101,39 @@ void free(void * addr){
 }
 
 void memDump(){
-    ncPrint("Memdump!\n");
+    //ncPrint("Memdump!\n");
+    ncNewline();
+    ncNewline();
+    ncPrint("-----Estado de memoria-----");
+    ncNewline();
+    ncPrint("Memoria total: ");
+    int total =  totalUnits*sizeof(data);
+    ncPrintDec((uint64_t) total);
+    ncPrint(" B");
+    ncNewline();
+    ncPrint("---------------------------");
+    ncNewline();
+    ncPrint("Memoria libre: ");
+
+    data * auxPointer = startingNode;
+    data * auxPointer2 = startingNode;
+    int sum = 0;
+    int flag = 1;
+    while(auxPointer != auxPointer2 || flag){
+        flag = 0;
+        sum += auxPointer->size;
+        auxPointer = auxPointer->ptr;
+    }
+
+    ncPrintDec((uint64_t) sum);
+    ncNewline();
+    ncPrint("---------------------------");
+    ncNewline();
+    ncPrint("Memoria ocupada: ");
+    ncPrintDec((uint64_t) total - (uint64_t) sum);
+    ncNewline();
+    ncPrint("---------------------------");
+    ncNewline();
 }
 
 #endif

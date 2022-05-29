@@ -14,12 +14,22 @@ char buffer[MAX_BUFFER];
 int buffSize = 0;
 
 int getchar(){
+
+    int fd = syscall(READ_FROM,0,0,0,0,0,0);
+    if(fd == 0){
+        return getKeyboardChar();
+    }
+    else{
+        return syscall(READ_PIPE, (uint64_t)fd,0,0,0,0,0);
+    }
+}
+
+int getKeyboardChar(){
     char temp[2] = {0};
     int read = scan(0, temp, 2);
     if (read <= 0)
         return -1;
     return *temp;
-    //return syscall(NEW_READ,0,0,0,0,0,0);
 }
 
 int putchar(char c){
@@ -122,8 +132,18 @@ char * getCommandWithArgsBis(){
     return retString;
 }
 
+void printHandler(int fd, char * str, int len){
+    if(fd == 1){
+        print(fd, str, len);
+    }
+    else{
+        syscall(WRITE_PIPE, (uint64_t)fd, (uint64_t)str,0,0,0,0);
+    }
+}
+
 void printf(char * command, ...){
     char auxBuff[MAX_BUFFER];
+    int fd = syscall(WRITE_TO,0,0,0,0,0,0);
     va_list args;
     va_start(args, command);
     while(*command != 0){
@@ -145,10 +165,12 @@ void printf(char * command, ...){
                     return;
                 break;  
             }
-            print(1, string, strlen(string));
+            //print(1, string, strlen(string));
+            printHandler(fd,string,strlen(string));
         }
         else{
-            print(1, command, 1);
+            //print(1, command, 1);
+            printHandler(fd,command,1);
         }
     command++;                   
     }

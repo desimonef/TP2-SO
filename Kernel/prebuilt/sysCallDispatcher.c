@@ -98,6 +98,12 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
             case NEW_READ:
                 return newRead(rsi,rdx,r10);
                 break;
+            case READ_FROM:
+                return getCurrentInFD();
+                break;
+            case WRITE_TO:
+                return getCurrentOutFD();
+                break;
             default:
                 return -1;
         }

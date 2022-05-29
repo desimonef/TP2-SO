@@ -38,6 +38,9 @@
 #define PRINT_MEM 31
 #define NEW_WRITE 32
 #define NEW_READ 33
+#define READ_FROM 34
+#define WRITE_TO 35
+
 
 
 #define MAXLEN 100

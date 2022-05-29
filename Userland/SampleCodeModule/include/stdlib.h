@@ -4,11 +4,13 @@
 #include <stdint.h>
 
 int getchar();
+int getKeyboardChar();
 int putchar(char c);
 void emptyBuffer() ;
 int scanf(char * command, ...);
 void getCommandWithArgs();
 char * getCommandWithArgsBis();
+void printHandler(int fd, char * str, int len);
 void printf(char * command, ...);
 int strlen(char * string);
 int strcmp(const char * str1, const char * str2);

@@ -313,15 +313,7 @@ static uint64_t changeState(uint64_t pid, State newState){
       if (process->state == READY && newState != READY){
             processes->readySize--;
       }
-      // State oldState = process->state;
       process->state = newState;
-      // ncPrint("Process of PID: ");
-      // ncPrintDec(pid);
-      // ncPrint(" changed status from ");
-      // ncPrint(stateName(oldState));
-      // ncPrint(" to ");
-      // ncPrint(stateName(newState));
-      // ncNewline();
       return process->pcb.pid;
 }
 

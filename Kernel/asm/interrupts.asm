@@ -53,7 +53,7 @@ SECTION .text
 	pop rax
 %endmacro
 
-%macro pushaq 0
+%macro pushall 0
     push rax      
     push rbx      
     push rcx      
@@ -73,7 +73,7 @@ SECTION .text
     push gs
 %endmacro
 
-%macro popaq 0
+%macro popall 0
     pop gs
     pop fs
     pop r15
@@ -161,10 +161,10 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	pushaq
+	pushall
  
-	mov rdi, 0 ; pasaje de parametro
-	mov rsi, rsp ; pasaje de parametro
+	mov rdi, 0 
+	mov rsi, rsp 
 	call irqDispatcher
 
 	mov rdi,rsp
@@ -175,7 +175,7 @@ _irq00Handler:
 	mov al, 20h
 	out 20h, al
 	
-	popaq
+	popall
 	iretq
 
 
@@ -201,15 +201,7 @@ _irq05Handler:
 
 ;SysCalls
 _sysCallHandler:
-	;pushState
-	
-;	mov rcx, rdx ;len
-;	mov rdx, rsi ;buffer
-;	mov rsi, rdi ;fd
-;	mov rdi, rax ;id
 	call sysCallDispatcher
-
-	;popState
 	iretq
 
 

@@ -9,6 +9,7 @@ void emptyBuffer() ;
 int scanf(char * command, ...);
 void getCommandWithArgs();
 char * getCommandWithArgsBis();
+int isBackground();
 void printf(char * command, ...);
 int strlen(char * string);
 int strcmp(const char * str1, const char * str2);

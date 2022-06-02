@@ -81,7 +81,8 @@ void reverse(char * str, int length){
     }
 }
 
-int argsCopy(char ** buffer, char ** argv, int argc){
+char ** args(char ** argv, int argc){
+    char ** buffer = malloc(sizeof(char *) * argc);
       for (int i = 0; i < argc; i++){
             buffer[i] = malloc(sizeof(char) * (strlen(argv[i]) + 1));
             if(buffer[i] == NULL){
@@ -90,8 +91,9 @@ int argsCopy(char ** buffer, char ** argv, int argc){
                   return -1;
             }
             strcpy(argv[i], buffer[i]);
+            
       }
-      return 1;
+      return buffer;
 }
 
 //https://www.geeksforgeeks.org/program-decimal-hexadecimal-conversion/

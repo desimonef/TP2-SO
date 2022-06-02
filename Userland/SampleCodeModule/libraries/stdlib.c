@@ -12,6 +12,7 @@
 #define STDOUT 1
 char buffer[MAX_BUFFER];
 int buffSize = 0;
+int background = 0;
 
 int getchar(){
     char temp[2] = {0};
@@ -102,19 +103,31 @@ void strcpy(char *str1, char *str2)
       str2[i] = 0;
 }
 
+int isBackground() {
+    return background;
+}
+
 char * getCommandWithArgsBis(){
     emptyBuffer();
     int c = 0;
+    int back = 0;
     while ((c = getchar()) != '\n'){
         if (c == '\b'){
+            back = 0;
             if (buffSize != 0)
                 buffSize--;
         }
+        else if (c == '&') { 
+            back = 1;
+            putchar(c);
+        }
         else if (c != -1){
+            back = 0;
             putInBuff(c);
             putchar(c);
         }
     }
+    background = back; 
     putchar('\n');
     putInBuff('\0');
     char retString[buffSize];
@@ -199,6 +212,8 @@ int tokenizeBuffer(char token, char **dest, char *source, int max){
             }
             source++;
       }
+    
+
       return index;
 }
 

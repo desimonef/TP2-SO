@@ -41,7 +41,7 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
             
             //------------ PROCESS SYSCALLS -----------------
             case CREATE_P:
-                return addProcess((void (*)(int, char **))rsi, (int)rdx, (char **)r10, (int)r8, (int *)r9);
+                return newProcess((void (*)(int, char **))rsi, (int)rdx, (char **)r10, (int)r8, (int *)r9);
             case KILL_P:
                 return kill(rsi);
             case BLOCK_P:

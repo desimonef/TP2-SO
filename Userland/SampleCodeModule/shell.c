@@ -47,7 +47,6 @@ int isItPiped(int argc, char **argv);
 int getCommand(char * str);
 int runPipedCommands(int pipeIdx, int argc, char ** argv, int fg);
 int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut);
-int isBackground(int argc, char ** argv);
 void shellNueva();
 void processInputChar(char * buffer, char c);
 
@@ -136,9 +135,8 @@ void processBuffer(char * buffer){
         }
         return;
     }
-    if(isBackground(argc, argv) == 0){
+    if(isBackground() == 1){
         fg = 0;
-        argc--;
     }
     int idx = getCommand(argv[0]);
     char buff[MAXLEN]; // Nota: Esta declaración no aporta nada al código. Sin embargo, sacarla
@@ -231,11 +229,4 @@ int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut)
       fd[1] = fdOut;
 
       return createProcess(cmds[cmdIdx], argc, argv, fg, fd);
-}
-
-int isBackground(int argc, char ** argv){
-    if(argv[argc - 1][0] == '&'){
-        return 0;
-    }
-    return -1;
 }

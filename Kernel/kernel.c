@@ -66,10 +66,11 @@ int main()
 	initScheduler();
 
 	char *argv[] = {"MasterProcess"};
-    addProcess(sampleCodeModuleAddress, 1, argv, 1, 0);
+    newProcess(sampleCodeModuleAddress, 1, argv, 1, 0);
 	ncClear();
     _hlt();
 
 	ncClear();
 	return 0;
 }
+

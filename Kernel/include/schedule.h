@@ -39,12 +39,12 @@ typedef struct{
 } StackFrame;
 
 void initScheduler();
+int newProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd);
 void *scheduler(void *oldRSP);
-int addProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd);
 uint64_t kill(uint64_t pid);
 uint64_t block(uint64_t pid);
 uint64_t unblock(uint64_t pid);
-int getCurrPID();
+int getCurrentPID();
 void processDisplay();
 void changePriority(uint64_t pid, int priority);
 void yield();

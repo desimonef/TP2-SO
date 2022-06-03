@@ -94,49 +94,6 @@ void initScheduler(){
       haltP = pDequeue();
 }
 
-void *scheduler(void * rsp){
- 
-      //HASTA ACÁ
-      //si el proceso actual está listo y tiene ciclos, que siga
-            if (currentP->state == READY && ticks > 0){
-                  ticks--;
-                  return rsp;
-            }
-
-            currentP->rsp = rsp;
-            if (currentP->pid != haltP->pid){
-                  if(currentP->state == KILLED) {
-                        PNode * fatherProcess = getProcess(currentP->ppid);
-                        if(fatherProcess != NULL && fatherProcess->state == BLOCKED) 
-                              unblock(fatherProcess->pid);
-                        freeP(currentP);
-                  } else {
-                        pEnqueue(currentP);
-                  }
-            }
-      
-      if (processQueue->prepared > 0){
-            PNode * aux;
-            do {
-                  aux = pDequeue();
-                  if (aux->state == KILLED){
-                        freeP(aux);
-                  }
-                  if (aux->state == BLOCKED){
-                        pEnqueue(aux);
-                  }
-            }
-            while (aux->state != READY);
-            currentP = aux;
-            ticks = currentP->priority;
-      }
-      else{
-            currentP = haltP; // No tenemos procesos listos --> Haltea el kernel
-      }
-      
-      return currentP->rsp;
-}
-
 int newProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd){
 
 
@@ -202,12 +159,57 @@ static int frame(PNode * newP) {
       return 0;
 }
 
+void *scheduler(void * rsp){
+ 
+      //HASTA ACÁ
+      //si el proceso actual está listo y tiene ciclos, que siga
+            if (currentP->state == READY && ticks > 0){
+                  ticks--;
+                  return rsp;
+            }
+
+            currentP->rsp = rsp;
+            if (currentP->pid != haltP->pid){
+                  if(currentP->state == KILLED) {
+                        PNode * fatherProcess = getProcess(currentP->ppid);
+                        if(fatherProcess != NULL && fatherProcess->state == BLOCKED) 
+                              unblock(fatherProcess->pid);
+                        freeP(currentP);
+                  } else {
+                        pEnqueue(currentP);
+                  }
+            }
+      
+      if (processQueue->prepared > 0){
+            PNode * aux;
+            do {
+                  aux = pDequeue();
+                  if (aux->state == KILLED){
+                        freeP(aux);
+                  }
+                  if (aux->state == BLOCKED){
+                        pEnqueue(aux);
+                  }
+            }
+            while (aux->state != READY);
+            currentP = aux;
+            ticks = currentP->priority;
+      }
+      else{
+            currentP = haltP; // No tenemos procesos listos --> Haltea el kernel
+      }
+      
+      return currentP->rsp;
+}
+
+
+
 static void freeP(PNode * process){
+      
       for (int i = 0; i < process->argc; i++){
             free(process->argv[i]);
       }
       free(process->argv);
-      free((void *)((char *)process->rbp - STACK_SIZE + 1));
       free((void *)process);
 }
 
@@ -449,7 +451,7 @@ int isForeground() {
       return currentP->fg;
 }
 
-int getCurrPID(){
+int getCurrentPID(){
       return currentP ? currentP->pid : -1;
 }
 

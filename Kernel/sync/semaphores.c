@@ -96,7 +96,7 @@ int semWait(uint32_t id)
         return 0;
     }
     else{
-        int currPid = getCurrPID();
+        int currPid = getCurrentPID();
         sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
         release(&(sem->mutex));
         block(currPid);

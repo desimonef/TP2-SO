@@ -62,7 +62,7 @@ static PNode * pDequeue();
 
 static PNode * currentP;
 static PList * processQueue;
-static uint64_t currPID = 0;
+static uint64_t PID = 0;
 static uint64_t ticks;
 static PNode * haltP;
 
@@ -205,11 +205,12 @@ void *scheduler(void * rsp){
 
 
 static void freeP(PNode * process){
-      
+      free((void *)((char *)process->rbp - STACK_SIZE + 1));
       for (int i = 0; i < process->argc; i++){
             free(process->argv[i]);
       }
       free(process->argv);
+      
       free((void *)process);
 }
 
@@ -287,9 +288,7 @@ static void pEnqueue(PNode * newP){
 
 static PNode * pDequeue(){
 
-      if (processQueue->size == 0){
-            return NULL;
-      }
+      
       PNode * aux = processQueue->first;
       processQueue->size--;
       
@@ -352,14 +351,14 @@ uint64_t kill(uint64_t pid){
       }
       int aux = changeState(pid, KILLED);
       if (pid == currentP->pid)
-            _timerTick();
+            yield();
       return aux;
 }
 
 uint64_t block(uint64_t pid){
       int aux = changeState(pid, BLOCKED);
       if (pid == currentP->pid){
-            _timerTick();
+           yield();
       }
       return aux;
 }
@@ -376,7 +375,7 @@ uint64_t unblock(uint64_t pid){
 //    ----------------------------
 
 static uint64_t getPID(){
-      return currPID++;
+      return PID++;
 }
 
 static void createStackFrame(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp){

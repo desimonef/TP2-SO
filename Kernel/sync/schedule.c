@@ -58,11 +58,11 @@ static PNode * getProcess(uint64_t pid);
 
 static void pEnqueue(PNode *newP);
 static PNode * pDequeue();
-static int isEmptyQ();
 
-static uint64_t currPID = 0;
-static PList * processQueue;
+
 static PNode * currentP;
+static PList * processQueue;
+static uint64_t currPID = 0;
 static uint64_t ticks;
 static PNode * haltP;
 
@@ -94,46 +94,46 @@ void initScheduler(){
       haltP = pDequeue();
 }
 
-void *scheduler(void * setRSP){
-      if (currentP != NULL){
-
-            //si el proceso actual está listo y tiene ciclos, que siga
+void *scheduler(void * rsp){
+ 
+      //HASTA ACÁ
+      //si el proceso actual está listo y tiene ciclos, que siga
             if (currentP->state == READY && ticks > 0){
                   ticks--;
-                  return setRSP;
+                  return rsp;
             }
 
-            currentP->rsp = setRSP;
+            currentP->rsp = rsp;
             if (currentP->pid != haltP->pid){
-                  if(currentP->state == READY || currentP->state == BLOCKED){
+                  if(currentP->state == KILLED) {
+                        PNode * fatherProcess = getProcess(currentP->ppid);
+                        if(fatherProcess != NULL && fatherProcess->state == BLOCKED) 
+                              unblock(fatherProcess->pid);
+                        freeP(currentP);
+                  } else {
                         pEnqueue(currentP);
                   }
-                  else{
-                        PNode * parent = getProcess(currentP->ppid);
-                        if (parent != NULL && currentP->fg && parent->state == BLOCKED){
-                              unblock(parent->pid);
-                        }
-                        freeP(currentP);
-                  }
             }
-      }
       
       if (processQueue->prepared > 0){
-            currentP = pDequeue();
-            while (currentP->state != READY){
-                  if (currentP->state == KILLED){
-                        freeP(currentP);
+            PNode * aux;
+            do {
+                  aux = pDequeue();
+                  if (aux->state == KILLED){
+                        freeP(aux);
                   }
-                  if (currentP->state == BLOCKED){
-                        pEnqueue(currentP);
+                  if (aux->state == BLOCKED){
+                        pEnqueue(aux);
                   }
-                  currentP = pDequeue();
             }
+            while (aux->state != READY);
+            currentP = aux;
+            ticks = currentP->priority;
       }
       else{
             currentP = haltP; // No tenemos procesos listos --> Haltea el kernel
       }
-      ticks = currentP->priority;
+      
       return currentP->rsp;
 }
 
@@ -174,13 +174,12 @@ int newProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
       newP->fd[0] = fd ? fd[0] : 0;
       newP->fd[1] = fd ? fd[1] : 1;
+      newP->state = READY;
 
       char ** newArgvs = args(argv, argc);
       newP->argc = argc;
       newP->argv = newArgvs;
       createStackFrame(entryPoint, argc, newArgvs, newP->rbp);
-
-      newP->state = READY;
       pEnqueue(newP);
       
       if (newP->fg && newP->ppid){

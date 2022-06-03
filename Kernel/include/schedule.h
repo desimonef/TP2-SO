@@ -13,22 +13,6 @@ typedef enum{
 } State;
 
 typedef struct{
-      uint64_t pid;
-      uint64_t ppid;
-
-      void * rsp;
-      void * rbp;
-
-      int fd[2];
-      int priority;
-      int fg;
-
-      char name[NAME_SIZE];
-      int argc;
-      char ** argv;
-} PCB;
-
-typedef struct{
       uint64_t gs;
       uint64_t fs;
       uint64_t r15;

@@ -6,6 +6,7 @@
 #include "keyboard.h"
 #include "naiveConsole.h"
 #include "screen.h"
+#include "schedule.h"
 
 //entre codes de pressed y released hay un defasaje de 128
 #define INPUT_BUFFER 255 //Cant max de caracteres en buffer de input
@@ -14,6 +15,8 @@
 #define CAPS_PRESS 58
 #define ENTER 28
 #define ENTER_RELEASE 156
+#define CTRL 29
+#define CTRL_RELEASE 157
 #define TAB 15
 #define UP 72
 #define UP_RELEASE 200
@@ -32,6 +35,7 @@ static unsigned int readIndex = 0;
 static int shift = 0;
 static int unread = 0;
 static int first = 0;
+static int ctrlDown = 0;
 
 static const char asciiTable[] = {
     '|', '|', '1', '2',
@@ -93,6 +97,13 @@ char getAscii(int scancode)
 
   if (scancode == TAB)
     moveCursor(5);
+
+  if(scancode == CTRL) {
+    ctrlDown = 1;
+  }
+  if(scancode == CTRL_RELEASE) {
+    ctrlDown = 0;
+  }
 
   return 0;
 }
@@ -201,12 +212,17 @@ void store(char c)
   unread++;
 }
 
+void ctrlC(char c) {
+  if(c == 'c' && ctrlDown)
+    kill(getCurrentPID());
+}
 
 void keyboard_handler()
 {
   int scancode = readKey();
   setStart();
   char c = getAscii(scancode);
+  ctrlC(c);
   if (c != -1)
     store(c);
 }

@@ -52,7 +52,7 @@ uint64_t sysCallDispatcher (uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
                 processDisplay();
                 return 0;
             case CURRENT_P:
-                return (uint64_t) getCurrPID();
+                return (uint64_t) getCurrentPID();
             case NICE:
                 changePriority(rsi, (int)rdx);
                 return 0;

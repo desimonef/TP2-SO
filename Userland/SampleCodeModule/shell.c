@@ -30,7 +30,7 @@ void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
 &testPrio, &testMM, &testProc, &testSync, 
 &testNosync, &loop, &kill, &nice,
 &block, &unblock, &sem, &pipe, 
-&cat, &wc, &filter, &runPhylos, 
+&cat, &wc, &filter, &runPhilos, 
 &clear};
 
 char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime", 

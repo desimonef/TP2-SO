@@ -13,16 +13,16 @@
 
 static unsigned align(unsigned size);
 
-typedef struct node{
-    struct node * left;
-    struct node * right;
+typedef struct memNode{
+    struct memNode * left;
+    struct memNode * right;
     unsigned int index;
     void * address;
     unsigned int size;
     int status;
-} node;
+} memNode;
 
-typedef struct node * node_t;
+typedef struct memNode * node_t;
 node_t root;
 unsigned int memAllocated = 0;
 

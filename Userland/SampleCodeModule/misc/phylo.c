@@ -113,7 +113,7 @@ int addPhilo(){
     if (currentPhilos == MAX)
         return -1;
 
-    semWait(tableMutex); //Gain access to check table
+    semWait(tableMutex); 
 
     Philosopher * auxPhilo = malloc(sizeof(Philosopher));
     if (auxPhilo == NULL)

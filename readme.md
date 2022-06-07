@@ -37,7 +37,6 @@ El kernel ofrece diferentes funcionalidades, que se encuentran listadas mediante
 
 - **help**: muestra el menu de ayuda
 - **clear**: Borra el contenido de la pantalla
-- **kill**: termina la ejecución del SO
 - **zerodiv**: se genera una excepcion de division por cero
 - **invopcode**: se genera una excepcion de codigo de operacion equivocado
 - **inforeg**: muestra los valores de los registros en el momento de ejecucion

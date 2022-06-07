@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "stdlib.h"
 #include "userlib.h"
@@ -22,7 +24,7 @@
 #define MAX_ARGS 4
 #define N_COMMANDS 25
 
-//4,5,7,7,4   -   4,9,16,23,27
+
 void (*cmds[])(int, char **) = {&helpWrp, &regWrp, &dumpWrp, &datetimeWrp,
 &divZeroWrp, &opCodeWrp, &ps, &mem, 
 &testPrio, &testMM, &testProc, &testSync, 
@@ -40,15 +42,15 @@ char * cmdsNames[] = {"help", "inforeg", "dumpMem", "datetime",
 "clear"};
 
 int off = 0;
-static int pipeCounter = 0;
+static int pipeCounter = 2;
 
 void processBuffer(char * buffer);
 int isItPiped(int argc, char **argv);
 int getCommand(char * str);
-int runPipedCommands(int pipeIdx, int argc, char ** argv, int fg);
-int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut);
+int execPipes(int pipeIdx, int argc, char ** argv, int fg);
+int pipeCmd(int argc, char **argv, int fg, int fdIn, int fdOut);
 void shellNueva();
-void processInputChar(char * buffer, char c);
+
 
 void initShell(int argc, char ** argv){
     screenClear(0);
@@ -85,25 +87,6 @@ void shellWelcomeMsg(){
 }
 
 
-void processInputChar(char * buffer, char c){
-    if(c != 0){
-        switch(c){
-            case '\n':
-                putchar('\n');
-                processBuffer(buffer);
-                break;
-            case '\b':
-                if(strlen(buffer) > 0)
-                    buffer[strlen(buffer)-1] = 0;
-                break;
-            default:
-                buffer[strlen(buffer)] = c;
-                putchar(c);
-                break;
-        }
-    }
-}
-
 void shellNueva(){
     printf("Bienvenidos a Among-OS! Si necesita ayuda, ingresar el comando <help>\n");
     char buffer[MAX_SIZE] ={0};
@@ -111,7 +94,7 @@ void shellNueva(){
         printf("$>");
         cleanBuffer(buffer);
         //int c = getchar();
-        //processInputChar(buffer, c);
+        
         char * parsed = getCommandWithArgsBis(buffer);
         processBuffer(parsed);
     }
@@ -120,17 +103,16 @@ void shellNueva(){
 void processBuffer(char * buffer){
     int argc = 0;
     char *argv[MAX_ARGS] = {0};
-    argc = tokenizeBuffer(' ', argv, buffer, MAX_ARGS);
+    tokenize(' ', &argc, argv, buffer, MAX_ARGS);
 
-    int fg = 1; //Unless stated otherwise ('&');  
+    int fg = 1; 
     int pipe = isItPiped(argc, argv);
     if(pipe != -1){
         if(pipe == 0 || pipe == argc-1){
             printf("El pipe se debe colocar entre argumentos.");
             return;
         }
-        if(runPipedCommands(pipe, argc, argv, fg) == -1){
-        //TODO: int runPipedCommands(int pipeIdx, int argc, char ** argv, int fg);
+        if(execPipes(pipe, argc, argv, fg) == -1){
             printf("Error corriendo comandos pipeados\n");
         }
         return;
@@ -161,13 +143,15 @@ int getCommand(char * str){
 
 int isItPiped(int argc, char **argv){
       for (int i = 0; i < argc; i++){
-            if (strcmp(argv[i], "|") == 0)
-                  return i;
+            if (strcmp(argv[i], "|") == 0) {
+                return i;
+            }
+                  
       }
       return -1;
 }
 
-int runPipedCommands(int pipeIdx, int argc, char **argv, int fg)
+int execPipes(int pipeIdx, int argc, char **argv, int fg)
 {
     char *currentArgv[N_ARGS];
     int currentArgc = 0;
@@ -185,7 +169,8 @@ int runPipedCommands(int pipeIdx, int argc, char **argv, int fg)
         currentArgc++;
     }
 
-    pids[0] = runPipeCommand(currentArgc, currentArgv, BG, pipe, 1);
+
+    pids[0] = pipeCmd(currentArgc, currentArgv, BG, 0, pipe);
 
     if (pids[0] == -1){
         pipeClose(pipe);
@@ -199,7 +184,7 @@ int runPipedCommands(int pipeIdx, int argc, char **argv, int fg)
         currentArgc++;
     }
 
-    pids[1] = runPipeCommand(currentArgc, currentArgv, fg, 0, pipe);
+    pids[1] = pipeCmd(currentArgc, currentArgv, fg, pipe, 1);
 
     if (pids[1] == -1){
         pipeClose(pipe);
@@ -217,7 +202,7 @@ int runPipedCommands(int pipeIdx, int argc, char **argv, int fg)
     return 1;
 };
 
-int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut)
+int pipeCmd(int argc, char **argv, int fg, int fdIn, int fdOut)
 {
       int fd[2];
       int cmdIdx = getCommand(argv[0]);
@@ -227,6 +212,7 @@ int runPipeCommand(int argc, char **argv, int fg, int fdIn, int fdOut)
 
       fd[0] = fdIn;
       fd[1] = fdOut;
+
 
       return createProcess(cmds[cmdIdx], argc, argv, fg, fd);
 }

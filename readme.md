@@ -57,7 +57,7 @@ El kernel ofrece diferentes funcionalidades, que se encuentran listadas mediante
 También se cuenta con el comando `clear`, que borra el contenido de la pantalla.
 
 
-**Aclaración**: Para utilizar las teclas & y |, se deben clickear las teclas a la derecha de la 'ñ' en un teclado estándar ('{' para utilizar '&', y '}' para utilizar '}') Nuestro layout utilizado fue el [siguiente](https://cdn.shopify.com/s/files/1/0810/3669/files/spanish-american_1024x1024.png?v=1510790458)
+**Aclaración**: Para utilizar las teclas & y |, se deben clickear las teclas a la derecha de la 'ñ' en un teclado estándar ('{' para utilizar '&', y '}' para utilizar '|') Nuestro layout utilizado fue el [siguiente](https://cdn.shopify.com/s/files/1/0810/3669/files/spanish-american_1024x1024.png?v=1510790458)
 
 ## Integrantes:
 Nombre | Legajo

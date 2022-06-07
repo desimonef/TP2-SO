@@ -81,26 +81,6 @@ void runPhilos(int argc, char *argv[]){
     semClose(MUTEX_ID);
 }
 
-void lifecycle(int argc, char *argv[])
-{
-    int idx = atoi(argv[1]);
-    while (working)
-    {
-        // Thinking...
-
-        // Time to eat
-        attemptForForks(idx);
-
-        // Eating...
-        sleep(1); 
-
-        // Done!
-        releaseForks(idx);
-
-        // Sleeping...
-        sleep(1);
-    }
-}
 
 //    ----------------------------
 //    |                          |
@@ -147,6 +127,28 @@ int removePhilo()
     semPost(tableMutex);
 
     return 0;
+}
+
+
+void lifecycle(int argc, char *argv[])
+{
+    int idx = atoi(argv[1]);
+    while (working)
+    {
+        // Thinking...
+
+        // Time to eat
+        attemptForForks(idx);
+
+        // Eating...
+        sleep(1); 
+
+        // Done!
+        releaseForks(idx);
+
+        // Sleeping...
+        sleep(1);
+    }
 }
 
 void attemptForForks(int i){

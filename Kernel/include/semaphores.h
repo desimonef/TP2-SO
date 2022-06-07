@@ -1,7 +1,7 @@
 #ifndef _SEMAPHORES_H
 #define _SEMAPHORES_H
 
-#define MAX_BLOCKED 16
+#define MAX_BLOCKED 64
 
 #include <stdint.h>
 

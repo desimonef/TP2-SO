@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "memManager.h"
 #include "lib.h"
@@ -8,10 +10,11 @@
 #include "naiveConsole.h"
 #include "defs.h"
 
-Semaphore * semaphores = NULL;
+Semaphore * semaphoreArray = NULL;
 
 static void printBlockedPIDsForSem(uint32_t *blockedPIDs, uint16_t blockedPIDsSize);
-static Semaphore * findSem(uint32_t id);
+void newSem(uint32_t id, int val);
+static Semaphore * getSem(uint32_t id);
 
 
 //    ----------------------------
@@ -21,32 +24,11 @@ static Semaphore * findSem(uint32_t id);
 //    |                          |
 //    ----------------------------
 
-uint32_t semOpen(uint32_t id, uint32_t initValue){
-    Semaphore * sem = findSem(id);
+uint32_t semOpen(uint32_t id, uint32_t val){
+    Semaphore * sem = getSem(id);
+    
     if (sem == NULL){
-        sem = malloc(sizeof(Semaphore));
-        if (sem == NULL)
-            return -1;
-
-        sem->value = initValue;
-        sem->id = id;
-
-        sem->attachedProcesses = 0;
-        sem->blockedPIDsSize = 0;
-
-        sem->next = NULL;
-        sem->mutex = 0;
-
-        Semaphore * auxSem = semaphores;
-
-        if(auxSem != NULL){
-            while (auxSem->next != NULL)
-                auxSem = auxSem->next;
-            auxSem->next = sem;
-        }
-        else{
-            semaphores = sem;
-        }
+        newSem(id, val);
     }
 
     if (sem->attachedProcesses >= MAX_BLOCKED){
@@ -60,11 +42,11 @@ uint32_t semOpen(uint32_t id, uint32_t initValue){
 }
 
 int semPost(uint32_t id){
-    Semaphore * sem = findSem(id);
+    Semaphore * sem = getSem(id);
     if (sem == NULL)
         return -1;
 
-    // PAra evaluar valor de semáforo, necesitamos su mutex (sección crítica)
+    
     acquire(&(sem->mutex));
     if (sem->blockedPIDsSize > 0){
         int nextPid = sem->blockedPIDs[0];
@@ -85,7 +67,7 @@ int semPost(uint32_t id){
 
 int semWait(uint32_t id)
 {
-    Semaphore * sem = findSem(id);
+    Semaphore * sem = getSem(id);
     if (sem == NULL)
         return -1;
 
@@ -96,10 +78,10 @@ int semWait(uint32_t id)
         return 0;
     }
     else{
-        int currPid = getCurrentPID();
-        sem->blockedPIDs[sem->blockedPIDsSize++] = currPid;
+        int pid = getCurrentPID();
+        sem->blockedPIDs[sem->blockedPIDsSize++] = pid;
         release(&(sem->mutex));
-        block(currPid);
+        block(pid);
     }
 
     return 0;
@@ -107,7 +89,7 @@ int semWait(uint32_t id)
 
 int semClose(uint32_t id)
 {
-    Semaphore * sem = findSem(id);
+    Semaphore * sem = getSem(id);
     if (sem == NULL)
         return -1;
 
@@ -115,9 +97,9 @@ int semClose(uint32_t id)
     if (sem->attachedProcesses > 0)
         return 0;
 
-    Semaphore *aux = semaphores;
+    Semaphore *aux = semaphoreArray;
     if (aux == sem){
-        semaphores = aux->next;
+        semaphoreArray = aux->next;
     }
     else{
         while (aux->next != sem)
@@ -130,7 +112,7 @@ int semClose(uint32_t id)
 }
 
 void printSemsRecursive(){
-    Semaphore * auxPointer = semaphores;
+    Semaphore * auxPointer = semaphoreArray;
     while(auxPointer != NULL){
         ncPrintDec(auxPointer->id);
         ncPrint("         ");
@@ -146,15 +128,39 @@ void printSemsRecursive(){
 
 void semStatus()
 {
-    //TODO
+    
     ncPrint("ID         Value         NOfAttachedProcs         NOfBlocked");
     ncNewline();
     printSemsRecursive();
 }
 
-static Semaphore *findSem(uint32_t id)
+void newSem(uint32_t id, int val) {
+        Semaphore * sem = malloc(sizeof(Semaphore));
+
+        sem->value = val;
+        sem->id = id;
+
+        sem->attachedProcesses = 0;
+        sem->blockedPIDsSize = 0;
+
+        sem->next = NULL;
+        sem->mutex = 0;
+
+        Semaphore * auxSem = semaphoreArray;
+
+        if(auxSem != NULL){
+            while (auxSem->next != NULL)
+                auxSem = auxSem->next;
+            auxSem->next = sem;
+        }
+        else{
+            semaphoreArray = sem;
+        }
+}
+
+static Semaphore *getSem(uint32_t id)
 {
-    Semaphore * sem = semaphores;
+    Semaphore * sem = semaphoreArray;
     while (sem){
         if (sem->id == id)
             return sem;

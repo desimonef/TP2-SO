@@ -17,6 +17,6 @@ typedef struct Philosopher
 
 } Philosopher;
 
-void runPhylos(int argc, char *argv[]);
+void runPhilos(int argc, char *argv[]);
 
 #endif

@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <schedule.h>
 #include <lib.h>
@@ -96,7 +98,6 @@ void initScheduler(){
 
 int newProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, int *fd){
 
-
       if (entryPoint == NULL)
             return -1;
 
@@ -109,6 +110,7 @@ int newProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
       if (fg > 1 || fg < 0){
             ncPrint("[Kernel] ERROR: Error creating process, fg value out of bounds");
+            free(newP);
             return -1;
       }
 
@@ -131,6 +133,7 @@ int newProcess(void (*entryPoint)(int, char **), int argc, char **argv, int fg, 
 
       newP->fd[0] = fd ? fd[0] : 0;
       newP->fd[1] = fd ? fd[1] : 1;
+
       newP->state = READY;
 
       char ** newArgvs = args(argv, argc);
@@ -161,7 +164,7 @@ static int frame(PNode * newP) {
 
 void *scheduler(void * rsp){
  
-      //HASTA ACÁ
+      
       //si el proceso actual está listo y tiene ciclos, que siga
             if (currentP->state == READY && ticks > 0){
                   ticks--;
@@ -215,7 +218,7 @@ static void freeP(PNode * process){
 }
 
 static PNode * getProcess(uint64_t pid){
-      // Chequeamos si es el que está corriendo
+      
       if (currentP != NULL && currentP->pid == pid){
             return currentP;
       }
@@ -332,15 +335,9 @@ static uint64_t changeState(uint64_t pid, State newState){
       if (process->state == READY && newState != READY){
             processQueue->prepared--;
       }
-      // State oldState = process->state;
+      
       process->state = newState;
-      // ncPrint("Process of PID: ");
-      // ncPrintDec(pid);
-      // ncPrint(" changed status from ");
-      // ncPrint(stateName(oldState));
-      // ncPrint(" to ");
-      // ncPrint(stateName(newState));
-      // ncNewline();
+      
       return process->pid;
 }
 
@@ -444,10 +441,6 @@ void processDisplay(){
             printIndividualProcess(iter);
             iter = iter->next;
       }
-}
-
-int isForeground() {
-      return currentP->fg;
 }
 
 int getCurrentPID(){

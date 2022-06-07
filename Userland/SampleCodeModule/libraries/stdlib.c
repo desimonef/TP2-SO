@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <stdarg.h>
 #include "stdlib.h"
@@ -7,10 +9,10 @@
 #include "clock.h"
 #include "sysCalls.h"
 
-#define MAX_BUFFER 100
+#define limit_BUFFER 100
 #define STDIN 0
 #define STDOUT 1
-char buffer[MAX_BUFFER];
+char buffer[limit_BUFFER];
 int buffSize = 0;
 int background = 0;
 
@@ -20,7 +22,7 @@ int getchar(){
     if (read <= 0)
         return -1;
     return *temp;
-    //return syscall(NEW_READ,0,0,0,0,0,0);
+    
 }
 
 int putchar(char c){
@@ -37,63 +39,8 @@ void emptyBuffer() {
     
 }
 
-int scanf(char *command, ...){
-    va_list args;
-    va_start(args, command);
-    getCommandWithArgs(); //guarda en buffer los argumentos
-    int bufferIndex = 0;
-    int error = 0;
-    int commandIndex = 0;
-    char *string;
-    int stringIndex;
 
-    while (!error && command[commandIndex] && buffer[bufferIndex]){
-        if (command[commandIndex] == '%'){
-            commandIndex++;
-            switch (command[commandIndex]){
-            case 's':
-                string = va_arg(args, char *);
-                stringIndex = 0;
-                while (buffer[bufferIndex] != ' ' && buffer[bufferIndex] != '\0')
-                    string[stringIndex++] = buffer[bufferIndex++];
-                string[stringIndex] = '\0';
-                if (buffer[bufferIndex] != ' ')
-                    bufferIndex++;
-                break;
-            default:
-                error = 1;
-                break;
-            }
-        }
-        else
-        {
-            if (buffer[bufferIndex] != command[commandIndex])
-                error = 1;
-            else
-                bufferIndex++;
-        }
-        commandIndex++;
-    }
-    va_end(args);
-    return bufferIndex;
-}
 
-void getCommandWithArgs(){
-    emptyBuffer();
-    int c = 0;
-    while ((c = getchar()) != '\n'){
-        if (c == '\b'){
-            if (buffSize != 0)
-                buffSize--;
-        }
-        else if (c != -1){
-            putInBuff(c);
-            putchar(c);
-        }
-    }
-    putchar('\n');
-    putInBuff('\0');
-}
 
 void strcpy(char *str1, char *str2)
 { //copies str1 into str2
@@ -136,7 +83,7 @@ char * getCommandWithArgsBis(){
 }
 
 void printf(char * command, ...){
-    char auxBuff[MAX_BUFFER];
+    char auxBuff[limit_BUFFER];
     va_list args;
     va_start(args, command);
     while(*command != 0){
@@ -155,6 +102,7 @@ void printf(char * command, ...){
                 break;
                 default:
                     printf("Error en formato");
+                    va_end(args);
                     return;
                 break;  
             }
@@ -195,7 +143,7 @@ void cleanBuffer(char * buffer){
         buffer[i] = 0;
 }
 
-int tokenizeBuffer(char token, char **dest, char *source, int max){
+void tokenize(char token, int *cant, char **dest, char *source, int limit){
       int index = 0;
 
       if (*source != token && *source != '\0')
@@ -205,7 +153,7 @@ int tokenizeBuffer(char token, char **dest, char *source, int max){
             if (*source == token){
                   *source = 0;
                   if (*(source + 1) != token && (*(source + 1) != '\0')){
-                        if (index >= max)
+                        if (index >= limit)
                               return index;
                         dest[index++] = source + 1;
                   }
@@ -214,11 +162,11 @@ int tokenizeBuffer(char token, char **dest, char *source, int max){
       }
     
 
-      return index;
+      *cant = index;
 }
 
 void putInBuff(char c) {
-    if(buffSize < MAX_BUFFER - 1)
+    if(buffSize < limit_BUFFER - 1)
         buffer[buffSize++] = c;
 }
 

@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include "shell.h"
 #include "semLib.h"
@@ -19,14 +21,20 @@ void slowInc(int64_t *p, int64_t inc){
   int64_t aux = *p;
   aux += inc;
   yieldProc();
+  //printf("slowInc: %d -> %d\n", *p, aux);
   *p = aux;
+
 }
 
 void inc(int argc, char *argv[]){
+
+
   uint64_t i;
-  int sem = atoi(argv[0]);
-  int64_t value = atoi(argv[1]);
-  int N = atoi(argv[2]  );
+  int sem = atoi(argv[1]);
+  int64_t value = atoi(argv[2]);
+  int N = atoi(argv[3]  );
+
+  
 
   if (sem && semOpen(SEM_ID, 1) == -1){
     printf("Error al crear proceso\n");
@@ -66,7 +74,7 @@ void test_sync(){
 
   global = 0;
 
-  if(semOpen(SEM_SHELL, -TOTAL_PAIR_PROCESSES*2) == -1){
+  if(semOpen(SEM_SHELL, 0) == -1){
     return;
   }
 
@@ -105,7 +113,7 @@ void test_sync(){
     if (error == -1)
     {
         printf("Error al crear el proceso");
-    }
+    } 
     for(int k = 0; k < 4; k++){
       freeMem(argv1[k]);
       freeMem(argv2[k]);
@@ -114,16 +122,21 @@ void test_sync(){
     freeMem(argv2);
   }
 
+  
   for (int i = 0; i < TOTAL_PAIR_PROCESSES*2; i++)
   {
     if(semWait(SEM_SHELL) == -1){
       return;
     };
+    
   }
+  
 
   if(semClose(SEM_SHELL) == -1){
     return;
   };
+
+  
   
 }
 
@@ -132,7 +145,7 @@ void test_no_sync(){
 
   global = 0;
 
-  if(semOpen(SEM_SHELL, -TOTAL_PAIR_PROCESSES*2) == -1){
+  if(semOpen(SEM_SHELL, 0) == -1){
     return;
   }
   printf("CREATING PROCESSES...(WITHOUT SEM)\n");

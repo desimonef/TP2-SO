@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "sysCalls.h"
 #include "stdlib.h"
@@ -7,14 +9,14 @@
 #include "procLib.h"
 #include "memLib.h"
 #include "phylo.h"
-//Tanenbaum's based implementation
 
-#define MAX_PHILOS 8
-#define BASE_PHILOS 4
+
+#define MAX 8
+#define MIN 4
 #define MUTEX_ID 999
-#define BASE_SEM_ID 1000
+#define SEM_ID 1000
 
-Philosopher * philos[MAX_PHILOS];
+Philosopher * philos[MAX];
 static int currentPhilos = 0;
 static int tableMutex;
 static int working;
@@ -22,15 +24,15 @@ static int working;
 #define RIGHT(i) ((i) + 1) % (currentPhilos)                         
 #define LEFT(i) ((i) + currentPhilos - 1) % (currentPhilos) 
 
-void philo(int argc, char *argv[]);
+void runPhilo(int argc, char *argv[]);
+int addPhilo();
+int removePhilo();
 void attemptForForks(int i);
 void releaseForks(int i);
 void checkForForks(int i);
-int addPhilosopher();
-int removePhilosopher();
 void printerAssistant();
 
-void runPhylos(int argc, char *argv[]){
+void runPhilos(int argc, char *argv[]){
     working = 1;
     tableMutex = semOpen(MUTEX_ID, 1);
     if(tableMutex == -1){
@@ -38,23 +40,23 @@ void runPhylos(int argc, char *argv[]){
         return;
     }
     printf("Problema de los filosofos.\n");
-    printf("Instrucciones:\n- 'a': Agrega un filosofo\n- 'b': Borra un filosofo\n- 'q': Cierra el programa\nComencemos :)\n\n");
+    printf("Instrucciones:\n- 'a': Agrega un filosofo\n- 'r': Borra un filosofo\n- 'q': Cierra el programa\nComencemos :)\n\n");
     sleep(2);
-    for (int i = 0; i < BASE_PHILOS; i++)
-        addPhilosopher();
+    for (int i = 0; i < MIN; i++)
+        addPhilo();
     char *args[] = {"printerAssistant"};
     int printerAssistantPid = createProcess(&printerAssistant, 1, args, BG, NULL);
     while (working){
         char key = getchar();
         switch (key){
         case 'a':
-            if (addPhilosopher() == -1)
+            if (addPhilo() == -1)
                 printf("No se puede agregar (maximo 8)\n");
             else
                 printf("Agregando filosofo...\n");
             break;
-        case 'b':
-            if (removePhilosopher() == -1)
+        case 'r':
+            if (removePhilo() == -1)
                 printf("No se puede remover (minimo 4)\n");
             else
                 printf("Removiendo filosofo...\n");
@@ -107,6 +109,46 @@ void lifecycle(int argc, char *argv[])
 //    |                          |
 //    ----------------------------
 
+int addPhilo(){
+    if (currentPhilos == MAX)
+        return -1;
+
+    semWait(tableMutex); //Gain access to check table
+
+    Philosopher * auxPhilo = malloc(sizeof(Philosopher));
+    if (auxPhilo == NULL)
+        return -1;
+
+    char buffer[3];
+    char * name[] = {"philosopher", itoa(currentPhilos, buffer, 10)};
+    auxPhilo->pid = createProcess(&lifecycle, 2, name, BG, NULL);
+
+    auxPhilo->State = THINKING;
+    auxPhilo->sem = semOpen(SEM_ID + currentPhilos, 1);
+
+    philos[currentPhilos++] = auxPhilo;
+
+    semPost(tableMutex);
+
+    return 0;
+}
+
+int removePhilo()
+{
+    if (currentPhilos == MIN){
+        return -1;
+    }
+
+    currentPhilos--;
+    Philosopher *chosenPhilo = philos[currentPhilos];
+    semClose(chosenPhilo->sem);
+    killProc(chosenPhilo->pid);
+    freeMem(chosenPhilo);
+    semPost(tableMutex);
+
+    return 0;
+}
+
 void attemptForForks(int i){
     semWait(tableMutex);
 
@@ -134,45 +176,6 @@ void checkForForks(int i){
 }
 
 
-int addPhilosopher(){
-    if (currentPhilos == MAX_PHILOS)
-        return -1;
-
-    semWait(tableMutex); //Gain access to check table
-
-    Philosopher * auxPhilo = malloc(sizeof(Philosopher));
-    if (auxPhilo == NULL)
-        return -1;
-
-    char buffer[3];
-    char * name[] = {"philosopher", itoa(currentPhilos, buffer, 10)};
-    auxPhilo->pid = createProcess(&lifecycle, 2, name, BG, NULL);
-
-    auxPhilo->State = THINKING;
-    auxPhilo->sem = semOpen(BASE_SEM_ID + currentPhilos, 1);
-
-    philos[currentPhilos++] = auxPhilo;
-
-    semPost(tableMutex);
-
-    return 0;
-}
-
-int removePhilosopher()
-{
-    if (currentPhilos == BASE_PHILOS){
-        return -1;
-    }
-
-    currentPhilos--;
-    Philosopher *chosenPhilo = philos[currentPhilos];
-    semClose(chosenPhilo->sem);
-    killProc(chosenPhilo->pid);
-    freeMem(chosenPhilo);
-    semPost(tableMutex);
-
-    return 0;
-}
 
 void printerAssistant(int argc, char *argv[]){
     while (working){

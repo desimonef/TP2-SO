@@ -16,7 +16,7 @@ int strcmp(const char * str1, const char * str2);
 void strcpy(char *str1, char *str2);
 void cleanBuffer(char * buffer);
 void putInBuff(char c);
-int tokenizeBuffer(char token, char **dest, char *source, int max);
+void tokenize(char token, int *cant, char **dest, char *source, int limit);
 void reverse(char str[], int length);
 char* itoa(int num, char* str, int base);
 int atoi(char * str);
